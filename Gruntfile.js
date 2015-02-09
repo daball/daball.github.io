@@ -18,7 +18,8 @@ module.exports = function (grunt) {
     // Configurable paths
     yeoman: {
       app: 'app',
-      dist: 'dist'
+      dist: 'dist',
+      root: '.'
     },
     watch: {
       compass: {
@@ -232,6 +233,14 @@ module.exports = function (grunt) {
     copy: {
       dist: {
         files: [{
+          expand: true,
+          dot: true,
+          cwd: '<%= yeoman.root %>',
+          //copy these two files to the dist upon build
+          src: ['CNAME', 'readme.md'],
+          dest: '<%= yeoman.dist %>'
+        },
+        {
           expand: true,
           dot: true,
           cwd: '<%= yeoman.app %>',
