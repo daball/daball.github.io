@@ -1,50 +1,65 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <title>{{ page.title }}</title>
-        <meta name="viewport" content="width=device-width">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
         <!-- build:css({app,.tmp}) /css/main.css -->
         <!-- Syntax highlighting CSS -->
-        <link rel="stylesheet" href="/css/syntax.css">
-
+        <link rel="stylesheet" href="/css/syntax.css" />
         <!-- Custom CSS -->
-        <link rel="stylesheet" href="/css/main.css">
+        <link rel="stylesheet" href="/css/main.css" />
         <!-- endbuild -->
-
+        <!-- Fonts -->
+        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans+Condensed:700,300|PT+Serif:400,700,400italic,700italic|Source+Code+Pro" rel="stylesheet" type="text/css" />
     </head>
-    <body>
+    <body data-0="background-position:0px 0px;" data-100000="background-position:0px -50000px;">
 
-        <div class="site">
-          <div class="header">
-            <h1 class="title"><a href="/">{{ site.name }}</a></h1>
-            <a class="extra" href="/">home</a>
-          </div>
-
-          {{ content }}
-
-          <div class="footer">
-            <div class="contact">
-              <p>
-                David A. Ball
-              </p>
-            </div>
-            <div class="contact">
-              <p>
-                <a href="https://github.com/{{ site.author.github }}" target="_blank">github.com/{{ site.author.github }}</a><br />
-                <a href="https://www.facebook.com/{{ site.author.facebook }}" target="_blank">facebook.com/{{ site.author.facebook }}</a><br />
-                <a href="https://twitter.com/{{ site.author.twitter }}" target="_blank">twitter.com/{{ site.author.twitter }}</a><br />
-              </p>
-            </div>
-          </div>
+      <div class="site" id="skrollr-body">
+        <div class="header">
+          <h1 class="title"><a href="/">{{ site.name }}</a></h1>
+          <h2 class="title">{{ site.subtitle }}</h2>
+          <h3>{{ site.description }}
         </div>
 
-    <!-- build:js(app) /js/scripts.js -->
-    <script src="/js/main.js"></script>
-    <!-- endbuild -->
+        <div class="content-container">
+        {{ content }}
+        </div>
 
-    {% include google-analytics.html %}
+        <div class="footer">
+          <div class="contact">
+            <h1>
+              {{ site.author.name }}
+            </h1>
+            <p>
+              {{ site.author.about }}
+            </p>
+          </div>
+          <div class="contact">
+            <p>
+              <a href="https://github.com/{{ site.author.github }}" title="GitHub" target="_blank"><i class="fa fa-github"></i></a>
+              <a href="https://www.facebook.com/{{ site.author.facebook }}" title="Facebook" target="_blank"><i class="fa fa-facebook"></i></a>
+              <a href="https://twitter.com/{{ site.author.twitter }}" title="Twitter" target="_blank"><i class="fa fa-twitter"></i></a>
+              <a href="https://www.linkedin.com/in/{{ site.author.linkedin }}" title="LinkedIn" target="_blank"><i class="fa fa-linkedin"></i></a>
+              <a href="https://docs.google.com/a/daball.me/file/d/0BzYaoZImu8cBbzNtQWRRa09VeWM/view" title="Resume" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- build:js(app) /js/scripts.js -->
+      <script src="/js/main.js"></script>
+      <script type="text/javascript" src="/_bower_components/skrollr/dist/skrollr.min.js"></script>
+      <!-- endbuild -->
+      <script type="text/javascript">
+      skrollr.init({
+        forceHeight: false
+      });
+      </script>
+
+      {% include google-analytics.html %}
     </body>
 </html>

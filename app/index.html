@@ -4,16 +4,28 @@ layout: default
 
 <div class="home">
 
-  <h1 class="page-heading">Posts</h1>
+  <span class="right skyscraper">
+    {% include google-adsense-vertical-skyscraper.html %}
+  </span>
+
+  <h1 class="page-heading">Blog Posts</h1>
 
   <ul class="post-list">
     {% for post in site.posts %}
+      {% if forloop.index0 == 2 || forloop.index0 == 6 %}
+        <li>
+          {% include google-adsense-leaderboard.html %}
+        </li>
+      {% endif %}
       <li>
-        <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
-
         <h2>
           <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
         </h2>
+        {% include post-meta.html param="post" %}
+        <p>
+          {% if post.summary %}{{ post.summary }}{% else %}{{ post.content | summarize }}{% endif %}
+          <a href="{{ post.url | prepend: site.baseurl }}">Read more... <i class="fa fa-angle-double-right"></i></a>
+        </p>
       </li>
     {% endfor %}
   </ul>

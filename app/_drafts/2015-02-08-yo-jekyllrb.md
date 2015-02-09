@@ -14,4 +14,6 @@ You now have
 
 installed.
 
+<div id="extended"></div>
+
 **Enjoy coding!**
