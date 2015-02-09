@@ -1,0 +1,38 @@
+# Jekyll configuration precedence:
+# 1. Gruntfile task
+# 2. config.build.yml
+# 3. config.yml
+
+name: David Allen Ball
+description: My web site, recreated with Jekyll at the core.
+author:
+  name: David Allen Ball
+  email: david@daball.me
+  github: daball
+  facebook: davidallenball
+  twitter: daballme
+
+# Grunt handles images and assets.
+exclude: ['img', 'css', 'js', 'fonts',
+          '**.png', '**.jpg', '**.jpeg', '**.gif', '**.webp', '**.svg', '**.ico']
+
+include: ['.htaccess']
+
+# _config.build.yml sets future and show_drafts to false on `grunt build`
+future: true
+show_drafts: true
+
+permalink: date
+paginate: 8
+paginate_path: 'page:num'
+
+# Markdown library
+markdown: redcarpet
+#   extensions: ['fenced_code_blocks', 'smart']
+
+pygments: true
+
+#baseurl: www.daball.me
+
+gems:
+  - jekyll-redirect-from
