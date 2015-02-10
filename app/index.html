@@ -12,9 +12,11 @@ layout: default
 
   <ul class="post-list">
     {% for post in site.posts %}
-      {% if forloop.index0 == 2 || forloop.index0 == 6 %}
+      {% if forloop.index0 == 2 or forloop.index0 == 6 %}
         <li>
-          {% include google-adsense-leaderboard.html %}
+          <p>
+            {% include google-adsense-leaderboard.html %}
+          </p>
         </li>
       {% endif %}
       <li>
