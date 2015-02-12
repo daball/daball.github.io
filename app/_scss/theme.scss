@@ -75,7 +75,8 @@ pre {
 .clear-left { clear: left; }
 .clear-right { float: right; }
 .clear-both { clear: both; }
-.skyscraper { position: sticky; top: 10px; }
+//THIS IS A POLICY VIOLATION. DO NOT ADD THIS CSS BACK. REMOVE COMPLETELY IN A FUTURE COMMIT.
+//.skyscraper { position: sticky; top: 10px; }
 .post, .post-list { margin-right: 165px; }
 ul.post-list { list-style-type: none; }
 ul.post-list li { margin: 0 }
