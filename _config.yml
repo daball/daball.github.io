@@ -3,6 +3,7 @@
 # 2. config.build.yml
 # 3. config.yml
 
+url: http://www.daball.me
 name: David Allen Ball
 subtitle: IT Professional and Software Engineering Student
 description: My web site redesigned with Jekyll.
@@ -16,6 +17,7 @@ author:
   linkedin: davidball
 
 disqus_shortname: daball
+adsense_client_id: ca-pub-8937572456576531
 
 timezone: America/New_York
 

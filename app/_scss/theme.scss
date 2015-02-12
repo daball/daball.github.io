@@ -1,8 +1,11 @@
 @import "../bourbon/bourbon";
 
+*,*:before,*:after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box}
+
 body {
   background: url("/img/wallpaper/cool-nature-wide-wallpaper36390-1680x1050-compressed.jpg");
   background-position: center top, center repeat fixed;
+  background-size: 100% auto;
   color: #000;
   font-family: "Source Sans Pro", sans-serif;
   font-size: 14pt;
@@ -27,7 +30,6 @@ body {
 }
 
 .header {
-  width: 90%;
   background-color: #000;
   background-color: rgba(0,0,0,0.5);
   color: #fff;
@@ -42,7 +44,6 @@ body {
   background-color: #000;
   background-color: rgba(0,0,0,0.5);
   color: #fff;
-  width: 90%;
   margin-left: 5%;
   text-align: center;
   @include border-top-radius(15px);
@@ -69,7 +70,11 @@ pre {
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
 .post { min-height: 620px; }
+.left { float: left; }
 .right { float: right; }
+.clear-left { clear: left; }
+.clear-right { float: right; }
+.clear-both { clear: both; }
 .skyscraper { position: sticky; top: 10px; }
 .post, .post-list { margin-right: 165px; }
 ul.post-list { list-style-type: none; }
