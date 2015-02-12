@@ -13,6 +13,6 @@ The core of our Spring 2011 Software Engineering I course at Radford University 
 
 The project site, document cloud, and group message board are privately shared. The project source is available at GitHub.
 
-  > <i class="fa fa-github-square"></i> GitHub source: [github.com/daball/Cooking-to-Goal](https://github.com/daball/Cooking-to-Goal)
+  > <i class="fa fa-github-square"></i> GitHub source: <a href="https://github.com/daball/Cooking-to-Goal" target="_blank">github.com/daball/Cooking-to-Goal</a>
 
 Our team included Stephanie Kinsella, Drew Salyer, Ryan Spoon, Steven Totten, and myself.

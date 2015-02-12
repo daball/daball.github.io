@@ -22,12 +22,12 @@ You will need at least two machines: the Technician PC and the target PC.
 On the Technician PC, you will need the following:
 
 * *Operating System:* Windows 8, Windows 7, Windows Server 2012, Windows Server 2008 R2, Windows Vista, or Windows Server 2008
-* *Installed:* [Windows Assessment and Deployment Kit (ADK) for Windows 8](http://www.microsoft.com/en-us/download/details.aspx?id=30652)
-* *Installed:* [Windows Automated Installation Kit (AIK) for Windows 7](http://www.microsoft.com/en-us/download/details.aspx?id=5753)
-* *Installed:* [Node.js for Windows](http://www.nodejs.org/)
-* *Installed:* [Github for Windows](http://windows.github.com/) *(recommended)* or [Git for Windows](http://msysgit.github.com/)
-* *Downloaded:* [Open DHCP Server](http://sourceforge.net/projects/dhcpserver/) or your choice of another DHCP server on the network.
-* *Downloaded:* [Open TFTP Server](http://sourceforge.net/projects/tftp-server/) or your choice of another TFTP server on the network.
+* *Installed:* <a href="http://www.microsoft.com/en-us/download/details.aspx?id=30652" target="_blank">Windows Assessment and Deployment Kit (ADK) for Windows 8</a>
+* *Installed:* <a href="http://www.microsoft.com/en-us/download/details.aspx?id=5753" target="_blank">Windows Automated Installation Kit (AIK) for Windows 7</a>
+* *Installed:* <a href="http://www.nodejs.org/" target="_blank">Node.js for Windows</a>
+* *Installed:* <a href="http://msysgit.github.com/" target="_blank">Github for Windows](http://windows.github.com/) *(recommended)* or [Git for Windows</a>
+* *Downloaded:* <a href="http://sourceforge.net/projects/dhcpserver/" target="_blank">Open DHCP Server</a> or your choice of another DHCP server on the network.
+* *Downloaded:* <a href="http://sourceforge.net/projects/tftp-server/" target="_blank">Open TFTP Server</a> or your choice of another TFTP server on the network.
 * DHCP authorization on the current LAN, or an extra NIC in the Technician PC for a second Ethernet.
 * Copies of the all of the installation media that you intend to deploy.
 
@@ -844,6 +844,6 @@ net start OpenDHCPServer
 
 ## 8 Product Testing
 
-With the exception of USB booting, I use a VirtualBox virtual machine to test all of these boot scenarios. [VirtualBox](http://www.virtualbox.org/) doesn't boot directly from USB, so I use a second PC to test USB booting. All of these boot patterns have been tested and work according to design.
+With the exception of USB booting, I use a VirtualBox virtual machine to test all of these boot scenarios. <a href="http://www.virtualbox.org/" target="_blank">VirtualBox</a> doesn't boot directly from USB, so I use a second PC to test USB booting. All of these boot patterns have been tested and work according to design.
 
 If you have any comments or suggestions for improvement, please drop me a line below or find me on Google+. Enjoy the fruits of your labor!

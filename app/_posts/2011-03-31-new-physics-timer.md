@@ -12,7 +12,7 @@ The timer application used in my Physics class was written in a long time ago wi
 <div id="extended"></div>
 
 >
->  <i class="fa fa-external-link-square"></i> Project homepage: [www.daball.me/projects/Physics-Timer](http://www.daball.me/projects/Physics-Timer/)
+>  <i class="fa fa-external-link-square"></i> Project homepage: <a href="http://www.daball.me/projects/Physics-Timer/" target="_blank">www.daball.me/projects/Physics-Timer</a>
 >
-> <i class="fa fa-github-square"></i> GitHub source: [github.com/daball/Physics-Timer](http://github.com/daball/Physics-Timer)
+> <i class="fa fa-github-square"></i> GitHub source: <a href="http://github.com/daball/Physics-Timer" target="_blank">github.com/daball/Physics-Timer</a>
 >
