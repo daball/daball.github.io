@@ -1,0 +1,28 @@
+---
+layout: default
+---
+
+<div class="home">
+
+  <h1 class="page-heading">Projects</h1>
+
+  <ul class="post-list">
+    {% for post in site.projects %}
+    {% if forloop.index0 == 2 or forloop.index0 == 6 %}
+    <li>
+      <p>
+        {% include google-adsense-leaderboard.html %}
+      </p>
+    </li>
+    {% endif %}
+    <li>
+      <h2>
+        <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+      </h2>
+      {% if post.summary %}<p>{{ post.summary }}</p>{% else %}{{ post.content | summarize }}{% endif %}
+      <p><a href="{{ post.url | prepend: site.baseurl }}">Read more... <i class="fa fa-angle-double-right"></i></a></p>
+    </li>
+    {% endfor %}
+  </ul>
+
+</div>

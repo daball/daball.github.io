@@ -3,7 +3,13 @@
 # 2. config.build.yml
 # 3. config.yml
 
+# Technical configuration about the site
 url: http://www.daball.me
+disqus_shortname: daball
+adsense_client_id: ca-pub-8937572456576531
+timezone: America/New_York
+
+# Site details
 name: David Allen Ball
 subtitle: IT Professional and Software Engineering Student
 description: My web site redesigned with Jekyll.
@@ -15,11 +21,10 @@ author:
   facebook: davidallenball
   twitter: daballme
   linkedin: davidball
-
-disqus_shortname: daball
-adsense_client_id: ca-pub-8937572456576531
-
-timezone: America/New_York
+collections:
+  projects:
+    output: true
+    permalink: /projects/:path/
 
 # Grunt handles images and assets.
 exclude: ['img', 'css', 'js', 'fonts',

@@ -24,10 +24,8 @@ layout: default
           <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
         </h2>
         {% include post-meta.html param="post" %}
-        <p>
-          {% if post.summary %}{{ post.summary }}{% else %}{{ post.content | summarize }}{% endif %}
-          <a href="{{ post.url | prepend: site.baseurl }}">Read more... <i class="fa fa-angle-double-right"></i></a>
-        </p>
+        {% if post.summary %}<p>{{ post.summary }}</p>{% else %}{{ post.content | summarize }}{% endif %}
+        <p><a href="{{ post.url | prepend: site.baseurl }}">Read more... <i class="fa fa-angle-double-right"></i></a></p>
       </li>
     {% endfor %}
   </ul>
