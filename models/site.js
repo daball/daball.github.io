@@ -1,5 +1,6 @@
 module.exports = {
   "title": "David A. Ball, Web Developer",
+  "hostname": "www.daball.me",
   "config": {
     "disqus_shortname": "daball",
     "google_analytics_id": "UA-3984008-3",

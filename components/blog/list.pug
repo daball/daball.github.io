@@ -11,6 +11,9 @@ block head
 block body
   include /components/blog/nav.pug
   .container
+    .card
+      .card-body
+        include /components/adsense/responsive.pug
     each post in query().sort("date").desc().on(blog.posts)
       .card
         .card-body
@@ -40,13 +43,17 @@ block body
               i.fa.fa-tags
               | 
               !=post.tags
-            if post.disqus_id
+            //if post.disqus_id
               | 
               i.fa.fa-comment
               | 
-              span.disqus-comment-count(data-disqus-identifier=post.disqus_id)
+              a.disqus-comment-count(data-disqus-identifier=post.disqus_id, href=post.permalink+'#disqus_thread')
+                | Comments
           p.card-text!=post.summary
           a.card-link(href=post.permalink) Read more...
+    .card
+      .card-body
+        include /components/adsense/responsive.pug
 
 block append scripts
   include /components/disqus/shortname-foot.pug
