@@ -310,6 +310,12 @@ gulp.task('pdf:resume:compile', /*['pdf:resume:ttf:fetch'],*/ function () {
 // pdf
 gulp.task('pdf', ['pdf:resume:compile']);
 
+// pdf
+gulp.task('github', function () {
+  return gulp.src(['LICENSE', 'readme.md', 'CNAME'])
+    .pipe(gulp.dest('./dist'));
+});
+
 // img
 gulp.task('img', ['img:copy']);
 
@@ -317,7 +323,7 @@ gulp.task('img', ['img:copy']);
 gulp.task('js', ['js:minify']);
 
 // Default task
-gulp.task('default', ['html', 'img', 'css', 'js', 'pdf', 'vendor']);
+gulp.task('default', ['html', 'img', 'css', 'js', 'pdf', 'vendor', 'github']);
 
 // Configure the browserSync task
 gulp.task('browserSync', function() {
@@ -329,7 +335,7 @@ gulp.task('browserSync', function() {
 });
 
 // Dev task
-gulp.task('dev', ['html', 'img', 'css', 'js', 'pdf', 'vendor', 'browserSync'], function() {
+gulp.task('dev', ['html', 'img', 'css', 'js', 'pdf', 'vendor', 'github', 'browserSync'], function() {
   gulp.watch('./scss/*.scss', ['css']);
   gulp.watch('./js/*.js', ['js']);
   gulp.watch('./img/*', ['img']);
