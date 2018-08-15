@@ -1,334 +1,554 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><title>Technician Tools Live Drive - David Allen Ball</title><meta name=viewport content="width=device-width,initial-scale=1,user-scalable=no"><link rel=stylesheet href=/css/main.eebd.css><!-- Fonts --><link href=//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css rel=stylesheet type="text/css"><link href="http://fonts.googleapis.com/css?family=Open+Sans+Condensed:700,300|PT+Serif:400,700,400italic,700italic|Source+Code+Pro" rel=stylesheet type="text/css"></head><body data-0="background-position:0px 0px;" data-100000="background-position:0px -50000px;"><div class=site id=skrollr-body><div class=header><h1 class=title><a href="/">David Allen Ball</a></h1><h2 class=title>IT Professional and Software Engineering Student</h2><h3>My web site redesigned with Jekyll.</h3></div><div class=content-container><div><span class="right skyscraper"><script type=text/javascript>google_ad_client = "ca-pub-8937572456576531";
-/* daball.me, right, vertical skyscraper */
-google_ad_slot = "9515036617";
-google_ad_width = 160;
-google_ad_height = 600;</script><script type=text/javascript src=http://pagead2.googlesyndication.com/pagead/show_ads.js></script></span><div class=post><header class=post-header><h1 class=post-title>Technician Tools Live Drive</h1><p class=post-meta><i class="fa fa-calendar"></i> published: 26 November 2012 @ 07:38 AM <i class="fa fa-user"></i> author: <a href="/">daball</a> <i class="fa fa-tags"></i> windows node.js <i class="fa fa-comment"></i> <a class=disqus-comment-count href=/2012/11/26/technician-tools-live-drive.html#disqus_thread data-disqus-identifier=520606022bbfd30200000003>Comments</a></p></header><article class=post-content><script type=text/javascript>google_ad_client = "ca-pub-8937572456576531";
-/* daball.me, leaderboard */
-google_ad_slot = "8757510213";
-google_ad_width = 728;
-google_ad_height = 90;</script><script type=text/javascript src=http://pagead2.googlesyndication.com/pagead/show_ads.js></script><p><strong>NOTICE: THE FOLLOWING ARTICLE REPRESENTS A WORK IN PROGRESS. PLEASE BE PATIENT AS I COMPLETE MY RESEARCH AND COMPILE THE RESULTS HERE. IF YOU HAVE ANY COMMENTS TO IMPROVE THE RESEARCH, BE SURE TO LEAVE A COMMENT BELOW. THANKS!</strong></p><p>This article details my concept of the ideal approach for provisioning a &quot;Technician Tools Live Drive&quot; (TM) environment conducive to installing and repairing Windows 2000, Windows XP, Windows Vista, Windows Server 2008, Windows 7, Windows Server 2008 R2, Windows 8, or Windows Server 2012 environments by deploying customized Windows PE images via PXE network, live USB hard disk, or CD/DVD or ISO image. This could theoretically be deployed in many other ways as well, including deployment over the Internet (or through a proxy) or by arbitrarily inserting entries into the BCD store on the local system.</p><div id=extended></div><p>The system will access tools stored on the Technician PC (where available) and/or the boot device (where available). The Windows PE system will leverage Node.js to establish a web server interface to administer Windows Setup either locally or remotely. The Windows PE system will then allow the local user to launch a web browser in order to interact with the system. In addition, remote access to the live system will be provided over the web browser. Moreover, when the target system comes up, the Technician PC will launch the web browser connection to the Windows PE system.</p><h2>1 Prerequisites</h2><p>You will need at least two machines: the Technician PC and the target PC.</p><p>On the Technician PC, you will need the following:</p><ul><li><em>Operating System:</em> Windows 8, Windows 7, Windows Server 2012, Windows Server 2008 R2, Windows Vista, or Windows Server 2008</li><li><em>Installed:</em> <a href="http://www.microsoft.com/en-us/download/details.aspx?id=30652" target=_blank>Windows Assessment and Deployment Kit (ADK) for Windows 8</a></li><li><em>Installed:</em> <a href="http://www.microsoft.com/en-us/download/details.aspx?id=5753" target=_blank>Windows Automated Installation Kit (AIK) for Windows 7</a></li><li><em>Installed:</em> <a href="http://www.nodejs.org/" target=_blank>Node.js for Windows</a></li><li><em>Installed:</em> <a href="http://msysgit.github.com/" target=_blank>Github for Windows](http://windows.github.com/) <em>(recommended)</em> or [Git for Windows</a></li><li><em>Downloaded:</em> <a href="http://sourceforge.net/projects/dhcpserver/" target=_blank>Open DHCP Server</a> or your choice of another DHCP server on the network.</li><li><em>Downloaded:</em> <a href="http://sourceforge.net/projects/tftp-server/" target=_blank>Open TFTP Server</a> or your choice of another TFTP server on the network.</li><li>DHCP authorization on the current LAN, or an extra NIC in the Technician PC for a second Ethernet.</li><li>Copies of the all of the installation media that you intend to deploy.</li></ul><p>The process detailed here should take the average technician and computer between one and two hours besides the amount of time it takes to burn the ISOs to discs, the time it takes to copy files from the installation media, and the time it takes to copy files onto the USB disk. So the total accumulation of time could take anywhere between one hour and eight hours, depending on the amount of data you are copying and the rate at which you can copy the data.</p><h2>2 Prepare Installation Environment</h2><p>Run the following commands as <strong>Administrator</strong> at the <em>Deployment and Imaging Tools Environment</em> command prompt to prepare the installation environment.</p><ol><li><p>Set system-level environment variables. You may have to adjust `KitsRoot` to your Windows ADK installation location, but `KitsRoot` should already be provided at the *Deployment and Imaging Tools Environment* command prompt. AIK may have to be adjusted to point to your Windows Automated Installation Kit for Windows 7.</p><div class=highlight><pre><code class=language-batch data-lang=batch><span class=k>set</span> <span class=nv>KitsRoot</span><span class=o>=</span>C:\Program Files (x<span class=m>86</span>)\Windows Kits\<span class=m>8</span>.<span class=m>0</span>\
-<span class=k>call</span> <span class=s2>&quot;%KitsRoot%Assessment and Deployment Kit\Deployment Tools\DandISetEnv.bat&quot;</span>
-<span class=k>set</span> <span class=nv>AIK</span><span class=o>=</span>C:\Program Files\Windows AIK</code></pre></div></li><li><p>Set application environment variables.</p><div class=highlight><pre><code class=language-batch data-lang=batch><span class=k>set</span> <span class=nv>ADK</span><span class=o>=</span><span class=nv>%KitsRoot%</span>Assessment and Deployment Kit
-<span class=k>set</span> <span class=nv>pe4cabsx86</span><span class=o>=</span><span class=nv>%ADK%</span>\Windows Preinstallation Environment\x<span class=m>86</span>\WinPE_OCs
-<span class=k>set</span> <span class=nv>pe4cabsamd64</span><span class=o>=</span><span class=nv>%ADK%</span>\Windows Preinstallation Environment\amd<span class=m>64</span>\WinPE_OCs
-<span class=k>set</span> <span class=nv>pe3cabsx86</span><span class=o>=</span><span class=nv>%AIK%</span>\Tools\PETools\x<span class=m>86</span>\WinPE_FPs
-<span class=k>set</span> <span class=nv>pe3cabsamd64</span><span class=o>=</span><span class=nv>%AIK%</span>\Tools\PETools\amd<span class=m>64</span>\WinPE_FPs
-<span class=k>set</span> <span class=nv>pe3cabsia64</span><span class=o>=</span><span class=nv>%AIK%</span>\Tools\PETools\ia<span class=m>64</span>\WinPE_FPs</code></pre></div></li><p>Set configuration environment variables. You may customize these as you wish. I recommend changing `LiveDrive`, `LiveHostName`, `LiveShareName`, `LiveUserName`, and `LiveUserPassword` to accomodate your environment.</p><div class=highlight><pre><code class=language-batch data-lang=batch><span class=k>set</span> <span class=nv>LiveTitle</span><span class=o>=</span>Technician Tools Live Drive
-<span class=k>set</span> <span class=nv>LiveDrive</span><span class=o>=</span>C:\LiveDrive
-<span class=k>set</span> <span class=nv>LiveScripts</span><span class=o>=</span><span class=nv>%LiveDrive%</span>\scripts
-<span class=k>set</span> <span class=nv>LiveMedia</span><span class=o>=</span><span class=nv>%LiveDrive%</span>\media
-<span class=k>set</span> <span class=nv>LiveTools</span><span class=o>=</span><span class=nv>%LiveDrive%</span>\tools
-<span class=k>set</span> <span class=nv>LiveHostName</span><span class=o>=</span><span class=m>192</span>.<span class=m>168</span>.<span class=m>1</span>.<span class=m>100</span>
-<span class=k>set</span> <span class=nv>LiveShareName</span><span class=o>=</span>LiveDrive
-<span class=k>set</span> <span class=nv>LiveUserName</span><span class=o>=</span>LiveDrive
-<span class=k>set</span> <span class=nv>LiveUserPassword</span><span class=o>=</span>liveDrive<span class=m>012</span>
-<span class=k>set</span> <span class=nv>ISORoot</span><span class=o>=</span><span class=nv>%LiveDrive%</span>\ISOs
-<span class=k>set</span> <span class=nv>TFTPRoot</span><span class=o>=</span><span class=nv>%LiveDrive%</span>\TFTPRoot
-<span class=k>set</span> <span class=nv>USBRoot</span><span class=o>=</span><span class=nv>%LiveDrive%</span>\USBRoot</code></pre></div><li><p>Set more application environment variables.</p><div class=highlight><pre><code class=language-batch data-lang=batch><span class=k>set</span> <span class=nv>PE4root</span><span class=o>=</span><span class=nv>%LiveDrive%</span>\TempPE<span class=m>4</span>
-<span class=k>set</span> <span class=nv>PE4x86</span><span class=o>=</span><span class=nv>%PE4root%</span>\x<span class=m>86</span>
-<span class=k>set</span> <span class=nv>PE4amd64</span><span class=o>=</span><span class=nv>%PE4root%</span>\amd<span class=m>64</span>
-<span class=k>set</span> <span class=nv>PE3root</span><span class=o>=</span><span class=nv>%LiveDrive%</span>\TempPE<span class=m>3</span>
-<span class=k>set</span> <span class=nv>PE3x86</span><span class=o>=</span><span class=nv>%PE3root%</span>\x<span class=m>86</span>
-<span class=k>set</span> <span class=nv>PE3amd64</span><span class=o>=</span><span class=nv>%PE3root%</span>\amd<span class=m>64</span>
-<span class=k>set</span> <span class=nv>PE3ia64</span><span class=o>=</span><span class=nv>%PE3root%</span>\ia<span class=m>64</span></code></pre></div></li><li><p>Create project structure, e.g., `C:\LiveDrive`.</p><div class=highlight><pre><code class=language-batch data-lang=batch>mkdir <span class=s2>&quot;%LiveDrive%&quot;</span>
-mkdir <span class=s2>&quot;%LiveScripts%&quot;</span>
-mkdir <span class=s2>&quot;%LiveMedia%&quot;</span>
-mkdir <span class=s2>&quot;%LiveTools%&quot;</span>
-mkdir <span class=s2>&quot;%PE4root%&quot;</span>
-mkdir <span class=s2>&quot;%PE3root%&quot;</span>
-mkdir <span class=s2>&quot;%ISORoot%&quot;</span>
-mkdir <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>
-mkdir <span class=s2>&quot;%ISORoot%&quot;</span>\amd<span class=m>64</span>
-mkdir <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo
-mkdir <span class=s2>&quot;%ISORoot%&quot;</span>\ia<span class=m>64</span>
-mkdir <span class=s2>&quot;%TFTPRoot%&quot;</span>
-mkdir <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot
-mkdir <span class=s2>&quot;%USBRoot%&quot;</span>
-mkdir <span class=s2>&quot;%USBRoot%&quot;</span>\Boot
-mkdir <span class=s2>&quot;%USBRoot%&quot;</span>\media</code></pre></div></li><li><p>Create a new user for accessing the remote file share.</p><div class=highlight><pre><code class=language-batch data-lang=batch>net user <span class=s2>&quot;%LiveUserName%&quot;</span> <span class=s2>&quot;%LiveUserPassword%&quot;</span> <span class=n>/ADD</span></code></pre></div></li><li><p>Share the `LiveDrive` folder onto the network, with a share name like `LiveDrive`.</p><div class=highlight><pre><code class=language-batch data-lang=batch>net share <span class=s2>&quot;%LiveShareName%&quot;</span><span class=o>=</span><span class=s2>&quot;%LiveDrive%&quot;</span> <span class=n>/GRANT:Everyone,FULL</span> <span class=n>/UNLIMITED</span></code></pre></div></li><li><p>Set security permissions for the remote access user on the shared project folder.</p><div class=highlight><pre><code class=language-batch data-lang=batch>icacls <span class=s2>&quot;%LiveDrive%&quot;</span> <span class=n>/grant</span> <span class=s2>&quot;%LiveUserName%&quot;</span><span class=nl>:F</span> <span class=n>/inheritance:e</span></code></pre></div></li></ol><h2>3 Custom Scripts</h2><p>Proceed using the same <em>Deployment and Imaging Tools Environment</em> command prompt as <strong>Administrator</strong> to prepare the startup environment for Windows PE.</p><h3>3.1 Batch file: startnet.cmd</h3><p>This is a replacement for the &#39;startnet.cmd&#39; script found inside of a generic Windows PE image. Run these commands to generate the &#39;startnet.cmd&#39; script.</p><div class=highlight><pre><code class=language-batch data-lang=batch><span class=k>echo</span> @<span class=k>echo</span> <span class=k>off</span>&gt;<span class=s2>&quot;%LiveScripts%&quot;</span>\startnet.cmd
-<span class=k>echo</span> <span class=k>set</span> <span class=nv>LiveTitle</span><span class=o>=</span><span class=nv>%LiveTitle%</span>&gt;&gt;<span class=s2>&quot;%LiveScripts%&quot;</span>\startnet.cmd
-<span class=k>echo</span> <span class=k>set</span> <span class=nv>LiveDriveLetter</span><span class=o>=</span>L:&gt;&gt;<span class=s2>&quot;%LiveScripts%&quot;</span>\startnet.cmd
-<span class=k>echo</span> <span class=k>set</span> <span class=nv>LiveDrive</span><span class=o>=</span>LiveDriveLetter\&gt;&gt;<span class=s2>&quot;%LiveScripts%&quot;</span>\startnet.cmd
-<span class=k>echo</span> <span class=k>set</span> <span class=nv>LiveHostName</span><span class=o>=</span><span class=nv>%LiveHostName%</span>&gt;&gt;<span class=s2>&quot;%LiveScripts%&quot;</span>\startnet.cmd
-<span class=k>echo</span> <span class=k>set</span> <span class=nv>LiveShareName</span><span class=o>=</span><span class=nv>%LiveShareName%</span>&gt;&gt;<span class=s2>&quot;%LiveScripts%&quot;</span>\startnet.cmd
-<span class=k>echo</span> <span class=k>set</span> <span class=nv>LiveUserName</span><span class=o>=</span><span class=nv>%LiveUserName%</span>&gt;&gt;<span class=s2>&quot;%LiveScripts%&quot;</span>\startnet.cmd
-<span class=k>echo</span> <span class=k>set</span> <span class=nv>LiveUserPassword</span><span class=o>=</span><span class=nv>%LiveUserPassword%</span>&gt;&gt;<span class=s2>&quot;%LiveScripts%&quot;</span>\startnet.cmd
-<span class=k>echo</span> title <span class=nv>%LiveTitle%</span>&gt;&gt;<span class=s2>&quot;%LiveScripts%&quot;</span>\startnet.cmd
-<span class=k>echo</span> <span class=k>echo</span> Initializing network services . . .&gt;&gt;<span class=s2>&quot;%LiveScripts%&quot;</span>\startnet.cmd
-<span class=k>echo</span> wpeinit&gt;&gt;<span class=s2>&quot;%LiveScripts%&quot;</span>\startnet.cmd
-<span class=k>echo</span> <span class=k>echo</span> Mounting network drive at <span class=nv>%LiveDriveLetter%</span> <span class=o>=</span> \\<span class=nv>%LiveHostName%</span>\<span class=nv>%LiveShareName%</span> . . .&gt;&gt;<span class=s2>&quot;%LiveScripts%&quot;</span>\startnet.cmd
-<span class=k>echo</span> net use <span class=nv>%LiveDriveLetter%</span> <span class=s2>&quot;\\%LiveHostName%\%LiveShareName%&quot;</span> <span class=n>/USER:&quot;%LiveUserName%&quot;</span> <span class=s2>&quot;%LiveUserPassword%&quot;</span>&gt;&gt;<span class=s2>&quot;%LiveScripts%&quot;</span>\startnet.cmd
-<span class=k>echo</span> cscript.exe <span class=n>/Nologo</span> bootstrap.js&gt;&gt;<span class=s2>&quot;%LiveScripts%&quot;</span>\startnet.cmd
-<span class=c>REM DISABLED: echo echo Rebooting . . .&gt;&gt;&quot;%LiveScripts%&quot;\startnet.cmd</span>
-<span class=c>REM DISABLED: echo wpeutil reboot&gt;&gt;&quot;%LiveScripts%&quot;\startnet.cmd</span></code></pre></div><h3>3.2 Script: bootstrap.js</h3><p>Save this script into <code>scripts\bootstrap.js</code>:</p><div class=highlight><pre><code class=language-js data-lang=js><span class=kd>var</span> <span class=nx>fso</span> <span class=o>=</span> <span class=nx>WScript</span><span class=p>.</span><span class=nx>CreateObject</span><span class=p>(</span><span class=s2>&quot;Scripting.FileSystemObject&quot;</span><span class=p>);</span>
-<span class=kd>var</span> <span class=nx>wshsh</span> <span class=o>=</span> <span class=nx>WScript</span><span class=p>.</span><span class=nx>CreateObject</span><span class=p>(</span><span class=s2>&quot;WScript.Shell&quot;</span><span class=p>);</span>
-<span class=kd>var</span> <span class=nx>env</span> <span class=o>=</span> <span class=nx>wshsh</span><span class=p>.</span><span class=nx>Environment</span><span class=p>(</span><span class=s2>&quot;Process&quot;</span><span class=p>);</span>
+<!DOCTYPE html><html lang="en"><head><!-- Blog theme--><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="David A. Ball"><meta name=""><title>Blog</title><!-- Bootstrap core CSS--><link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"><!-- Custom fonts for this template--><link href="https://fonts.googleapis.com/css?family=Saira+Extra+Condensed:100,200,300,400,500,600,700,800,900" rel="stylesheet"><link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i" rel="stylesheet"><link href="/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet"><link href="/vendor/devicons/css/devicons.min.css" rel="stylesheet"><link href="/vendor/simple-line-icons/css/simple-line-icons.css" rel="stylesheet"><!-- Custom styles for this template--><link href="/layouts/blog/css/blog.min.css" rel="stylesheet"></head><body id="page-top"><div class="navbar navbar-expand-lg fixed-top navbar-dark bg-primary"><div class="container"><a class="navbar-brand" href="/">David A. Ball</a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navbarResponsive"><ul class="navbar-nav"><li class="nav-item"><a class="nav-link" href="/blog">Blog</a></li><li class="nav-item"><a class="nav-link" href="/">Resume</a></li></ul></div></div></div><div class="container"><div class="card"><div class="card-body"><script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle d-block" data-ad-client="ca-pub-8937572456576531" data-ad-slot="5297465010" data-ad-format="auto"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div></div><div class="card"><div class="card-body"><h1 class="card-title post-title">Technician Tools Live Drive</h1><h4 class="card-subtitle mb-2 text-muted post-meta"><i class="fa fa-calendar"></i> 
+published:
+ 26 November 2012 
+@
+ 7:38 am <i class="fa fa-user"></i> 
+author: daball <i class="fa fa-tags"></i> windows node.js<!--if blog.post.disqus_id| 
+i.fa.fa-comment
+| 
+a.disqus-comment-count(data-disqus-identifier=post.disqus_id, href=post.permalink+'#disqus_thread')
+  | Comments--></h4></div></div><div class="card"><div class="card-body"><p class="card-text"><p><strong>NOTICE: THE FOLLOWING ARTICLE REPRESENTS A WORK IN PROGRESS. PLEASE BE PATIENT AS I COMPLETE MY RESEARCH AND COMPILE THE RESULTS HERE. IF YOU HAVE ANY COMMENTS TO IMPROVE THE RESEARCH, BE SURE TO LEAVE A COMMENT BELOW. THANKS!</strong></p>
+<p>This article details my concept of the ideal approach for provisioning a "Technician Tools Live Drive" (TM) environment conducive to installing and repairing Windows 2000, Windows XP, Windows Vista, Windows Server 2008, Windows 7, Windows Server 2008 R2, Windows 8, or Windows Server 2012 environments by deploying customized Windows PE images via PXE network, live USB hard disk, or CD/DVD or ISO image. This could theoretically be deployed in many other ways as well, including deployment over the Internet (or through a proxy) or by arbitrarily inserting entries into the BCD store on the local system.</p>
+<div id="extended"></div>
+<p>The system will access tools stored on the Technician PC (where available) and/or the boot device (where available). The Windows PE system will leverage Node.js to establish a web server interface to administer Windows Setup either locally or remotely. The Windows PE system will then allow the local user to launch a web browser in order to interact with the system. In addition, remote access to the live system will be provided over the web browser. Moreover, when the target system comes up, the Technician PC will launch the web browser connection to the Windows PE system.</p>
+<h2 id="1-prerequisites">1 Prerequisites</h2>
+<p>You will need at least two machines: the Technician PC and the target PC.</p>
+<p>On the Technician PC, you will need the following:</p>
+<ul>
+<li><em>Operating System:</em> Windows 8, Windows 7, Windows Server 2012, Windows Server 2008 R2, Windows Vista, or Windows Server 2008</li>
+<li><em>Installed:</em> <a href="http://www.microsoft.com/en-us/download/details.aspx?id=30652" target="_blank">Windows Assessment and Deployment Kit (ADK) for Windows 8</a></li>
+<li><em>Installed:</em> <a href="http://www.microsoft.com/en-us/download/details.aspx?id=5753" target="_blank">Windows Automated Installation Kit (AIK) for Windows 7</a></li>
+<li><em>Installed:</em> <a href="http://www.nodejs.org/" target="_blank">Node.js for Windows</a></li>
+<li><em>Installed:</em> <a href="http://msysgit.github.com/" target="_blank">Github for Windows](<a href="http://windows.github.com/">http://windows.github.com/</a>) <em>(recommended)</em> or [Git for Windows</a></li>
+<li><em>Downloaded:</em> <a href="http://sourceforge.net/projects/dhcpserver/" target="_blank">Open DHCP Server</a> or your choice of another DHCP server on the network.</li>
+<li><em>Downloaded:</em> <a href="http://sourceforge.net/projects/tftp-server/" target="_blank">Open TFTP Server</a> or your choice of another TFTP server on the network.</li>
+<li>DHCP authorization on the current LAN, or an extra NIC in the Technician PC for a second Ethernet.</li>
+<li>Copies of the all of the installation media that you intend to deploy.</li>
+</ul>
+<p>The process detailed here should take the average technician and computer between one and two hours besides the amount of time it takes to burn the ISOs to discs, the time it takes to copy files from the installation media, and the time it takes to copy files onto the USB disk. So the total accumulation of time could take anywhere between one hour and eight hours, depending on the amount of data you are copying and the rate at which you can copy the data.</p>
+<h2 id="2-prepare-installation-environment">2 Prepare Installation Environment</h2>
+<p>Run the following commands as <strong>Administrator</strong> at the <em>Deployment and Imaging Tools Environment</em> command prompt to prepare the installation environment.</p>
+<ol>
+<li><p>Set system-level environment variables. You may have to adjust `KitsRoot` to your Windows ADK installation location, but `KitsRoot` should already be provided at the *Deployment and Imaging Tools Environment* command prompt. AIK may have to be adjusted to point to your Windows Automated Installation Kit for Windows 7.</p>
+<pre><code class="batch language-batch">set KitsRoot=C:\Program Files (x86)\Windows Kits\8.0\
+call "%KitsRoot%Assessment and Deployment Kit\Deployment Tools\DandISetEnv.bat"
+set AIK=C:\Program Files\Windows AIK</code></pre>
 
-<span class=c1>//array of objects like { path: string, packages: array, type: string }</span>
-<span class=kd>var</span> <span class=nx>discoveredRepos</span> <span class=o>=</span> <span class=kd>function</span> <span class=nx>detectRepos</span> <span class=p>()</span> <span class=p>{</span>
-<span class=kd>var</span> <span class=nx>repos</span> <span class=o>=</span> <span class=p>[];</span>
-<span class=kd>var</span> <span class=nx>drives</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Enumerator</span><span class=p>(</span><span class=nx>fso</span><span class=p>.</span><span class=nx>Drives</span><span class=p>);</span>
-<span class=k>for</span> <span class=p>(;</span> <span class=o>!</span><span class=nx>drives</span><span class=p>.</span><span class=nx>atEnd</span><span class=p>();</span> <span class=nx>drives</span><span class=p>.</span><span class=nx>moveNext</span><span class=p>())</span> <span class=p>{</span>
-<span class=kd>var</span> <span class=nx>drive</span> <span class=o>=</span> <span class=nx>drives</span><span class=p>.</span><span class=nx>item</span><span class=p>();</span>
-<span class=k>if</span> <span class=p>(</span><span class=nx>fso</span><span class=p>.</span><span class=nx>FolderExists</span><span class=p>(</span><span class=nx>drive</span><span class=p>.</span><span class=nx>DriveLetter</span> <span class=o>+</span> <span class=s2>&quot;:\\tools&quot;</span><span class=p>)</span>
-<span class=o>&amp;&amp;</span> <span class=nx>fso</span><span class=p>.</span><span class=nx>FileExists</span><span class=p>(</span><span class=nx>drive</span><span class=p>.</span><span class=nx>DriveLetter</span> <span class=o>+</span> <span class=s2>&quot;:\\tools\\repo.json&quot;</span><span class=p>))</span> <span class=p>{</span>
- <span class=kd>var</span> <span class=nx>pkgsfile</span> <span class=o>=</span> <span class=nx>fso</span><span class=p>.</span><span class=nx>OpenTextFile</span><span class=p>(</span><span class=nx>drive</span><span class=p>.</span><span class=nx>DriveLetter</span> <span class=o>+</span> <span class=s2>&quot;:\\tools\\repo.json&quot;</span><span class=p>,</span> <span class=nx>ForReading</span><span class=o>=</span><span class=mi>1</span><span class=p>);</span>
- <span class=kd>var</span> <span class=nx>pkgstxt</span> <span class=o>=</span> <span class=nx>pkgsfile</span><span class=p>.</span><span class=nx>ReadAll</span><span class=p>();</span>
- <span class=nx>pkgsfile</span><span class=p>.</span><span class=nx>Close</span><span class=p>();</span>
- <span class=kd>var</span> <span class=nx>repoType</span> <span class=o>=</span> <span class=kd>function</span> <span class=nx>DriveTypeDesc</span><span class=p>(</span><span class=nx>typeCode</span><span class=p>)</span> <span class=p>{</span>
-  <span class=k>switch</span> <span class=p>(</span><span class=nx>typeCode</span><span class=p>)</span> <span class=p>{</span>
-   <span class=k>case</span> <span class=mi>1</span><span class=o>:</span> <span class=k>return</span> <span class=s2>&quot;Removable&quot;</span><span class=p>;</span>
-   <span class=k>case</span> <span class=mi>2</span><span class=o>:</span> <span class=k>return</span> <span class=s2>&quot;Fixed&quot;</span><span class=p>;</span>
-   <span class=k>case</span> <span class=mi>3</span><span class=o>:</span> <span class=k>return</span> <span class=s2>&quot;Network&quot;</span><span class=p>;</span>
-   <span class=k>case</span> <span class=mi>4</span><span class=o>:</span> <span class=k>return</span> <span class=s2>&quot;CD-ROM&quot;</span><span class=p>;</span>
-   <span class=k>case</span> <span class=mi>5</span><span class=o>:</span> <span class=k>return</span> <span class=s2>&quot;RAM Disk&quot;</span><span class=p>;</span>
-   <span class=k>default</span><span class=o>:</span><span class=k>return</span> <span class=s2>&quot;Unknown&quot;</span><span class=p>;</span>
-  <span class=p>}</span>
-  <span class=p>}(</span><span class=nx>drive</span><span class=p>.</span><span class=nx>DriveType</span><span class=p>);</span>
-  <span class=nx>repos</span><span class=p>[</span><span class=nx>repos</span><span class=p>.</span><span class=nx>length</span><span class=p>]</span> <span class=o>=</span> <span class=p>{</span> <span class=nx>path</span><span class=o>:</span> <span class=nx>drive</span><span class=p>.</span><span class=nx>DriveLetter</span> <span class=o>+</span> <span class=s2>&quot;:\\tools\\&quot;</span><span class=p>,</span> <span class=nx>packages</span><span class=o>:</span> <span class=nb>eval</span><span class=p>(</span><span class=nx>pkgstxt</span><span class=p>),</span> <span class=nx>type</span><span class=o>:</span> <span class=nx>repoType</span> <span class=p>};</span>
- <span class=p>}</span>
-<span class=p>}</span>
-<span class=p>}</span>
-<span class=p>}();</span>
+</li>
+<li><p>Set application environment variables.</p>
+<pre><code class="batch language-batch">set ADK=%KitsRoot%Assessment and Deployment Kit
+set pe4cabsx86=%ADK%\Windows Preinstallation Environment\x86\WinPE_OCs
+set pe4cabsamd64=%ADK%\Windows Preinstallation Environment\amd64\WinPE_OCs
+set pe3cabsx86=%AIK%\Tools\PETools\x86\WinPE_FPs
+set pe3cabsamd64=%AIK%\Tools\PETools\amd64\WinPE_FPs
+set pe3cabsia64=%AIK%\Tools\PETools\ia64\WinPE_FPs</code></pre>
 
-<span class=nx>livedrive</span> <span class=o>=</span> <span class=kd>function</span> <span class=p>()</span> <span class=p>{</span>
-<span class=kd>var</span> <span class=nx>drives</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Enumerator</span><span class=p>(</span><span class=nx>fso</span><span class=p>.</span><span class=nx>Drives</span><span class=p>);</span>
-<span class=k>for</span> <span class=p>(;</span> <span class=o>!</span><span class=nx>drives</span><span class=p>.</span><span class=nx>atEnd</span><span class=p>();</span> <span class=nx>drives</span><span class=p>.</span><span class=nx>moveNext</span><span class=p>())</span> <span class=p>{</span>
- <span class=kd>var</span> <span class=nx>drive</span> <span class=o>=</span> <span class=nx>drives</span><span class=p>.</span><span class=nx>item</span><span class=p>();</span>
- <span class=k>if</span> <span class=p>(</span><span class=nx>fso</span><span class=p>.</span><span class=nx>FolderExists</span><span class=p>(</span><span class=nx>drive</span><span class=p>.</span><span class=nx>DriveLetter</span> <span class=o>+</span> <span class=s2>&quot;:\\scripts&quot;</span><span class=p>))</span> <span class=p>{</span>
-  <span class=k>return</span> <span class=nx>drive</span><span class=p>.</span><span class=nx>DriveLetter</span> <span class=o>+</span> <span class=s2>&quot;:\\&quot;</span><span class=p>;</span>
- <span class=p>}</span>
-<span class=p>}</span>
-<span class=nx>WScript</span><span class=p>.</span><span class=nx>StdOut</span><span class=p>.</span><span class=nx>WriteLine</span><span class=p>(</span>
- <span class=s2>&quot;WARNING: Could not locate scripts folder on the Technician Tools Live Drive.\n&quot;</span> <span class=o>+</span>
- <span class=s2>&quot;     Tools will probably be unavailable for this session.\n&quot;</span><span class=p>);</span>
- <span class=k>return</span> <span class=s2>&quot;&quot;</span><span class=p>;</span>
-<span class=p>}();</span>
+</li>
+</li><p>Set configuration environment variables. You may customize these as you wish. I recommend changing `LiveDrive`, `LiveHostName`, `LiveShareName`, `LiveUserName`, and `LiveUserPassword` to accomodate your environment.</p>
+<pre><code class="batch language-batch">set LiveTitle=Technician Tools Live Drive
+set LiveDrive=C:\LiveDrive
+set LiveScripts=%LiveDrive%\scripts
+set LiveMedia=%LiveDrive%\media
+set LiveTools=%LiveDrive%\tools
+set LiveHostName=192.168.1.100
+set LiveShareName=LiveDrive
+set LiveUserName=LiveDrive
+set LiveUserPassword=liveDrive012
+set ISORoot=%LiveDrive%\ISOs
+set TFTPRoot=%LiveDrive%\TFTPRoot
+set USBRoot=%LiveDrive%\USBRoot</code></pre>
 
-<span class=kd>var</span> <span class=nx>SystemRoot</span> <span class=o>=</span> <span class=nx>env</span><span class=p>(</span><span class=s2>&quot;SystemRoot&quot;</span><span class=p>);</span>
+</li>
+<li><p>Set more application environment variables.</p>
+<pre><code class="batch language-batch">set PE4root=%LiveDrive%\TempPE4
+set PE4x86=%PE4root%\x86
+set PE4amd64=%PE4root%\amd64
+set PE3root=%LiveDrive%\TempPE3
+set PE3x86=%PE3root%\x86
+set PE3amd64=%PE3root%\amd64
+set PE3ia64=%PE3root%\ia64</code></pre>
 
-<span class=cm>/*WScript.Echo(&quot;Live Drive found at &quot; + livedrive + &quot;.\nDeploying current version of toolkit to &quot; + windows + &quot; . . .&quot;);</span>
+</li>
+<li><p>Create project structure, e.g., `C:\LiveDrive`.</p>
+<pre><code class="batch language-batch">mkdir "%LiveDrive%"
+mkdir "%LiveScripts%"
+mkdir "%LiveMedia%"
+mkdir "%LiveTools%"
+mkdir "%PE4root%"
+mkdir "%PE3root%"
+mkdir "%ISORoot%"
+mkdir "%ISORoot%"\x86
+mkdir "%ISORoot%"\amd64
+mkdir "%ISORoot%"\x86amd64combo
+mkdir "%ISORoot%"\ia64
+mkdir "%TFTPRoot%"
+mkdir "%TFTPRoot%"\Boot
+mkdir "%USBRoot%"
+mkdir "%USBRoot%"\Boot
+mkdir "%USBRoot%"\media</code></pre>
 
-<span class=cm>var fso = WScript.CreateObject(&quot;Scripting.FileSystemObject&quot;)</span>
-<span class=cm>, folder = fso.GetFolder(livedrive + &quot;scripts&quot;)</span>
-<span class=cm>, files = new Enumerator(folder.Files);</span>
+</li>
+<li><p>Create a new user for accessing the remote file share.</p>
+<pre><code class="batch language-batch">net user "%LiveUserName%" "%LiveUserPassword%" /ADD</code></pre>
 
-<span class=cm>for (; !files.atEnd(); files.moveNext()) {</span>
-<span class=cm>var file = files.item();</span>
-<span class=cm>WScript.Echo(&quot;Copying &quot; + file.Path + &quot; to &quot; + SystemRoot + &quot;\\System32\\&quot; + file.Name);</span>
-<span class=cm>fso.CopyFile(file.Path, SystemRoot + &quot;\\System32\\&quot; + file.Name);</span>
-<span class=cm>}*/</span></code></pre></div><h3>3.3 Node.JS: Acquire web root</h3><p>You will need to download the following ZIP file and expand it to the <code>%LiveDrive%\scripts\liveserver</code> folder.</p><h2>4 Prepare Windows PE 4</h2><p>Proceed using the same <em>Deployment and Imaging Tools Environment</em> command prompt as <strong>Administrator</strong> to prepare the startup environment for Windows PE.</p><h3>4.1 Prepare x86 Image</h3><p>Create a new Windows PE 4 image for x86.</p><div class=highlight><pre><code class=language-batch data-lang=batch>copype.cmd x<span class=m>86</span> <span class=s2>&quot;%PE4x86%&quot;</span></code></pre></div><p>Mount the new x86 Windows PE 4 image.</p><div class=highlight><pre><code class=language-batch data-lang=batch>imagex <span class=n>/mountrw</span> <span class=s2>&quot;%PE4x86%&quot;</span>\media\sources\boot.wim <span class=m>1</span> <span class=s2>&quot;%PE4x86%&quot;</span>\mount</code></pre></div><p>Add packages to Windows PE 4 x86 image.</p><div class=highlight><pre><code class=language-batch data-lang=batch>dism <span class=n>/image:&quot;%PE4x86%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe4cabsx86%\WinPE-WMI.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE4x86%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe4cabsx86%\WinPE-SecureStartup.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE4x86%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe4cabsx86%\WinPE-NetFx4.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE4x86%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe4cabsx86%\WinPE-Scripting.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE4x86%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe4cabsx86%\WinPE-HTA.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE4x86%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe4cabsx86%\WinPE-PowerShell3.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE4x86%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe4cabsx86%\WinPE-EnhancedStorage.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE4x86%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe4cabsx86%\WinPE-DismCmdlets.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE4x86%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe4cabsx86%\WinPE-StorageWMI.cab&quot;</span>
-imagex <span class=n>/commit</span> <span class=s2>&quot;%PE4x86%&quot;</span>\mount</code></pre></div><p>Install custom scripts into Windows PE 4 x86 image.</p><div class=highlight><pre><code class=language-batch data-lang=batch>copy <span class=n>/Y</span> <span class=s2>&quot;%LiveScripts%&quot;</span>\startnet.cmd <span class=s2>&quot;%PE4x86%&quot;</span>\mount\Windows\System<span class=m>32</span>
-copy <span class=n>/Y</span> <span class=s2>&quot;%LiveScripts%&quot;</span>\bootstrap.js <span class=s2>&quot;%PE4x86%&quot;</span>\mount\Windows\System<span class=m>32</span>
-imagex <span class=n>/commit</span> <span class=s2>&quot;%PE4x86%&quot;</span>\mount</code></pre></div><h3>4.2 Prepare amd64 Image</h3><p>Create Windows PE 4 image for amd64.</p><div class=highlight><pre><code class=language-batch data-lang=batch>copype.cmd amd<span class=m>64</span> <span class=s2>&quot;%PE4amd64%&quot;</span></code></pre></div><p>Mount the new amd64 Windows PE 4 image.</p><div class=highlight><pre><code class=language-batch data-lang=batch>imagex <span class=n>/mountrw</span> <span class=s2>&quot;%PE4amd64%&quot;</span>\media\sources\boot.wim <span class=m>1</span> <span class=s2>&quot;%PE4amd64%&quot;</span>\mount</code></pre></div><p>Add packages to Windows PE 4 amd64 image.</p><div class=highlight><pre><code class=language-batch data-lang=batch>dism <span class=n>/image:&quot;%PE4amd64%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe4cabsamd64%\WinPE-WMI.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE4amd64%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe4cabsamd64%\WinPE-SecureStartup.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE4amd64%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe4cabsamd64%\WinPE-NetFx4.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE4amd64%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe4cabsamd64%\WinPE-Scripting.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE4amd64%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe4cabsamd64%\WinPE-HTA.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE4amd64%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe4cabsamd64%\WinPE-PowerShell3.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE4amd64%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe4cabsamd64%\WinPE-EnhancedStorage.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE4amd64%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe4cabsamd64%\WinPE-DismCmdlets.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE4amd64%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe4cabsamd64%\WinPE-StorageWMI.cab&quot;</span>
-imagex <span class=n>/commit</span> <span class=s2>&quot;%PE4amd64%&quot;</span>\mount</code></pre></div><p>Install custom scripts into Windows PE 4 amd64 image.</p><div class=highlight><pre><code class=language-batch data-lang=batch>copy <span class=n>/Y</span> <span class=s2>&quot;%LiveScripts%&quot;</span>\startnet.cmd <span class=s2>&quot;%PE4amd64%&quot;</span>\mount\Windows\System<span class=m>32</span>
-copy <span class=n>/Y</span> <span class=s2>&quot;%LiveScripts%&quot;</span>\bootstrap.js <span class=s2>&quot;%PE4amd64%&quot;</span>\mount\Windows\System<span class=m>32</span>
-imagex <span class=n>/commit</span> <span class=s2>&quot;%PE4amd64%&quot;</span>\mount</code></pre></div><h3>4.3 Assemble Windows PE 4 for ISO/USB/TFTP Boot</h3><p>Copy files needed for x86 ISO boot.</p><div class=highlight><pre><code class=language-batch data-lang=batch>xcopy <span class=n>/S</span> <span class=n>/Y</span> <span class=s2>&quot;%PE4x86%&quot;</span>\media\*.* <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>
-ren <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>\sources\boot.wim bootpe<span class=m>4</span>x<span class=m>86</span>.wim</code></pre></div><p>Copy files needed for amd64 ISO boot.</p><div class=highlight><pre><code class=language-batch data-lang=batch>xcopy <span class=n>/S</span> <span class=n>/Y</span> <span class=s2>&quot;%PE4x86%&quot;</span>\media\*.* <span class=s2>&quot;%USBRoot%&quot;</span>
-<span class=k>del</span> <span class=s2>&quot;%USBRoot%&quot;</span>\sources\boot.wim</code></pre></div><p>Deploy both images to USB root.</p><div class=highlight><pre><code class=language-batch data-lang=batch>copy <span class=n>/Y</span> <span class=s2>&quot;%PE4x86%&quot;</span>\media\sources\boot.wim <span class=s2>&quot;%USBRoot%&quot;</span>\sources\bootpe<span class=m>4</span>x<span class=m>86</span>.wim
-copy <span class=n>/Y</span> <span class=s2>&quot;%PE4amd64%&quot;</span>\media\sources\boot.wim <span class=s2>&quot;%USBRoot%&quot;</span>\sources\bootpe<span class=m>4</span>amd<span class=m>64</span>.wim</code></pre></div><p>Copy files needed for PXE boot.</p><div class=highlight><pre><code class=language-batch data-lang=batch>xcopy <span class=n>/S</span> <span class=n>/Y</span> <span class=s2>&quot;%PE4x86%&quot;</span>\media\*.* <span class=s2>&quot;%TFTPRoot%&quot;</span>
-copy <span class=n>/Y</span> <span class=s2>&quot;%PE4x86%&quot;</span>\mount\Windows\Boot\PXE\*.* <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot
-<span class=k>del</span> <span class=n>/Q</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\sources\boot*.wim</code></pre></div><p>Deploy both images to TFTP root.</p><div class=highlight><pre><code class=language-batch data-lang=batch>copy <span class=n>/Y</span> <span class=s2>&quot;%PE4x86%&quot;</span>\media\sources\boot.wim <span class=s2>&quot;%TFTPRoot%&quot;</span>\sources\bootpe<span class=m>4</span>x<span class=m>86</span>.wim
-copy <span class=n>/Y</span> <span class=s2>&quot;%PE4amd64%&quot;</span>\media\sources\boot.wim <span class=s2>&quot;%TFTPRoot%&quot;</span>\sources\bootpe<span class=m>4</span>amd<span class=m>64</span>.wim</code></pre></div><p><em>Optional:</em> Usability Hack: Remove the press F12 for Network Servicing prompt.</p><div class=highlight><pre><code class=language-batch data-lang=batch>ren <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\pxeboot.com pxeboot.com.disabled
-copy <span class=n>/Y</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\pxeboot.n<span class=m>12</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\pxeboot.com</code></pre></div><h3>4.4 Unmount Windows PE 4 images</h3><p>Unmount both images.</p><div class=highlight><pre><code class=language-batch data-lang=batch>imagex <span class=n>/unmount</span> <span class=s2>&quot;%PE4x86%&quot;</span>\mount
-imagex <span class=n>/unmount</span> <span class=s2>&quot;%PE4amd64%&quot;</span>\mount</code></pre></div><h3>4.5 Prepare BCD Stores</h3><p>Edit boot configuration database (BCD) store for x86 ISO container.</p><div class=highlight><pre><code class=language-batch data-lang=batch>bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>\Boot\BCD <span class=n>/set</span> {bootmgr} displaybootmenu true
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>\Boot\BCD <span class=n>/create</span> {ramdiskoptions} <span class=n>/d</span> <span class=s2>&quot;%LiveTitle% - Windows PE 4 CD (x86)&quot;</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>\Boot\BCD <span class=n>/set</span> {ramdiskoptions} ramdisksdidevice boot
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>\Boot\BCD <span class=n>/set</span> {ramdiskoptions} ramdisksdipath \boot\boot.sdi
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>\Boot\BCD <span class=n>/set</span> {default} description <span class=s2>&quot;%LiveTitle% - Windows PE 4 CD (x86)&quot;</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>\Boot\BCD <span class=n>/set</span> {default} osdevice ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>4</span>x<span class=m>86</span>.wim<span class=p>,</span>{ramdiskoptions}
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>\Boot\BCD <span class=n>/set</span> {default} device ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>4</span>x<span class=m>86</span>.wim<span class=p>,</span>{ramdiskoptions}</code></pre></div><p>Edit boot configuration database (BCD) store for amd64 ISO container.</p><div class=highlight><pre><code class=language-batch data-lang=batch>bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\amd<span class=m>64</span>\Boot\BCD <span class=n>/set</span> {bootmgr} displaybootmenu true
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\amd<span class=m>64</span>\Boot\BCD <span class=n>/create</span> {ramdiskoptions} <span class=n>/d</span> <span class=s2>&quot;%LiveTitle% - Windows PE 4 CD (amd64)&quot;</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\amd<span class=m>64</span>\Boot\BCD <span class=n>/set</span> {ramdiskoptions} ramdisksdidevice boot
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\amd<span class=m>64</span>\Boot\BCD <span class=n>/set</span> {ramdiskoptions} ramdisksdipath \boot\boot.sdi
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\amd<span class=m>64</span>\Boot\BCD <span class=n>/set</span> {default} description <span class=s2>&quot;%LiveTitle% - Windows PE 4 CD (amd64)&quot;</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\amd<span class=m>64</span>\Boot\BCD <span class=n>/set</span> {default} osdevice ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>4</span>amd<span class=m>64</span>.wim<span class=p>,</span>{ramdiskoptions}
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\amd<span class=m>64</span>\Boot\BCD <span class=n>/set</span> {default} device ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>4</span>amd<span class=m>64</span>.wim<span class=p>,</span>{ramdiskoptions}</code></pre></div><p>Edit boot configuration database (BCD) store for USB container.</p><div class=highlight><pre><code class=language-batch data-lang=batch>bcdedit <span class=n>/store</span> <span class=s2>&quot;%USBRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> {bootmgr} displaybootmenu true
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%USBRoot%&quot;</span>\Boot\BCD <span class=n>/create</span> {ramdiskoptions} <span class=n>/d</span> <span class=s2>&quot;%LiveTitle% - Windows PE 4 USB (amd64)&quot;</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%USBRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> {ramdiskoptions} ramdisksdidevice boot
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%USBRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> {ramdiskoptions} ramdisksdipath \boot\boot.sdi
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%USBRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> {default} description <span class=s2>&quot;%LiveTitle% - Windows PE 4 USB (amd64)&quot;</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%USBRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> {default} osdevice ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>4</span>amd<span class=m>64</span>.wim<span class=p>,</span>{ramdiskoptions}
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%USBRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> {default} device ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>4</span>amd<span class=m>64</span>.wim<span class=p>,</span>{ramdiskoptions}
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%USBRoot%&quot;\Boot\BCD /copy {ramdiskoptions} /d &quot;%LiveTitle% - Windows PE 4 USB (x86)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>ramdisk</span><span class=o>=</span><span class=nv>%1</span>
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%USBRoot%&quot;\Boot\BCD /copy {default} /d &quot;%LiveTitle% - Windows PE 4 USB (x86)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>entry</span><span class=o>=</span><span class=nv>%1</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%USBRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> osdevice ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>4</span>x<span class=m>86</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%USBRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> device ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>4</span>x<span class=m>86</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%USBRoot%&quot;</span>\Boot\BCD <span class=n>/displayorder</span> <span class=nv>%entry%</span> <span class=n>/addlast</span></code></pre></div><p>Build boot configuration database (BCD) store for PXE boot.</p><div class=highlight><pre><code class=language-batch data-lang=batch>bcdedit <span class=n>/store</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> {bootmgr} displaybootmenu true
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\BCD <span class=n>/create</span> {ramdiskoptions} <span class=n>/d</span> <span class=s2>&quot;%LiveTitle% - Windows PE 4 PXE (amd64)&quot;</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> {ramdiskoptions} ramdisksdidevice boot
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> {ramdiskoptions} ramdisksdipath \boot\boot.sdi
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> {default} description <span class=s2>&quot;%LiveTitle% - Windows PE 4 PXE (amd64)&quot;</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> {default} osdevice ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>4</span>amd<span class=m>64</span>.wim<span class=p>,</span>{ramdiskoptions}
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> {default} device ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>4</span>amd<span class=m>64</span>.wim<span class=p>,</span>{ramdiskoptions}
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%TFTPRoot%&quot;\Boot\BCD /copy {ramdiskoptions} /d &quot;%LiveTitle% - Windows PE 4 PXE (x86)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>ramdisk</span><span class=o>=</span><span class=nv>%1</span>
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%TFTPRoot%&quot;\Boot\BCD /copy {default} /d &quot;%LiveTitle% - Windows PE 4 PXE (x86)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>entry</span><span class=o>=</span><span class=nv>%1</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> osdevice ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>4</span>x<span class=m>86</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> device ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>4</span>x<span class=m>86</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\BCD <span class=n>/displayorder</span> <span class=nv>%entry%</span> <span class=n>/addlast</span></code></pre></div><h2>5 Prepare Windows PE 3</h2><p>Proceed using the same <em>Deployment and Imaging Tools Environment</em> command prompt as <strong>Administrator</strong> to prepare the startup environment for Windows PE.</p><h3>5.1 Import Windows AIK Environment</h3><p>By importing the Windows AIK environment, we ensure that the tools that are being used are from the AIK and not the ADK.</p><div class=highlight><pre><code class=language-batch data-lang=batch><span class=k>call</span> <span class=s2>&quot;%AIK%&quot;</span>\Tools\PETools\pesetenv.cmd</code></pre></div><h3>5.2 Prepare x86 Image</h3><p>Create a new Windows PE 3 image for x86.</p><div class=highlight><pre><code class=language-batch data-lang=batch>copype.cmd x<span class=m>86</span> <span class=s2>&quot;%PE3x86%&quot;</span></code></pre></div><p>Mount the new x86 Windows PE 3 image.</p><div class=highlight><pre><code class=language-batch data-lang=batch>imagex <span class=n>/mountrw</span> <span class=s2>&quot;%PE3x86%&quot;</span>\winpe.wim <span class=m>1</span> <span class=s2>&quot;%PE3x86%&quot;</span>\mount</code></pre></div><p>Add packages to Windows PE 3 x86 image.</p><div class=highlight><pre><code class=language-batch data-lang=batch>dism <span class=n>/image:&quot;%PE3x86%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe3cabsx86%\winpe-wmi.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE3x86%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe3cabsx86%\winpe-scripting.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE3x86%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe3cabsx86%\winpe-hta.cab&quot;</span>
-imagex <span class=n>/commit</span> <span class=s2>&quot;%PE3x86%&quot;</span>\mount</code></pre></div><p>Install custom scripts into Windows PE 3 x86 image.</p><div class=highlight><pre><code class=language-batch data-lang=batch>copy <span class=n>/Y</span> <span class=s2>&quot;%LiveScripts%&quot;</span>\startnet.cmd <span class=s2>&quot;%PE3x86%&quot;</span>\mount\Windows\System<span class=m>32</span>
-copy <span class=n>/Y</span> <span class=s2>&quot;%LiveScripts%&quot;</span>\bootstrap.js <span class=s2>&quot;%PE3x86%&quot;</span>\mount\Windows\System<span class=m>32</span>
-imagex <span class=n>/commit</span> <span class=s2>&quot;%PE3x86%&quot;</span>\mount</code></pre></div><h3>5.3 Prepare amd64 Image</h3><p>Create a new Windows PE 3 image for amd64.</p><div class=highlight><pre><code class=language-batch data-lang=batch>copype.cmd amd<span class=m>64</span> <span class=s2>&quot;%PE3amd64%&quot;</span></code></pre></div><p>Mount the new amd64 Windows PE 3 image.</p><div class=highlight><pre><code class=language-batch data-lang=batch>imagex <span class=n>/mountrw</span> <span class=s2>&quot;%PE3amd64%&quot;</span>\winpe.wim <span class=m>1</span> <span class=s2>&quot;%PE3amd64%&quot;</span>\mount</code></pre></div><p>Add packages to Windows PE 3 amd64 image.</p><div class=highlight><pre><code class=language-batch data-lang=batch>dism <span class=n>/image:&quot;%PE3amd64%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe3cabsamd64%\winpe-wmi.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE3amd64%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe3cabsamd64%\winpe-scripting.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE3amd64%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe3cabsamd64%\winpe-hta.cab&quot;</span>
-imagex <span class=n>/commit</span> <span class=s2>&quot;%PE3amd64%&quot;</span>\mount</code></pre></div><p>Install custom scripts into Windows PE 3 amd64 image.</p><div class=highlight><pre><code class=language-batch data-lang=batch>copy <span class=n>/Y</span> <span class=s2>&quot;%LiveScripts%&quot;</span>\startnet.cmd <span class=s2>&quot;%PE3amd64%&quot;</span>\mount\Windows\System<span class=m>32</span>
-copy <span class=n>/Y</span> <span class=s2>&quot;%LiveScripts%&quot;</span>\bootstrap.js <span class=s2>&quot;%PE3amd64%&quot;</span>\mount\Windows\System<span class=m>32</span>
-imagex <span class=n>/commit</span> <span class=s2>&quot;%PE3amd64%&quot;</span>\mount</code></pre></div><h3>5.4 Prepare ia64 Image</h3><p>Create a new Windows PE 3 image for ia64.</p><div class=highlight><pre><code class=language-batch data-lang=batch>copype.cmd ia<span class=m>64</span> <span class=s2>&quot;%PE3ia64%&quot;</span></code></pre></div><p>Mount the new ia64 Windows PE 3 image.</p><div class=highlight><pre><code class=language-batch data-lang=batch>imagex <span class=n>/mountrw</span> <span class=s2>&quot;%PE3ia64%&quot;</span>\winpe.wim <span class=m>1</span> <span class=s2>&quot;%PE3ia64%&quot;</span>\mount</code></pre></div><p>Add packages to Windows PE 3 ia64 image.</p><div class=highlight><pre><code class=language-batch data-lang=batch>dism <span class=n>/image:&quot;%PE3ia64%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe3cabsia64%\winpe-wmi.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE3ia64%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe3cabsia64%\winpe-scripting.cab&quot;</span>
-dism <span class=n>/image:&quot;%PE3ia64%&quot;\mount</span> <span class=n>/Add-Package</span> <span class=n>/PackagePath:&quot;%pe3cabsia64%\winpe-hta.cab&quot;</span>
-imagex <span class=n>/commit</span> <span class=s2>&quot;%PE3ia64%&quot;</span>\mount</code></pre></div><p>Install custom scripts into Windows PE 3 ia64 image.</p><div class=highlight><pre><code class=language-batch data-lang=batch>copy <span class=n>/Y</span> <span class=s2>&quot;%LiveScripts%&quot;</span>\startnet.cmd <span class=s2>&quot;%PE3ia64%&quot;</span>\mount\Windows\System<span class=m>32</span>
-copy <span class=n>/Y</span> <span class=s2>&quot;%LiveScripts%&quot;</span>\bootstrap.js <span class=s2>&quot;%PE3ia64%&quot;</span>\mount\Windows\System<span class=m>32</span>
-imagex <span class=n>/commit</span> <span class=s2>&quot;%PE3ia64%&quot;</span>\mount</code></pre></div><h3>5.5 Assemble Windows PE 3 for ISO/USB/TFTP Boot</h3><p>Copy files needed for x86 ISO boot.</p><div class=highlight><pre><code class=language-batch data-lang=batch>copy <span class=n>/Y</span> <span class=s2>&quot;%PE3x86%&quot;</span>\winpe.wim <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>\sources\bootpe<span class=m>3</span>x<span class=m>86</span>.wim</code></pre></div><p>Copy files needed for amd64 ISO boot.</p><div class=highlight><pre><code class=language-batch data-lang=batch>copy <span class=n>/Y</span> <span class=s2>&quot;%PE3amd64%&quot;</span>\winpe.wim <span class=s2>&quot;%ISORoot%&quot;</span>\amd<span class=m>64</span>\sources\bootpe<span class=m>3</span>amd<span class=m>64</span>.wim</code></pre></div><p>Copy files needed for ia64 ISO boot.</p><div class=highlight><pre><code class=language-batch data-lang=batch>xcopy <span class=n>/E</span> <span class=n>/Y</span> <span class=s2>&quot;%PE3ia64%&quot;</span>\ISO\*.* <span class=s2>&quot;%ISORoot%&quot;</span>\ia<span class=m>64</span>
-copy <span class=n>/Y</span> <span class=s2>&quot;%PE3ia64%&quot;</span>\winpe.wim <span class=s2>&quot;%ISORoot%&quot;</span>\ia<span class=m>64</span>\sources\boot.wim</code></pre></div><p>Copy files needed for USB boot.</p><div class=highlight><pre><code class=language-batch data-lang=batch>copy <span class=n>/Y</span> <span class=s2>&quot;%PE3x86%&quot;</span>\winpe.wim <span class=s2>&quot;%USBRoot%&quot;</span>\sources\bootpe<span class=m>3</span>x<span class=m>86</span>.wim
-copy <span class=n>/Y</span> <span class=s2>&quot;%PE3amd64%&quot;</span>\winpe.wim <span class=s2>&quot;%USBRoot%&quot;</span>\sources\bootpe<span class=m>3</span>amd<span class=m>64</span>.wim
-copy <span class=n>/Y</span> <span class=s2>&quot;%PE3ia64%&quot;</span>\winpe.wim <span class=s2>&quot;%USBRoot%&quot;</span>\sources\bootpe<span class=m>3</span>ia<span class=m>64</span>.wim</code></pre></div><p>Deploy all images to TFTP root.</p><div class=highlight><pre><code class=language-batch data-lang=batch>copy <span class=n>/Y</span> <span class=s2>&quot;%PE3x86%&quot;</span>\winpe.wim <span class=s2>&quot;%TFTPRoot%&quot;</span>\sources\bootpe<span class=m>3</span>x<span class=m>86</span>.wim
-copy <span class=n>/Y</span> <span class=s2>&quot;%PE3amd64%&quot;</span>\winpe.wim <span class=s2>&quot;%TFTPRoot%&quot;</span>\sources\bootpe<span class=m>3</span>amd<span class=m>64</span>.wim
-copy <span class=n>/Y</span> <span class=s2>&quot;%PE3ia64%&quot;</span>\winpe.wim <span class=s2>&quot;%TFTPRoot%&quot;</span>\sources\bootpe<span class=m>3</span>ia<span class=m>64</span>.wim</code></pre></div><h3>5.6 Unmount Windows PE 3 images</h3><p>Unmount all images.</p><div class=highlight><pre><code class=language-batch data-lang=batch>imagex <span class=n>/unmount</span> <span class=s2>&quot;%PE3x86%&quot;</span>\mount
-imagex <span class=n>/unmount</span> <span class=s2>&quot;%PE3amd64%&quot;</span>\mount
-imagex <span class=n>/unmount</span> <span class=s2>&quot;%PE3ia64%&quot;</span>\mount</code></pre></div><h3>5.7 Update BCD Stores</h3><p>Edit boot configuration database (BCD) store for x86 ISO container.</p><div class=highlight><pre><code class=language-batch data-lang=batch><span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%ISORoot%&quot;\x86\Boot\BCD /copy {ramdiskoptions} /d &quot;%LiveTitle% - Windows PE 3 CD (x86)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>ramdisk</span><span class=o>=</span><span class=nv>%1</span>
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%ISORoot%&quot;\x86\Boot\BCD /copy {default} /d &quot;%LiveTitle% - Windows PE 3 CD (x86)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>entry</span><span class=o>=</span><span class=nv>%1</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> osdevice ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>3</span>x<span class=m>86</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> device ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>3</span>x<span class=m>86</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>\Boot\BCD <span class=n>/displayorder</span> <span class=nv>%entry%</span> <span class=n>/addlast</span></code></pre></div><p>Edit boot configuration database (BCD) store for amd64 ISO container.</p><div class=highlight><pre><code class=language-batch data-lang=batch><span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%ISORoot%&quot;\amd64\Boot\BCD /copy {ramdiskoptions} /d &quot;%LiveTitle% - Windows PE 3 CD (amd64)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>ramdisk</span><span class=o>=</span><span class=nv>%1</span>
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%ISORoot%&quot;\amd64\Boot\BCD /copy {default} /d &quot;%LiveTitle% - Windows PE 3 CD (amd64)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>entry</span><span class=o>=</span><span class=nv>%1</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\amd<span class=m>64</span>\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> osdevice ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>3</span>amd<span class=m>64</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\amd<span class=m>64</span>\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> device ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>3</span>amd<span class=m>64</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\amd<span class=m>64</span>\Boot\BCD <span class=n>/displayorder</span> <span class=nv>%entry%</span> <span class=n>/addlast</span></code></pre></div><p>Edit boot configuration database (BCD) store for ia64 ISO container.</p><div class=highlight><pre><code class=language-batch data-lang=batch>bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\ia<span class=m>64</span>\EFI\Microsoft\Boot\BCD <span class=n>/create</span> {ramdiskoptions} <span class=n>/d</span> <span class=s2>&quot;%LiveTitle% - Windows PE 3 CD (ia64)&quot;</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\ia<span class=m>64</span>\EFI\Microsoft\Boot\BCD <span class=n>/set</span> {ramdiskoptions} ramdisksdidevice boot
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\ia<span class=m>64</span>\EFI\Microsoft\Boot\BCD <span class=n>/set</span> {ramdiskoptions} ramdisksdipath \boot\boot.sdi
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\ia<span class=m>64</span>\EFI\Microsoft\Boot\BCD <span class=n>/set</span> {default} description <span class=s2>&quot;%LiveTitle% - Windows PE 3 CD (ia64)&quot;</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\ia<span class=m>64</span>\EFI\Microsoft\Boot\BCD <span class=n>/set</span> {default} osdevice ramdisk<span class=o>=</span>[boot]\sources\boot.wim<span class=p>,</span>{ramdiskoptions}
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\ia<span class=m>64</span>\EFI\Microsoft\Boot\BCD <span class=n>/set</span> {default} device ramdisk<span class=o>=</span>[boot]\sources\boot.wim<span class=p>,</span>{ramdiskoptions}</code></pre></div><p>Integrate Windows PE 3 into existing boot configuration database (BCD) store for USB boot.</p><div class=highlight><pre><code class=language-batch data-lang=batch>bcdedit <span class=n>/store</span> <span class=s2>&quot;%USBRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> {bootmgr} displaybootmenu true
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%USBRoot%&quot;\Boot\BCD /copy {ramdiskoptions} /d &quot;%LiveTitle% - Windows PE 3 USB (amd64)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>ramdisk</span><span class=o>=</span><span class=nv>%1</span>
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%USBRoot%&quot;\Boot\BCD /copy {default} /d &quot;%LiveTitle% - Windows PE 3 USB (amd64)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>entry</span><span class=o>=</span><span class=nv>%1</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%USBRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> osdevice ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>3</span>amd<span class=m>64</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%USBRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> device ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>3</span>amd<span class=m>64</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%USBRoot%&quot;</span>\Boot\BCD <span class=n>/displayorder</span> <span class=nv>%entry%</span> <span class=n>/addlast</span>
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%USBRoot%&quot;\Boot\BCD /copy {ramdiskoptions} /d &quot;%LiveTitle% - Windows PE 3 USB (ia64)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>ramdisk</span><span class=o>=</span><span class=nv>%1</span>
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%USBRoot%&quot;\Boot\BCD /copy {default} /d &quot;%LiveTitle% - Windows PE 3 USB (ia64)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>entry</span><span class=o>=</span><span class=nv>%1</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%USBRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> osdevice ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>3</span>ia<span class=m>64</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%USBRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> device ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>3</span>ia<span class=m>64</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%USBRoot%&quot;</span>\Boot\BCD <span class=n>/displayorder</span> <span class=nv>%entry%</span> <span class=n>/addlast</span>
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%USBRoot%&quot;\Boot\BCD /copy {ramdiskoptions} /d &quot;%LiveTitle% - Windows PE 3 USB (x86)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>ramdisk</span><span class=o>=</span><span class=nv>%1</span>
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%USBRoot%&quot;\Boot\BCD /copy {default} /d &quot;%LiveTitle% - Windows PE 3 USB (x86)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>entry</span><span class=o>=</span><span class=nv>%1</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%USBRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> osdevice ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>3</span>x<span class=m>86</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%USBRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> device ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>3</span>x<span class=m>86</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%USBRoot%&quot;</span>\Boot\BCD <span class=n>/displayorder</span> <span class=nv>%entry%</span> <span class=n>/addlast</span></code></pre></div><p>Integrate Windows PE 3 into existing boot configuration database (BCD) store for PXE boot.</p><div class=highlight><pre><code class=language-batch data-lang=batch>bcdedit <span class=n>/store</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> {bootmgr} displaybootmenu true
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%TFTPRoot%&quot;\Boot\BCD /copy {ramdiskoptions} /d &quot;%LiveTitle% - Windows PE 3 PXE (amd64)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>ramdisk</span><span class=o>=</span><span class=nv>%1</span>
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%TFTPRoot%&quot;\Boot\BCD /copy {default} /d &quot;%LiveTitle% - Windows PE 3 PXE (amd64)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>entry</span><span class=o>=</span><span class=nv>%1</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> osdevice ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>3</span>amd<span class=m>64</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> device ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>3</span>amd<span class=m>64</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\BCD <span class=n>/displayorder</span> <span class=nv>%entry%</span> <span class=n>/addlast</span>
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%TFTPRoot%&quot;\Boot\BCD /copy {ramdiskoptions} /d &quot;%LiveTitle% - Windows PE 3 PXE (ia64)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>ramdisk</span><span class=o>=</span><span class=nv>%1</span>
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%TFTPRoot%&quot;\Boot\BCD /copy {default} /d &quot;%LiveTitle% - Windows PE 3 PXE (ia64)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>entry</span><span class=o>=</span><span class=nv>%1</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> osdevice ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>3</span>ia<span class=m>64</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> device ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>3</span>ia<span class=m>64</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\BCD <span class=n>/displayorder</span> <span class=nv>%entry%</span> <span class=n>/addlast</span>
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%TFTPRoot%&quot;\Boot\BCD /copy {ramdiskoptions} /d &quot;%LiveTitle% - Windows PE 3 PXE (x86)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>ramdisk</span><span class=o>=</span><span class=nv>%1</span>
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%TFTPRoot%&quot;\Boot\BCD /copy {default} /d &quot;%LiveTitle% - Windows PE 3 PXE (x86)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>entry</span><span class=o>=</span><span class=nv>%1</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> osdevice ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>3</span>x<span class=m>86</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> device ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>3</span>x<span class=m>86</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%TFTPRoot%&quot;</span>\Boot\BCD <span class=n>/displayorder</span> <span class=nv>%entry%</span> <span class=n>/addlast</span></code></pre></div><h2>6 Deploy Windows PE Media</h2><h3>6.1 Generate x86 ISO Image</h3><p>Generate x86 image file.</p><div class=highlight><pre><code class=language-batch data-lang=batch>oscdimg -n -m -o -b<span class=s2>&quot;%PE4x86%&quot;</span>\fwfiles\etfsboot.com <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>.iso</code></pre></div><h3>6.2 Generate amd64 ISO Image</h3><p>Generate amd64 image file.</p><div class=highlight><pre><code class=language-batch data-lang=batch>oscdimg -n -m -o -b<span class=s2>&quot;%PE4amd64%&quot;</span>\fwfiles\etfsboot.com <span class=s2>&quot;%ISORoot%&quot;</span>\amd<span class=m>64</span> <span class=s2>&quot;%ISORoot%&quot;</span>\amd<span class=m>64</span>.iso</code></pre></div><h3>6.3 Generate ia64 ISO Image</h3><p>Generate ia64 image file.</p><div class=highlight><pre><code class=language-batch data-lang=batch>oscdimg -n -m -o -b<span class=s2>&quot;%PE3ia64%&quot;</span>\efisys.bin <span class=s2>&quot;%ISORoot%&quot;</span>\ia<span class=m>64</span> <span class=s2>&quot;%ISORoot%&quot;</span>\ia<span class=m>64</span>.iso</code></pre></div><h3>6.4 Generate x86/amd64 Combination ISO Image</h3><p>Gather all the files needed.</p><div class=highlight><pre><code class=language-batch data-lang=batch>xcopy <span class=n>/S</span> <span class=n>/Y</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>\*.* <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo
-copy <span class=n>/Y</span> <span class=s2>&quot;%ISORoot%&quot;</span>\amd<span class=m>64</span>\sources\*.* <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo\sources
-copy <span class=n>/Y</span> <span class=s2>&quot;%ISORoot%&quot;</span>\amd<span class=m>64</span>\sources\*.* <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo\sources
-copy <span class=n>/Y</span> <span class=s2>&quot;%PE4amd64%&quot;</span>\media\Boot\BCD <span class=nv>%ISORoot%</span>&quot;\x<span class=m>86</span>amd<span class=m>64</span>combo\Boot</code></pre></div><p>Edit boot configuration database (BCD) store for x86/amd64 combined ISO container.</p><div class=highlight><pre><code class=language-batch data-lang=batch>bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo\Boot\BCD <span class=n>/set</span> {bootmgr} displaybootmenu true
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo\Boot\BCD <span class=n>/create</span> {ramdiskoptions} <span class=n>/d</span> <span class=s2>&quot;%LiveTitle% - Windows PE 4 DVD (amd64)&quot;</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo\Boot\BCD <span class=n>/set</span> {ramdiskoptions} ramdisksdidevice boot
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo\Boot\BCD <span class=n>/set</span> {ramdiskoptions} ramdisksdipath \boot\boot.sdi
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo\Boot\BCD <span class=n>/set</span> {default} description <span class=s2>&quot;%LiveTitle% - Windows PE 4 DVD (amd64)&quot;</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo\Boot\BCD <span class=n>/set</span> {default} osdevice ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>4</span>amd<span class=m>64</span>.wim<span class=p>,</span>{ramdiskoptions}
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo\Boot\BCD <span class=n>/set</span> {default} device ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>4</span>amd<span class=m>64</span>.wim<span class=p>,</span>{ramdiskoptions}
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%ISORoot%&quot;\x86amd64combo\Boot\BCD /copy {ramdiskoptions} /d &quot;%LiveTitle% - Windows PE 4 DVD (x86)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>ramdisk</span><span class=o>=</span><span class=nv>%1</span>
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%ISORoot%&quot;\x86amd64combo\Boot\BCD /copy {default} /d &quot;%LiveTitle% - Windows PE 4 DVD (x86)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>entry</span><span class=o>=</span><span class=nv>%1</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> osdevice ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>4</span>x<span class=m>86</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> device ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>4</span>x<span class=m>86</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo\Boot\BCD <span class=n>/displayorder</span> <span class=nv>%entry%</span> <span class=n>/addlast</span>
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%ISORoot%&quot;\x86amd64combo\Boot\BCD /copy {ramdiskoptions} /d &quot;%LiveTitle% - Windows PE 3 DVD (amd64)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>ramdisk</span><span class=o>=</span><span class=nv>%1</span>
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%ISORoot%&quot;\x86amd64combo\Boot\BCD /copy {default} /d &quot;%LiveTitle% - Windows PE 3 DVD (amd64)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>entry</span><span class=o>=</span><span class=nv>%1</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> osdevice ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>3</span>amd<span class=m>64</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> device ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>3</span>amd<span class=m>64</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo\Boot\BCD <span class=n>/displayorder</span> <span class=nv>%entry%</span> <span class=n>/addlast</span>
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%ISORoot%&quot;\x86amd64combo\Boot\BCD /copy {ramdiskoptions} /d &quot;%LiveTitle% - Windows PE 3 DVD (x86)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>ramdisk</span><span class=o>=</span><span class=nv>%1</span>
-<span class=k>for</span> <span class=n>/F</span> <span class=s2>&quot;tokens=7 delims=. &quot;</span> <span class=nv>%1</span> in (<span class=s1>&#39;bcdedit /store &quot;%ISORoot%&quot;\x86amd64combo\Boot\BCD /copy {default} /d &quot;%LiveTitle% - Windows PE 3 DVD (x86)&quot;&#39;</span>) <span class=k>do</span> <span class=k>set</span> <span class=nv>entry</span><span class=o>=</span><span class=nv>%1</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> osdevice ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>3</span>x<span class=m>86</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo\Boot\BCD <span class=n>/set</span> <span class=nv>%entry%</span> device ramdisk<span class=o>=</span>[boot]\sources\bootpe<span class=m>3</span>x<span class=m>86</span>.wim<span class=p>,</span><span class=nv>%ramdisk%</span>
-bcdedit <span class=n>/store</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo\Boot\BCD <span class=n>/displayorder</span> <span class=nv>%entry%</span> <span class=n>/addlast</span></code></pre></div><p>Generate x86/amd64 image file.</p><div class=highlight><pre><code class=language-batch data-lang=batch>oscdimg -n -m -o -b<span class=s2>&quot;%PE4x86%&quot;</span>\fwfiles\etfsboot.com <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo.iso</code></pre></div><h3>6.5 Clean up</h3><p><em>Optional:</em> Remove temporary build environments.</p><div class=highlight><pre><code class=language-batch data-lang=batch>rmdir <span class=n>/S</span> <span class=n>/Q</span> <span class=s2>&quot;%PE4x86%&quot;</span>
-rmdir <span class=n>/S</span> <span class=n>/Q</span> <span class=s2>&quot;%PE4amd64%&quot;</span>
+</li>
+<li><p>Share the `LiveDrive` folder onto the network, with a share name like `LiveDrive`.</p>
+<pre><code class="batch language-batch">net share "%LiveShareName%"="%LiveDrive%" /GRANT:Everyone,FULL /UNLIMITED</code></pre>
 
-rmdir <span class=n>/S</span> <span class=n>/Q</span> <span class=s2>&quot;%PE3x86%&quot;</span>
-rmdir <span class=n>/S</span> <span class=n>/Q</span> <span class=s2>&quot;%PE3amd64%&quot;</span>
-rmdir <span class=n>/S</span> <span class=n>/Q</span> <span class=s2>&quot;%PE3ia64%&quot;</span>
+</li>
+<li><p>Set security permissions for the remote access user on the shared project folder.</p>
+<pre><code class="batch language-batch">icacls "%LiveDrive%" /grant "%LiveUserName%":F /inheritance:e</code></pre>
 
-rmdir <span class=n>/S</span> <span class=n>/Q</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>
-rmdir <span class=n>/S</span> <span class=n>/Q</span> <span class=s2>&quot;%ISORoot%&quot;</span>\amd<span class=m>64</span>
-rmdir <span class=n>/S</span> <span class=n>/Q</span> <span class=s2>&quot;%ISORoot%&quot;</span>\ia<span class=m>64</span>
-rmdir <span class=n>/S</span> <span class=n>/Q</span> <span class=s2>&quot;%ISORoot%&quot;</span>\x<span class=m>86</span>amd<span class=m>64</span>combo</code></pre></div><h3>6.6 Copy Your Installation Media</h3><p>Copy all of your installation media into folders/subfolders inside the <code>%LiveDrive%\media</code> folder. The scripts provided earlier will automatically detect the available installation media and provide an interface to launch whichever Windows Setup instances are valid for the given Windows PE session that is booted.</p><p><strong>NOTICE: The scripts do not currently do this. It is a planned feature for the next release of this article.</strong></p><h3>6.7 Prepare Installation Media for USB Deployment</h3><p>Now that all of the installation files are tucked away safely inside of <code>%LiveDrive%\media</code>, you can adjust the contents of the <code>%USBRoot%\media</code> folder as well. You can either copy them directly or create links as I have done.</p><div class=highlight><pre><code class=language-batch data-lang=batch><span class=k>for</span> <span class=nv>%f</span> in (<span class=s2>&quot;%LiveMedia%&quot;</span>\*) <span class=k>do</span> mklink <span class=s2>&quot;%USBRoot%\media\%~nf&quot;</span> <span class=s2>&quot;%f&quot;</span>
-<span class=k>for</span> <span class=n>/d</span> <span class=nv>%d</span> in (<span class=s2>&quot;%LiveMedia%&quot;</span>\*) <span class=k>do</span> mklink <span class=n>/d</span> <span class=s2>&quot;%USBRoot%\media\%~nd&quot;</span> <span class=s2>&quot;%d&quot;</span></code></pre></div><h3>6.8 Deploy USB Root to USB Drive</h3><p>You will need a USB drive formatted to FAT32 or NTFS (recommended). If it was not formatted in Windows Vista or higher, you may use <code>bootsect.exe</code> to update the master boot record and partition record so that it is using the BOOTMGR boot code. The syntax is as follows:</p><div class=highlight><pre><code class=language-batch data-lang=batch>bootsect <span class=n>/nt60</span> <span class=p>&lt;</span><span class=n>USBDriveLetter</span>&gt;: <span class=n>/mbr</span></code></pre></div><p>Replace <code>&lt;USBDriveLetter&gt;</code> with the drive letter of your USB drive. Run <code>bootsect /help</code> for further information.</p><p>Then just copy the contents of your <code>%USBRoot%</code> folder to your USB drive&#39;s root directory.</p><div class=highlight><pre><code class=language-batch data-lang=batch>xcopy <span class=n>/E</span> <span class=n>/Y</span> <span class=nv>%USBRoot%</span> <span class=p>&lt;</span><span class=n>USBDriveLetter</span>&gt;:\</code></pre></div><p>Replace <code>&lt;USBDriveLetter&gt;</code> with the drive letter of your USB drive.</p><h2>7 Setup Technician PC Services</h2><p>I have chosen to use Open DHCP Server and Open TFTP Server for this portion of the setup. You may use what you want, but this is the configuration I chose because my Technician PC is also a workstation PC.</p><h3>7.1 TFTP Server Setup</h3><p>Setup Open TFTP Server.</p><p>Backup <code>C:\OpenTFTPServer\OpenTFTPServerMT.ini</code>.</p><div class=highlight><pre><code class=language-batch data-lang=batch>copy <span class=s2>&quot;C:\OpenTFTPServer\OpenTFTPServerMT.ini&quot;</span> <span class=s2>&quot;C:\OpenTFTPServer\OpenTFTPServerMT.ini.original&quot;</span></code></pre></div><p>Edit <code>C:\OpenTFTPServer\OpenTFTPServerMT.ini</code> so that it says something like:</p><div class=highlight><pre><code class=language-ini data-lang=ini><span class=k>[LISTEN-ON]</span>
-<span class=c1>#192.168.1.100</span>
-<span class=k>[HOME]</span>
-<span class=err>C:\LiveDrive\TFTPRoot</span>
-<span class=k>[LOGGING]</span>
-<span class=err>Errors</span>
-<span class=k>[TFTP-OPTIONS]</span>
-<span class=na>blksize</span><span class=o>=</span><span class=s>65464</span></code></pre></div><p>Restart service:</p><div class=highlight><pre><code class=language-batch data-lang=batch>net stop TFTPServer
-net start TFTPServer</code></pre></div><h3>7.2 DHCP Server Setup</h3><p>Setup Open DHCP Server.</p><p>Backup <code>C:\OpenDHCPServer\OpenDHCPServer.ini</code>.</p><div class=highlight><pre><code class=language-batch data-lang=batch>copy <span class=s2>&quot;C:\OpenDHCPServer\OpenDHCPServer.ini&quot;</span> <span class=s2>&quot;C:\OpenDHCPServer\OpenDHCPServer.ini.original&quot;</span></code></pre></div><p>Edit <code>C:\OpenDHCPServer\OpenDHCPServer.ini</code> so that it says something like:</p><div class=highlight><pre><code class=language-ini data-lang=ini><span class=k>[LISTEN_ON]</span>
-<span class=c1>#192.168.1.100</span>
-<span class=k>[LOGGING]</span>
-<span class=na>LogLevel</span><span class=o>=</span><span class=s>Normal</span>
-<span class=k>[RANGE_SET]</span>
-<span class=na>DHCPRange</span><span class=o>=</span><span class=s>192.168.1.25-192.168.1.75</span>
-<span class=na>SubnetMask</span><span class=o>=</span><span class=s>255.255.255.0</span>
-<span class=na>DomainServer</span><span class=o>=</span><span class=s>192.168.1.1,8.8.8.8,8.8.4.4</span>
-<span class=na>Router</span><span class=o>=</span><span class=s>192.168.1.1</span>
-<span class=na>NameServer</span><span class=o>=</span><span class=s>192.168.1.1</span>
-<span class=na>NextServer</span><span class=o>=</span><span class=s>192.168.1.100</span>
-<span class=na>BootFileSize</span><span class=o>=</span><span class=s>3170304</span>
-<span class=na>BootFileName</span><span class=o>=</span><span class=s>\Boot\wdsnbp.com</span></code></pre></div><p>Restart service:</p><div class=highlight><pre><code class=language-batch data-lang=batch>net stop OpenDHCPServer
-net start OpenDHCPServer</code></pre></div><h3>7.3 Web Server Setup</h3><h2>8 Product Testing</h2><p>With the exception of USB booting, I use a VirtualBox virtual machine to test all of these boot scenarios. <a href="http://www.virtualbox.org/" target=_blank>VirtualBox</a> doesn&#39;t boot directly from USB, so I use a second PC to test USB booting. All of these boot patterns have been tested and work according to design.</p><p>If you have any comments or suggestions for improvement, please drop me a line below or find me on Google+. Enjoy the fruits of your labor!</p><script type=text/javascript>google_ad_client = "ca-pub-8937572456576531";
-/* daball.me, leaderboard */
-google_ad_slot = "8757510213";
-google_ad_width = 728;
-google_ad_height = 90;</script><script type=text/javascript src=http://pagead2.googlesyndication.com/pagead/show_ads.js></script></article><!-- Disqus (Thread) --><div id=disqus_thread></div><script type=text/javascript>var disqus_identifier = '520606022bbfd30200000003';
+</li>
+</ol>
+<h2 id="3-custom-scripts">3 Custom Scripts</h2>
+<p>Proceed using the same <em>Deployment and Imaging Tools Environment</em> command prompt as <strong>Administrator</strong> to prepare the startup environment for Windows PE.</p>
+<h3 id="31-batch-file-startnetcmd">3.1 Batch file: startnet.cmd</h3>
+<p>This is a replacement for the 'startnet.cmd' script found inside of a generic Windows PE image. Run these commands to generate the 'startnet.cmd' script.</p>
+<pre><code class="batch language-batch">echo @echo off&gt;"%LiveScripts%"\startnet.cmd
+echo set LiveTitle=%LiveTitle%&gt;&gt;"%LiveScripts%"\startnet.cmd
+echo set LiveDriveLetter=L:&gt;&gt;"%LiveScripts%"\startnet.cmd
+echo set LiveDrive=LiveDriveLetter\&gt;&gt;"%LiveScripts%"\startnet.cmd
+echo set LiveHostName=%LiveHostName%&gt;&gt;"%LiveScripts%"\startnet.cmd
+echo set LiveShareName=%LiveShareName%&gt;&gt;"%LiveScripts%"\startnet.cmd
+echo set LiveUserName=%LiveUserName%&gt;&gt;"%LiveScripts%"\startnet.cmd
+echo set LiveUserPassword=%LiveUserPassword%&gt;&gt;"%LiveScripts%"\startnet.cmd
+echo title %LiveTitle%&gt;&gt;"%LiveScripts%"\startnet.cmd
+echo echo Initializing network services . . .&gt;&gt;"%LiveScripts%"\startnet.cmd
+echo wpeinit&gt;&gt;"%LiveScripts%"\startnet.cmd
+echo echo Mounting network drive at %LiveDriveLetter% = \\%LiveHostName%\%LiveShareName% . . .&gt;&gt;"%LiveScripts%"\startnet.cmd
+echo net use %LiveDriveLetter% "\\%LiveHostName%\%LiveShareName%" /USER:"%LiveUserName%" "%LiveUserPassword%"&gt;&gt;"%LiveScripts%"\startnet.cmd
+echo cscript.exe /Nologo bootstrap.js&gt;&gt;"%LiveScripts%"\startnet.cmd
+REM DISABLED: echo echo Rebooting . . .&gt;&gt;"%LiveScripts%"\startnet.cmd
+REM DISABLED: echo wpeutil reboot&gt;&gt;"%LiveScripts%"\startnet.cmd</code></pre>
+<h3 id="32-script-bootstrapjs">3.2 Script: bootstrap.js</h3>
+<p>Save this script into <code>scripts\bootstrap.js</code>:</p>
+<pre><code class="js language-js">var fso = WScript.CreateObject("Scripting.FileSystemObject");
+var wshsh = WScript.CreateObject("WScript.Shell");
+var env = wshsh.Environment("Process");
+
+//array of objects like { path: string, packages: array, type: string }
+var discoveredRepos = function detectRepos () {
+var repos = [];
+var drives = new Enumerator(fso.Drives);
+for (; !drives.atEnd(); drives.moveNext()) {
+var drive = drives.item();
+if (fso.FolderExists(drive.DriveLetter + ":\\tools")
+&amp;&amp; fso.FileExists(drive.DriveLetter + ":\\tools\\repo.json")) {
+ var pkgsfile = fso.OpenTextFile(drive.DriveLetter + ":\\tools\\repo.json", ForReading=1);
+ var pkgstxt = pkgsfile.ReadAll();
+ pkgsfile.Close();
+ var repoType = function DriveTypeDesc(typeCode) {
+  switch (typeCode) {
+   case 1: return "Removable";
+   case 2: return "Fixed";
+   case 3: return "Network";
+   case 4: return "CD-ROM";
+   case 5: return "RAM Disk";
+   default:return "Unknown";
+  }
+  }(drive.DriveType);
+  repos[repos.length] = { path: drive.DriveLetter + ":\\tools\\", packages: eval(pkgstxt), type: repoType };
+ }
+}
+}
+}();
+
+livedrive = function () {
+var drives = new Enumerator(fso.Drives);
+for (; !drives.atEnd(); drives.moveNext()) {
+ var drive = drives.item();
+ if (fso.FolderExists(drive.DriveLetter + ":\\scripts")) {
+  return drive.DriveLetter + ":\\";
+ }
+}
+WScript.StdOut.WriteLine(
+ "WARNING: Could not locate scripts folder on the Technician Tools Live Drive.\n" +
+ "     Tools will probably be unavailable for this session.\n");
+ return "";
+}();
+
+var SystemRoot = env("SystemRoot");
+
+/*WScript.Echo("Live Drive found at " + livedrive + ".\nDeploying current version of toolkit to " + windows + " . . .");
+
+var fso = WScript.CreateObject("Scripting.FileSystemObject")
+, folder = fso.GetFolder(livedrive + "scripts")
+, files = new Enumerator(folder.Files);
+
+for (; !files.atEnd(); files.moveNext()) {
+var file = files.item();
+WScript.Echo("Copying " + file.Path + " to " + SystemRoot + "\\System32\\" + file.Name);
+fso.CopyFile(file.Path, SystemRoot + "\\System32\\" + file.Name);
+}*/</code></pre>
+<h3 id="33-nodejs-acquire-web-root">3.3 Node.JS: Acquire web root</h3>
+<p>You will need to download the following ZIP file and expand it to the <code>%LiveDrive%\scripts\liveserver</code> folder.</p>
+<h2 id="4-prepare-windows-pe-4">4 Prepare Windows PE 4</h2>
+<p>Proceed using the same <em>Deployment and Imaging Tools Environment</em> command prompt as <strong>Administrator</strong> to prepare the startup environment for Windows PE.</p>
+<h3 id="41-prepare-x86-image">4.1 Prepare x86 Image</h3>
+<p>Create a new Windows PE 4 image for x86.</p>
+<pre><code class="batch language-batch">copype.cmd x86 "%PE4x86%"</code></pre>
+<p>Mount the new x86 Windows PE 4 image.</p>
+<pre><code class="batch language-batch">imagex /mountrw "%PE4x86%"\media\sources\boot.wim 1 "%PE4x86%"\mount</code></pre>
+<p>Add packages to Windows PE 4 x86 image.</p>
+<pre><code class="batch language-batch">dism /image:"%PE4x86%"\mount /Add-Package /PackagePath:"%pe4cabsx86%\WinPE-WMI.cab"
+dism /image:"%PE4x86%"\mount /Add-Package /PackagePath:"%pe4cabsx86%\WinPE-SecureStartup.cab"
+dism /image:"%PE4x86%"\mount /Add-Package /PackagePath:"%pe4cabsx86%\WinPE-NetFx4.cab"
+dism /image:"%PE4x86%"\mount /Add-Package /PackagePath:"%pe4cabsx86%\WinPE-Scripting.cab"
+dism /image:"%PE4x86%"\mount /Add-Package /PackagePath:"%pe4cabsx86%\WinPE-HTA.cab"
+dism /image:"%PE4x86%"\mount /Add-Package /PackagePath:"%pe4cabsx86%\WinPE-PowerShell3.cab"
+dism /image:"%PE4x86%"\mount /Add-Package /PackagePath:"%pe4cabsx86%\WinPE-EnhancedStorage.cab"
+dism /image:"%PE4x86%"\mount /Add-Package /PackagePath:"%pe4cabsx86%\WinPE-DismCmdlets.cab"
+dism /image:"%PE4x86%"\mount /Add-Package /PackagePath:"%pe4cabsx86%\WinPE-StorageWMI.cab"
+imagex /commit "%PE4x86%"\mount</code></pre>
+<p>Install custom scripts into Windows PE 4 x86 image.</p>
+<pre><code class="batch language-batch">copy /Y "%LiveScripts%"\startnet.cmd "%PE4x86%"\mount\Windows\System32
+copy /Y "%LiveScripts%"\bootstrap.js "%PE4x86%"\mount\Windows\System32
+imagex /commit "%PE4x86%"\mount</code></pre>
+<h3 id="42-prepare-amd64-image">4.2 Prepare amd64 Image</h3>
+<p>Create Windows PE 4 image for amd64.</p>
+<pre><code class="batch language-batch">copype.cmd amd64 "%PE4amd64%"</code></pre>
+<p>Mount the new amd64 Windows PE 4 image.</p>
+<pre><code class="batch language-batch">imagex /mountrw "%PE4amd64%"\media\sources\boot.wim 1 "%PE4amd64%"\mount</code></pre>
+<p>Add packages to Windows PE 4 amd64 image.</p>
+<pre><code class="batch language-batch">dism /image:"%PE4amd64%"\mount /Add-Package /PackagePath:"%pe4cabsamd64%\WinPE-WMI.cab"
+dism /image:"%PE4amd64%"\mount /Add-Package /PackagePath:"%pe4cabsamd64%\WinPE-SecureStartup.cab"
+dism /image:"%PE4amd64%"\mount /Add-Package /PackagePath:"%pe4cabsamd64%\WinPE-NetFx4.cab"
+dism /image:"%PE4amd64%"\mount /Add-Package /PackagePath:"%pe4cabsamd64%\WinPE-Scripting.cab"
+dism /image:"%PE4amd64%"\mount /Add-Package /PackagePath:"%pe4cabsamd64%\WinPE-HTA.cab"
+dism /image:"%PE4amd64%"\mount /Add-Package /PackagePath:"%pe4cabsamd64%\WinPE-PowerShell3.cab"
+dism /image:"%PE4amd64%"\mount /Add-Package /PackagePath:"%pe4cabsamd64%\WinPE-EnhancedStorage.cab"
+dism /image:"%PE4amd64%"\mount /Add-Package /PackagePath:"%pe4cabsamd64%\WinPE-DismCmdlets.cab"
+dism /image:"%PE4amd64%"\mount /Add-Package /PackagePath:"%pe4cabsamd64%\WinPE-StorageWMI.cab"
+imagex /commit "%PE4amd64%"\mount</code></pre>
+<p>Install custom scripts into Windows PE 4 amd64 image.</p>
+<pre><code class="batch language-batch">copy /Y "%LiveScripts%"\startnet.cmd "%PE4amd64%"\mount\Windows\System32
+copy /Y "%LiveScripts%"\bootstrap.js "%PE4amd64%"\mount\Windows\System32
+imagex /commit "%PE4amd64%"\mount</code></pre>
+<h3 id="43-assemble-windows-pe-4-for-isousbtftp-boot">4.3 Assemble Windows PE 4 for ISO/USB/TFTP Boot</h3>
+<p>Copy files needed for x86 ISO boot.</p>
+<pre><code class="batch language-batch">xcopy /S /Y "%PE4x86%"\media\*.* "%ISORoot%"\x86
+ren "%ISORoot%"\x86\sources\boot.wim bootpe4x86.wim</code></pre>
+<p>Copy files needed for amd64 ISO boot.</p>
+<pre><code class="batch language-batch">xcopy /S /Y "%PE4x86%"\media\*.* "%USBRoot%"
+del "%USBRoot%"\sources\boot.wim</code></pre>
+<p>Deploy both images to USB root.</p>
+<pre><code class="batch language-batch">copy /Y "%PE4x86%"\media\sources\boot.wim "%USBRoot%"\sources\bootpe4x86.wim
+copy /Y "%PE4amd64%"\media\sources\boot.wim "%USBRoot%"\sources\bootpe4amd64.wim</code></pre>
+<p>Copy files needed for PXE boot.</p>
+<pre><code class="batch language-batch">xcopy /S /Y "%PE4x86%"\media\*.* "%TFTPRoot%"
+copy /Y "%PE4x86%"\mount\Windows\Boot\PXE\*.* "%TFTPRoot%"\Boot
+del /Q "%TFTPRoot%"\sources\boot*.wim</code></pre>
+<p>Deploy both images to TFTP root.</p>
+<pre><code class="batch language-batch">copy /Y "%PE4x86%"\media\sources\boot.wim "%TFTPRoot%"\sources\bootpe4x86.wim
+copy /Y "%PE4amd64%"\media\sources\boot.wim "%TFTPRoot%"\sources\bootpe4amd64.wim</code></pre>
+<p><em>Optional:</em> Usability Hack: Remove the press F12 for Network Servicing prompt.</p>
+<pre><code class="batch language-batch">ren "%TFTPRoot%"\Boot\pxeboot.com pxeboot.com.disabled
+copy /Y "%TFTPRoot%"\Boot\pxeboot.n12 "%TFTPRoot%"\Boot\pxeboot.com</code></pre>
+<h3 id="44-unmount-windows-pe-4-images">4.4 Unmount Windows PE 4 images</h3>
+<p>Unmount both images.</p>
+<pre><code class="batch language-batch">imagex /unmount "%PE4x86%"\mount
+imagex /unmount "%PE4amd64%"\mount</code></pre>
+<h3 id="45-prepare-bcd-stores">4.5 Prepare BCD Stores</h3>
+<p>Edit boot configuration database (BCD) store for x86 ISO container.</p>
+<pre><code class="batch language-batch">bcdedit /store "%ISORoot%"\x86\Boot\BCD /set {bootmgr} displaybootmenu true
+bcdedit /store "%ISORoot%"\x86\Boot\BCD /create {ramdiskoptions} /d "%LiveTitle% - Windows PE 4 CD (x86)"
+bcdedit /store "%ISORoot%"\x86\Boot\BCD /set {ramdiskoptions} ramdisksdidevice boot
+bcdedit /store "%ISORoot%"\x86\Boot\BCD /set {ramdiskoptions} ramdisksdipath \boot\boot.sdi
+bcdedit /store "%ISORoot%"\x86\Boot\BCD /set {default} description "%LiveTitle% - Windows PE 4 CD (x86)"
+bcdedit /store "%ISORoot%"\x86\Boot\BCD /set {default} osdevice ramdisk=[boot]\sources\bootpe4x86.wim,{ramdiskoptions}
+bcdedit /store "%ISORoot%"\x86\Boot\BCD /set {default} device ramdisk=[boot]\sources\bootpe4x86.wim,{ramdiskoptions}</code></pre>
+<p>Edit boot configuration database (BCD) store for amd64 ISO container.</p>
+<pre><code class="batch language-batch">bcdedit /store "%ISORoot%"\amd64\Boot\BCD /set {bootmgr} displaybootmenu true
+bcdedit /store "%ISORoot%"\amd64\Boot\BCD /create {ramdiskoptions} /d "%LiveTitle% - Windows PE 4 CD (amd64)"
+bcdedit /store "%ISORoot%"\amd64\Boot\BCD /set {ramdiskoptions} ramdisksdidevice boot
+bcdedit /store "%ISORoot%"\amd64\Boot\BCD /set {ramdiskoptions} ramdisksdipath \boot\boot.sdi
+bcdedit /store "%ISORoot%"\amd64\Boot\BCD /set {default} description "%LiveTitle% - Windows PE 4 CD (amd64)"
+bcdedit /store "%ISORoot%"\amd64\Boot\BCD /set {default} osdevice ramdisk=[boot]\sources\bootpe4amd64.wim,{ramdiskoptions}
+bcdedit /store "%ISORoot%"\amd64\Boot\BCD /set {default} device ramdisk=[boot]\sources\bootpe4amd64.wim,{ramdiskoptions}</code></pre>
+<p>Edit boot configuration database (BCD) store for USB container.</p>
+<pre><code class="batch language-batch">bcdedit /store "%USBRoot%"\Boot\BCD /set {bootmgr} displaybootmenu true
+bcdedit /store "%USBRoot%"\Boot\BCD /create {ramdiskoptions} /d "%LiveTitle% - Windows PE 4 USB (amd64)"
+bcdedit /store "%USBRoot%"\Boot\BCD /set {ramdiskoptions} ramdisksdidevice boot
+bcdedit /store "%USBRoot%"\Boot\BCD /set {ramdiskoptions} ramdisksdipath \boot\boot.sdi
+bcdedit /store "%USBRoot%"\Boot\BCD /set {default} description "%LiveTitle% - Windows PE 4 USB (amd64)"
+bcdedit /store "%USBRoot%"\Boot\BCD /set {default} osdevice ramdisk=[boot]\sources\bootpe4amd64.wim,{ramdiskoptions}
+bcdedit /store "%USBRoot%"\Boot\BCD /set {default} device ramdisk=[boot]\sources\bootpe4amd64.wim,{ramdiskoptions}
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%USBRoot%"\Boot\BCD /copy {ramdiskoptions} /d "%LiveTitle% - Windows PE 4 USB (x86)"') do set ramdisk=%1
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%USBRoot%"\Boot\BCD /copy {default} /d "%LiveTitle% - Windows PE 4 USB (x86)"') do set entry=%1
+bcdedit /store "%USBRoot%"\Boot\BCD /set %entry% osdevice ramdisk=[boot]\sources\bootpe4x86.wim,%ramdisk%
+bcdedit /store "%USBRoot%"\Boot\BCD /set %entry% device ramdisk=[boot]\sources\bootpe4x86.wim,%ramdisk%
+bcdedit /store "%USBRoot%"\Boot\BCD /displayorder %entry% /addlast</code></pre>
+<p>Build boot configuration database (BCD) store for PXE boot.</p>
+<pre><code class="batch language-batch">bcdedit /store "%TFTPRoot%"\Boot\BCD /set {bootmgr} displaybootmenu true
+bcdedit /store "%TFTPRoot%"\Boot\BCD /create {ramdiskoptions} /d "%LiveTitle% - Windows PE 4 PXE (amd64)"
+bcdedit /store "%TFTPRoot%"\Boot\BCD /set {ramdiskoptions} ramdisksdidevice boot
+bcdedit /store "%TFTPRoot%"\Boot\BCD /set {ramdiskoptions} ramdisksdipath \boot\boot.sdi
+bcdedit /store "%TFTPRoot%"\Boot\BCD /set {default} description "%LiveTitle% - Windows PE 4 PXE (amd64)"
+bcdedit /store "%TFTPRoot%"\Boot\BCD /set {default} osdevice ramdisk=[boot]\sources\bootpe4amd64.wim,{ramdiskoptions}
+bcdedit /store "%TFTPRoot%"\Boot\BCD /set {default} device ramdisk=[boot]\sources\bootpe4amd64.wim,{ramdiskoptions}
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%TFTPRoot%"\Boot\BCD /copy {ramdiskoptions} /d "%LiveTitle% - Windows PE 4 PXE (x86)"') do set ramdisk=%1
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%TFTPRoot%"\Boot\BCD /copy {default} /d "%LiveTitle% - Windows PE 4 PXE (x86)"') do set entry=%1
+bcdedit /store "%TFTPRoot%"\Boot\BCD /set %entry% osdevice ramdisk=[boot]\sources\bootpe4x86.wim,%ramdisk%
+bcdedit /store "%TFTPRoot%"\Boot\BCD /set %entry% device ramdisk=[boot]\sources\bootpe4x86.wim,%ramdisk%
+bcdedit /store "%TFTPRoot%"\Boot\BCD /displayorder %entry% /addlast</code></pre>
+<h2 id="5-prepare-windows-pe-3">5 Prepare Windows PE 3</h2>
+<p>Proceed using the same <em>Deployment and Imaging Tools Environment</em> command prompt as <strong>Administrator</strong> to prepare the startup environment for Windows PE.</p>
+<h3 id="51-import-windows-aik-environment">5.1 Import Windows AIK Environment</h3>
+<p>By importing the Windows AIK environment, we ensure that the tools that are being used are from the AIK and not the ADK.</p>
+<pre><code class="batch language-batch">call "%AIK%"\Tools\PETools\pesetenv.cmd</code></pre>
+<h3 id="52-prepare-x86-image">5.2 Prepare x86 Image</h3>
+<p>Create a new Windows PE 3 image for x86.</p>
+<pre><code class="batch language-batch">copype.cmd x86 "%PE3x86%"</code></pre>
+<p>Mount the new x86 Windows PE 3 image.</p>
+<pre><code class="batch language-batch">imagex /mountrw "%PE3x86%"\winpe.wim 1 "%PE3x86%"\mount</code></pre>
+<p>Add packages to Windows PE 3 x86 image.</p>
+<pre><code class="batch language-batch">dism /image:"%PE3x86%"\mount /Add-Package /PackagePath:"%pe3cabsx86%\winpe-wmi.cab"
+dism /image:"%PE3x86%"\mount /Add-Package /PackagePath:"%pe3cabsx86%\winpe-scripting.cab"
+dism /image:"%PE3x86%"\mount /Add-Package /PackagePath:"%pe3cabsx86%\winpe-hta.cab"
+imagex /commit "%PE3x86%"\mount</code></pre>
+<p>Install custom scripts into Windows PE 3 x86 image.</p>
+<pre><code class="batch language-batch">copy /Y "%LiveScripts%"\startnet.cmd "%PE3x86%"\mount\Windows\System32
+copy /Y "%LiveScripts%"\bootstrap.js "%PE3x86%"\mount\Windows\System32
+imagex /commit "%PE3x86%"\mount</code></pre>
+<h3 id="53-prepare-amd64-image">5.3 Prepare amd64 Image</h3>
+<p>Create a new Windows PE 3 image for amd64.</p>
+<pre><code class="batch language-batch">copype.cmd amd64 "%PE3amd64%"</code></pre>
+<p>Mount the new amd64 Windows PE 3 image.</p>
+<pre><code class="batch language-batch">imagex /mountrw "%PE3amd64%"\winpe.wim 1 "%PE3amd64%"\mount</code></pre>
+<p>Add packages to Windows PE 3 amd64 image.</p>
+<pre><code class="batch language-batch">dism /image:"%PE3amd64%"\mount /Add-Package /PackagePath:"%pe3cabsamd64%\winpe-wmi.cab"
+dism /image:"%PE3amd64%"\mount /Add-Package /PackagePath:"%pe3cabsamd64%\winpe-scripting.cab"
+dism /image:"%PE3amd64%"\mount /Add-Package /PackagePath:"%pe3cabsamd64%\winpe-hta.cab"
+imagex /commit "%PE3amd64%"\mount</code></pre>
+<p>Install custom scripts into Windows PE 3 amd64 image.</p>
+<pre><code class="batch language-batch">copy /Y "%LiveScripts%"\startnet.cmd "%PE3amd64%"\mount\Windows\System32
+copy /Y "%LiveScripts%"\bootstrap.js "%PE3amd64%"\mount\Windows\System32
+imagex /commit "%PE3amd64%"\mount</code></pre>
+<h3 id="54-prepare-ia64-image">5.4 Prepare ia64 Image</h3>
+<p>Create a new Windows PE 3 image for ia64.</p>
+<pre><code class="batch language-batch">copype.cmd ia64 "%PE3ia64%"</code></pre>
+<p>Mount the new ia64 Windows PE 3 image.</p>
+<pre><code class="batch language-batch">imagex /mountrw "%PE3ia64%"\winpe.wim 1 "%PE3ia64%"\mount</code></pre>
+<p>Add packages to Windows PE 3 ia64 image.</p>
+<pre><code class="batch language-batch">dism /image:"%PE3ia64%"\mount /Add-Package /PackagePath:"%pe3cabsia64%\winpe-wmi.cab"
+dism /image:"%PE3ia64%"\mount /Add-Package /PackagePath:"%pe3cabsia64%\winpe-scripting.cab"
+dism /image:"%PE3ia64%"\mount /Add-Package /PackagePath:"%pe3cabsia64%\winpe-hta.cab"
+imagex /commit "%PE3ia64%"\mount</code></pre>
+<p>Install custom scripts into Windows PE 3 ia64 image.</p>
+<pre><code class="batch language-batch">copy /Y "%LiveScripts%"\startnet.cmd "%PE3ia64%"\mount\Windows\System32
+copy /Y "%LiveScripts%"\bootstrap.js "%PE3ia64%"\mount\Windows\System32
+imagex /commit "%PE3ia64%"\mount</code></pre>
+<h3 id="55-assemble-windows-pe-3-for-isousbtftp-boot">5.5 Assemble Windows PE 3 for ISO/USB/TFTP Boot</h3>
+<p>Copy files needed for x86 ISO boot.</p>
+<pre><code class="batch language-batch">copy /Y "%PE3x86%"\winpe.wim "%ISORoot%"\x86\sources\bootpe3x86.wim</code></pre>
+<p>Copy files needed for amd64 ISO boot.</p>
+<pre><code class="batch language-batch">copy /Y "%PE3amd64%"\winpe.wim "%ISORoot%"\amd64\sources\bootpe3amd64.wim</code></pre>
+<p>Copy files needed for ia64 ISO boot.</p>
+<pre><code class="batch language-batch">xcopy /E /Y "%PE3ia64%"\ISO\*.* "%ISORoot%"\ia64
+copy /Y "%PE3ia64%"\winpe.wim "%ISORoot%"\ia64\sources\boot.wim</code></pre>
+<p>Copy files needed for USB boot.</p>
+<pre><code class="batch language-batch">copy /Y "%PE3x86%"\winpe.wim "%USBRoot%"\sources\bootpe3x86.wim
+copy /Y "%PE3amd64%"\winpe.wim "%USBRoot%"\sources\bootpe3amd64.wim
+copy /Y "%PE3ia64%"\winpe.wim "%USBRoot%"\sources\bootpe3ia64.wim</code></pre>
+<p>Deploy all images to TFTP root.</p>
+<pre><code class="batch language-batch">copy /Y "%PE3x86%"\winpe.wim "%TFTPRoot%"\sources\bootpe3x86.wim
+copy /Y "%PE3amd64%"\winpe.wim "%TFTPRoot%"\sources\bootpe3amd64.wim
+copy /Y "%PE3ia64%"\winpe.wim "%TFTPRoot%"\sources\bootpe3ia64.wim</code></pre>
+<h3 id="56-unmount-windows-pe-3-images">5.6 Unmount Windows PE 3 images</h3>
+<p>Unmount all images.</p>
+<pre><code class="batch language-batch">imagex /unmount "%PE3x86%"\mount
+imagex /unmount "%PE3amd64%"\mount
+imagex /unmount "%PE3ia64%"\mount</code></pre>
+<h3 id="57-update-bcd-stores">5.7 Update BCD Stores</h3>
+<p>Edit boot configuration database (BCD) store for x86 ISO container.</p>
+<pre><code class="batch language-batch">for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%ISORoot%"\x86\Boot\BCD /copy {ramdiskoptions} /d "%LiveTitle% - Windows PE 3 CD (x86)"') do set ramdisk=%1
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%ISORoot%"\x86\Boot\BCD /copy {default} /d "%LiveTitle% - Windows PE 3 CD (x86)"') do set entry=%1
+bcdedit /store "%ISORoot%"\x86\Boot\BCD /set %entry% osdevice ramdisk=[boot]\sources\bootpe3x86.wim,%ramdisk%
+bcdedit /store "%ISORoot%"\x86\Boot\BCD /set %entry% device ramdisk=[boot]\sources\bootpe3x86.wim,%ramdisk%
+bcdedit /store "%ISORoot%"\x86\Boot\BCD /displayorder %entry% /addlast</code></pre>
+<p>Edit boot configuration database (BCD) store for amd64 ISO container.</p>
+<pre><code class="batch language-batch">for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%ISORoot%"\amd64\Boot\BCD /copy {ramdiskoptions} /d "%LiveTitle% - Windows PE 3 CD (amd64)"') do set ramdisk=%1
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%ISORoot%"\amd64\Boot\BCD /copy {default} /d "%LiveTitle% - Windows PE 3 CD (amd64)"') do set entry=%1
+bcdedit /store "%ISORoot%"\amd64\Boot\BCD /set %entry% osdevice ramdisk=[boot]\sources\bootpe3amd64.wim,%ramdisk%
+bcdedit /store "%ISORoot%"\amd64\Boot\BCD /set %entry% device ramdisk=[boot]\sources\bootpe3amd64.wim,%ramdisk%
+bcdedit /store "%ISORoot%"\amd64\Boot\BCD /displayorder %entry% /addlast</code></pre>
+<p>Edit boot configuration database (BCD) store for ia64 ISO container.</p>
+<pre><code class="batch language-batch">bcdedit /store "%ISORoot%"\ia64\EFI\Microsoft\Boot\BCD /create {ramdiskoptions} /d "%LiveTitle% - Windows PE 3 CD (ia64)"
+bcdedit /store "%ISORoot%"\ia64\EFI\Microsoft\Boot\BCD /set {ramdiskoptions} ramdisksdidevice boot
+bcdedit /store "%ISORoot%"\ia64\EFI\Microsoft\Boot\BCD /set {ramdiskoptions} ramdisksdipath \boot\boot.sdi
+bcdedit /store "%ISORoot%"\ia64\EFI\Microsoft\Boot\BCD /set {default} description "%LiveTitle% - Windows PE 3 CD (ia64)"
+bcdedit /store "%ISORoot%"\ia64\EFI\Microsoft\Boot\BCD /set {default} osdevice ramdisk=[boot]\sources\boot.wim,{ramdiskoptions}
+bcdedit /store "%ISORoot%"\ia64\EFI\Microsoft\Boot\BCD /set {default} device ramdisk=[boot]\sources\boot.wim,{ramdiskoptions}</code></pre>
+<p>Integrate Windows PE 3 into existing boot configuration database (BCD) store for USB boot.</p>
+<pre><code class="batch language-batch">bcdedit /store "%USBRoot%"\Boot\BCD /set {bootmgr} displaybootmenu true
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%USBRoot%"\Boot\BCD /copy {ramdiskoptions} /d "%LiveTitle% - Windows PE 3 USB (amd64)"') do set ramdisk=%1
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%USBRoot%"\Boot\BCD /copy {default} /d "%LiveTitle% - Windows PE 3 USB (amd64)"') do set entry=%1
+bcdedit /store "%USBRoot%"\Boot\BCD /set %entry% osdevice ramdisk=[boot]\sources\bootpe3amd64.wim,%ramdisk%
+bcdedit /store "%USBRoot%"\Boot\BCD /set %entry% device ramdisk=[boot]\sources\bootpe3amd64.wim,%ramdisk%
+bcdedit /store "%USBRoot%"\Boot\BCD /displayorder %entry% /addlast
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%USBRoot%"\Boot\BCD /copy {ramdiskoptions} /d "%LiveTitle% - Windows PE 3 USB (ia64)"') do set ramdisk=%1
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%USBRoot%"\Boot\BCD /copy {default} /d "%LiveTitle% - Windows PE 3 USB (ia64)"') do set entry=%1
+bcdedit /store "%USBRoot%"\Boot\BCD /set %entry% osdevice ramdisk=[boot]\sources\bootpe3ia64.wim,%ramdisk%
+bcdedit /store "%USBRoot%"\Boot\BCD /set %entry% device ramdisk=[boot]\sources\bootpe3ia64.wim,%ramdisk%
+bcdedit /store "%USBRoot%"\Boot\BCD /displayorder %entry% /addlast
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%USBRoot%"\Boot\BCD /copy {ramdiskoptions} /d "%LiveTitle% - Windows PE 3 USB (x86)"') do set ramdisk=%1
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%USBRoot%"\Boot\BCD /copy {default} /d "%LiveTitle% - Windows PE 3 USB (x86)"') do set entry=%1
+bcdedit /store "%USBRoot%"\Boot\BCD /set %entry% osdevice ramdisk=[boot]\sources\bootpe3x86.wim,%ramdisk%
+bcdedit /store "%USBRoot%"\Boot\BCD /set %entry% device ramdisk=[boot]\sources\bootpe3x86.wim,%ramdisk%
+bcdedit /store "%USBRoot%"\Boot\BCD /displayorder %entry% /addlast</code></pre>
+<p>Integrate Windows PE 3 into existing boot configuration database (BCD) store for PXE boot.</p>
+<pre><code class="batch language-batch">bcdedit /store "%TFTPRoot%"\Boot\BCD /set {bootmgr} displaybootmenu true
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%TFTPRoot%"\Boot\BCD /copy {ramdiskoptions} /d "%LiveTitle% - Windows PE 3 PXE (amd64)"') do set ramdisk=%1
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%TFTPRoot%"\Boot\BCD /copy {default} /d "%LiveTitle% - Windows PE 3 PXE (amd64)"') do set entry=%1
+bcdedit /store "%TFTPRoot%"\Boot\BCD /set %entry% osdevice ramdisk=[boot]\sources\bootpe3amd64.wim,%ramdisk%
+bcdedit /store "%TFTPRoot%"\Boot\BCD /set %entry% device ramdisk=[boot]\sources\bootpe3amd64.wim,%ramdisk%
+bcdedit /store "%TFTPRoot%"\Boot\BCD /displayorder %entry% /addlast
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%TFTPRoot%"\Boot\BCD /copy {ramdiskoptions} /d "%LiveTitle% - Windows PE 3 PXE (ia64)"') do set ramdisk=%1
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%TFTPRoot%"\Boot\BCD /copy {default} /d "%LiveTitle% - Windows PE 3 PXE (ia64)"') do set entry=%1
+bcdedit /store "%TFTPRoot%"\Boot\BCD /set %entry% osdevice ramdisk=[boot]\sources\bootpe3ia64.wim,%ramdisk%
+bcdedit /store "%TFTPRoot%"\Boot\BCD /set %entry% device ramdisk=[boot]\sources\bootpe3ia64.wim,%ramdisk%
+bcdedit /store "%TFTPRoot%"\Boot\BCD /displayorder %entry% /addlast
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%TFTPRoot%"\Boot\BCD /copy {ramdiskoptions} /d "%LiveTitle% - Windows PE 3 PXE (x86)"') do set ramdisk=%1
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%TFTPRoot%"\Boot\BCD /copy {default} /d "%LiveTitle% - Windows PE 3 PXE (x86)"') do set entry=%1
+bcdedit /store "%TFTPRoot%"\Boot\BCD /set %entry% osdevice ramdisk=[boot]\sources\bootpe3x86.wim,%ramdisk%
+bcdedit /store "%TFTPRoot%"\Boot\BCD /set %entry% device ramdisk=[boot]\sources\bootpe3x86.wim,%ramdisk%
+bcdedit /store "%TFTPRoot%"\Boot\BCD /displayorder %entry% /addlast</code></pre>
+<h2 id="6-deploy-windows-pe-media">6 Deploy Windows PE Media</h2>
+<h3 id="61-generate-x86-iso-image">6.1 Generate x86 ISO Image</h3>
+<p>Generate x86 image file.</p>
+<pre><code class="batch language-batch">oscdimg -n -m -o -b"%PE4x86%"\fwfiles\etfsboot.com "%ISORoot%"\x86 "%ISORoot%"\x86.iso</code></pre>
+<h3 id="62-generate-amd64-iso-image">6.2 Generate amd64 ISO Image</h3>
+<p>Generate amd64 image file.</p>
+<pre><code class="batch language-batch">oscdimg -n -m -o -b"%PE4amd64%"\fwfiles\etfsboot.com "%ISORoot%"\amd64 "%ISORoot%"\amd64.iso</code></pre>
+<h3 id="63-generate-ia64-iso-image">6.3 Generate ia64 ISO Image</h3>
+<p>Generate ia64 image file.</p>
+<pre><code class="batch language-batch">oscdimg -n -m -o -b"%PE3ia64%"\efisys.bin "%ISORoot%"\ia64 "%ISORoot%"\ia64.iso</code></pre>
+<h3 id="64-generate-x86amd64-combination-iso-image">6.4 Generate x86/amd64 Combination ISO Image</h3>
+<p>Gather all the files needed.</p>
+<pre><code class="batch language-batch">xcopy /S /Y "%ISORoot%"\x86\*.* "%ISORoot%"\x86amd64combo
+copy /Y "%ISORoot%"\amd64\sources\*.* "%ISORoot%"\x86amd64combo\sources
+copy /Y "%ISORoot%"\amd64\sources\*.* "%ISORoot%"\x86amd64combo\sources
+copy /Y "%PE4amd64%"\media\Boot\BCD %ISORoot%"\x86amd64combo\Boot</code></pre>
+<p>Edit boot configuration database (BCD) store for x86/amd64 combined ISO container.</p>
+<pre><code class="batch language-batch">bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /set {bootmgr} displaybootmenu true
+bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /create {ramdiskoptions} /d "%LiveTitle% - Windows PE 4 DVD (amd64)"
+bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /set {ramdiskoptions} ramdisksdidevice boot
+bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /set {ramdiskoptions} ramdisksdipath \boot\boot.sdi
+bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /set {default} description "%LiveTitle% - Windows PE 4 DVD (amd64)"
+bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /set {default} osdevice ramdisk=[boot]\sources\bootpe4amd64.wim,{ramdiskoptions}
+bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /set {default} device ramdisk=[boot]\sources\bootpe4amd64.wim,{ramdiskoptions}
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /copy {ramdiskoptions} /d "%LiveTitle% - Windows PE 4 DVD (x86)"') do set ramdisk=%1
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /copy {default} /d "%LiveTitle% - Windows PE 4 DVD (x86)"') do set entry=%1
+bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /set %entry% osdevice ramdisk=[boot]\sources\bootpe4x86.wim,%ramdisk%
+bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /set %entry% device ramdisk=[boot]\sources\bootpe4x86.wim,%ramdisk%
+bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /displayorder %entry% /addlast
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /copy {ramdiskoptions} /d "%LiveTitle% - Windows PE 3 DVD (amd64)"') do set ramdisk=%1
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /copy {default} /d "%LiveTitle% - Windows PE 3 DVD (amd64)"') do set entry=%1
+bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /set %entry% osdevice ramdisk=[boot]\sources\bootpe3amd64.wim,%ramdisk%
+bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /set %entry% device ramdisk=[boot]\sources\bootpe3amd64.wim,%ramdisk%
+bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /displayorder %entry% /addlast
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /copy {ramdiskoptions} /d "%LiveTitle% - Windows PE 3 DVD (x86)"') do set ramdisk=%1
+for /F "tokens=7 delims=. " %1 in ('bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /copy {default} /d "%LiveTitle% - Windows PE 3 DVD (x86)"') do set entry=%1
+bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /set %entry% osdevice ramdisk=[boot]\sources\bootpe3x86.wim,%ramdisk%
+bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /set %entry% device ramdisk=[boot]\sources\bootpe3x86.wim,%ramdisk%
+bcdedit /store "%ISORoot%"\x86amd64combo\Boot\BCD /displayorder %entry% /addlast</code></pre>
+<p>Generate x86/amd64 image file.</p>
+<pre><code class="batch language-batch">oscdimg -n -m -o -b"%PE4x86%"\fwfiles\etfsboot.com "%ISORoot%"\x86amd64combo "%ISORoot%"\x86amd64combo.iso</code></pre>
+<h3 id="65-clean-up">6.5 Clean up</h3>
+<p><em>Optional:</em> Remove temporary build environments.</p>
+<pre><code class="batch language-batch">rmdir /S /Q "%PE4x86%"
+rmdir /S /Q "%PE4amd64%"
+
+rmdir /S /Q "%PE3x86%"
+rmdir /S /Q "%PE3amd64%"
+rmdir /S /Q "%PE3ia64%"
+
+rmdir /S /Q "%ISORoot%"\x86
+rmdir /S /Q "%ISORoot%"\amd64
+rmdir /S /Q "%ISORoot%"\ia64
+rmdir /S /Q "%ISORoot%"\x86amd64combo</code></pre>
+<h3 id="66-copy-your-installation-media">6.6 Copy Your Installation Media</h3>
+<p>Copy all of your installation media into folders/subfolders inside the <code>%LiveDrive%\media</code> folder. The scripts provided earlier will automatically detect the available installation media and provide an interface to launch whichever Windows Setup instances are valid for the given Windows PE session that is booted.</p>
+<p><strong>NOTICE: The scripts do not currently do this. It is a planned feature for the next release of this article.</strong></p>
+<h3 id="67-prepare-installation-media-for-usb-deployment">6.7 Prepare Installation Media for USB Deployment</h3>
+<p>Now that all of the installation files are tucked away safely inside of <code>%LiveDrive%\media</code>, you can adjust the contents of the <code>%USBRoot%\media</code> folder as well. You can either copy them directly or create links as I have done.</p>
+<pre><code class="batch language-batch">for %f in ("%LiveMedia%"\*) do mklink "%USBRoot%\media\%~nf" "%f"
+for /d %d in ("%LiveMedia%"\*) do mklink /d "%USBRoot%\media\%~nd" "%d"</code></pre>
+<h3 id="68-deploy-usb-root-to-usb-drive">6.8 Deploy USB Root to USB Drive</h3>
+<p>You will need a USB drive formatted to FAT32 or NTFS (recommended). If it was not formatted in Windows Vista or higher, you may use <code>bootsect.exe</code> to update the master boot record and partition record so that it is using the BOOTMGR boot code. The syntax is as follows:</p>
+<pre><code class="batch language-batch">bootsect /nt60 &lt;USBDriveLetter&gt;: /mbr</code></pre>
+<p>Replace <code>&lt;USBDriveLetter&gt;</code> with the drive letter of your USB drive. Run <code>bootsect /help</code> for further information.</p>
+<p>Then just copy the contents of your <code>%USBRoot%</code> folder to your USB drive's root directory.</p>
+<pre><code class="batch language-batch">xcopy /E /Y %USBRoot% &lt;USBDriveLetter&gt;:\</code></pre>
+<p>Replace <code>&lt;USBDriveLetter&gt;</code> with the drive letter of your USB drive.</p>
+<h2 id="7-setup-technician-pc-services">7 Setup Technician PC Services</h2>
+<p>I have chosen to use Open DHCP Server and Open TFTP Server for this portion of the setup. You may use what you want, but this is the configuration I chose because my Technician PC is also a workstation PC.</p>
+<h3 id="71-tftp-server-setup">7.1 TFTP Server Setup</h3>
+<p>Setup Open TFTP Server.</p>
+<p>Backup <code>C:\OpenTFTPServer\OpenTFTPServerMT.ini</code>.</p>
+<pre><code class="batch language-batch">copy "C:\OpenTFTPServer\OpenTFTPServerMT.ini" "C:\OpenTFTPServer\OpenTFTPServerMT.ini.original"</code></pre>
+<p>Edit <code>C:\OpenTFTPServer\OpenTFTPServerMT.ini</code> so that it says something like:</p>
+<pre><code class="ini language-ini">[LISTEN-ON]
+#192.168.1.100
+[HOME]
+C:\LiveDrive\TFTPRoot
+[LOGGING]
+Errors
+[TFTP-OPTIONS]
+blksize=65464</code></pre>
+<p>Restart service:</p>
+<pre><code class="batch language-batch">net stop TFTPServer
+net start TFTPServer</code></pre>
+<h3 id="72-dhcp-server-setup">7.2 DHCP Server Setup</h3>
+<p>Setup Open DHCP Server.</p>
+<p>Backup <code>C:\OpenDHCPServer\OpenDHCPServer.ini</code>.</p>
+<pre><code class="batch language-batch">copy "C:\OpenDHCPServer\OpenDHCPServer.ini" "C:\OpenDHCPServer\OpenDHCPServer.ini.original"</code></pre>
+<p>Edit <code>C:\OpenDHCPServer\OpenDHCPServer.ini</code> so that it says something like:</p>
+<pre><code class="ini language-ini">[LISTEN_ON]
+#192.168.1.100
+[LOGGING]
+LogLevel=Normal
+[RANGE_SET]
+DHCPRange=192.168.1.25-192.168.1.75
+SubnetMask=255.255.255.0
+DomainServer=192.168.1.1,8.8.8.8,8.8.4.4
+Router=192.168.1.1
+NameServer=192.168.1.1
+NextServer=192.168.1.100
+BootFileSize=3170304
+BootFileName=\Boot\wdsnbp.com</code></pre>
+<p>Restart service:</p>
+<pre><code class="batch language-batch">net stop OpenDHCPServer
+net start OpenDHCPServer</code></pre>
+<h3 id="73-web-server-setup">7.3 Web Server Setup</h3>
+<h2 id="8-product-testing">8 Product Testing</h2>
+<p>With the exception of USB booting, I use a VirtualBox virtual machine to test all of these boot scenarios. <a href="http://www.virtualbox.org/" target="_blank">VirtualBox</a> doesn't boot directly from USB, so I use a second PC to test USB booting. All of these boot patterns have been tested and work according to design.</p>
+<p>If you have any comments or suggestions for improvement, please drop me a line below or find me on Google+. Enjoy the fruits of your labor!</p></p></div></div><div class="card"><div class="card-body"><div id="disqus_thread"></div><script type="text/javascript">var disqus_identifier = '520606022bbfd30200000003';
 var disqus_title = 'Technician Tools Live Drive';
-var disqus_url = 'http://www.daball.me/2012/11/26/technician-tools-live-drive.html';</script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus</a>.</noscript><!-- Disqus (Main) --><script type=text/javascript>var disqus_shortname = 'daball';
-
-(function() {
-  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-})();
-
-
-(function () {
-  var s = document.createElement('script'); s.async = true;
-  s.type = 'text/javascript';
-  s.src = '//' + disqus_shortname + '.disqus.com/count.js';
-  (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-}());</script></div></div></div><div class=footer><div class=contact><h1>David Allen Ball</h1><p>I have been a computer geek for 25 years. I recently resumed undergraduate studies at Radford University, where I am majoring in Software Engineering.</p></div><div class=contact><p><a href=https://github.com/daball title=GitHub target=_blank><i class="fa fa-github"></i></a> <a href=https://www.facebook.com/davidallenball title=Facebook target=_blank><i class="fa fa-facebook"></i></a> <a href=https://twitter.com/daballme title=Twitter target=_blank><i class="fa fa-twitter"></i></a> <a href=https://www.linkedin.com/in/davidball title=LinkedIn target=_blank><i class="fa fa-linkedin"></i></a> <a href="/go/resume/" title=Resume target=_blank><i class="fa fa-file-pdf-o"></i></a></p></div></div></div><script src=/js/scripts.2b6b.js></script><script type=text/javascript>skrollr.init({
-        forceHeight: false
-      });</script><!-- Google Analytics --><script type=text/javascript>var _gaq = _gaq || [];
+/* var disqus_url = '{{ site.url }}{{ site.base_url }}{{ page.url }}'; */</script><noscript>Please enable JavaScript to view the
+ <a href="https://disqus.com/?ref_noscript">comments powered by Disqus</a>.</noscript></div></div><div class="card"><div class="card-body"><script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle d-block" data-ad-client="ca-pub-8937572456576531" data-ad-slot="5297465010" data-ad-format="auto"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div></div></div><!-- Google Analytics--><script type="text/javascript">var _gaq = _gaq || [];
 _gaq.push(['_setAccount', 'UA-3984008-3']);
 _gaq.push(['_trackPageview']);
 (function() {
   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
   ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();</script><!-- Bootstrap core JavaScript--><script src="/vendor/jquery/jquery.min.js"></script><script src="/vendor/popper.js/dist/popper.min.js"></script><script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script><!-- Plugin JavaScript--><script src="/vendor/jquery-easing/jquery.easing.min.js"></script><!-- Custom scripts for this template--><script src="/layouts/blog/js/blog.min.js"></script><script type="text/javascript"><var>disqus_shortname = 'daball';</var></script><script>(function () {
+  var s = document.createElement('script'); s.async = true;
+  s.type = 'text/javascript';
+  s.src = '//' + daball + '.disqus.com/count.js';
+  (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());</script><script>/* var disqus_config = function () {
+  // Replace PAGE_URL with your page's canonical URL variable
+  this.page.url = PAGE_URL;  
+    
+  // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+  this.page.identifier = PAGE_IDENTIFIER; 
+}; */
+(function() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://daball.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
 })();</script></body></html>
