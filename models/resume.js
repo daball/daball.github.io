@@ -12,7 +12,7 @@ module.exports = {
   "sections": {
     "about": {
       "name": "About",
-      "opener": "Leveraging state-of-the-art development toolkits, I aim to deliver meaningful user experiences for web, mobile, and desktop apps. I have an adaptive skill set, a thirst to learn more, and the motivation to lead a project to success. I would like to join a team of like-minded and brilliant thinkers.",
+      "opener": "Leveraging state-of-the-art development toolkits, I aim to deliver meaningful user experiences to web, mobile, and desktop apps. I have an adaptive skill set, a thirst to learn more, and the motivation to lead a project to success. I would like to join a team of like-minded and brilliant thinkers to innovate powerful, evolving software solutions, empowering people in order to help make the world better.",
       "closer": "Let's build something great together!",
       "me": {
         "displayName": "David A. Ball",
@@ -21,7 +21,7 @@ module.exports = {
         "emailAddress": "david@daball.me",
         "url": "www.daball.me",
         // "objective": "Deliver state-of-the-art native and web apps using the latest tech stacks.",
-        "objective": "Leveraging state-of-the-art development toolkits, I aim to deliver meaningful user experiences for web, mobile, and desktop apps.",
+        "objective": "Leveraging state-of-the-art development toolkits, I aim to deliver meaningful user experiences to web, mobile, and desktop apps.",
         "socialMedia": [
           {
             "icon": "fa-linkedin",
