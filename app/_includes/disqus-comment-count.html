@@ -1,5 +1,0 @@
-{% if include.link == 'true' %}
-<a class="disqus-comment-count" href="{{ post.url | prepend: site.baseurl }}#disqus_thread" data-disqus-identifier="{{post.disqus_id}}">Comments</a>
-{% else %}
-<span class="disqus-comment-count" data-disqus-identifier="{{post.disqus_id}}"></span>
-{% endif %}

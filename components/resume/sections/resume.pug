@@ -1,0 +1,16 @@
+section#resume.resume-section.p-3.p-lg-5.d-flex.flex-column
+  .my-auto
+    h2.mb-3!=resume.sections.resume.title
+    - var alerts = resume.sections.resume.alerts
+    if alerts
+      include /components/resume/parts/alerts.pug
+    p.mb-5
+      .btn-group
+        a.btn.btn-success(href='https://docs.google.com/file/d/0BzYaoZImu8cBbzNtQWRRa09VeWM/view')
+          | View in Google Docs
+          | 
+          i.fa-file-pdf-o.fa
+        a.btn.btn-primary.js-scroll-trigger(href='#about')
+          | View My Contact Information
+          | 
+          i.fa-mobile-phone.fa

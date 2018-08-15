@@ -1,0 +1,52 @@
+// Core variables and mixins
+@import "variables.scss";
+@import "mixins.scss";
+// Global CSS
+@import "global.scss";
+@import "nav.scss";
+@import "resume-item.scss";
+@import "bootstrap-overrides.scss";
+// Components
+
+// Hide to the printer
+@media print {
+  nav, .btn, .alert, #resume, #resume .my-auto, #blog, #blog .my-auto {
+    display: none !important;
+  }
+  blockquote {
+    border: none;
+  }
+  .container {
+    
+  }
+}
+
+#sideNav.affix {
+top: 0 !important;
+width: 100% !important;
+}
+
+.text-black {
+  color: $black;
+}
+
+.btn {
+  @include heading-font;
+  font-size: 1.35rem;
+}
+
+.btn .devicon {
+  font-size: 3rem;
+}
+
+.qotd sup {
+  font-size: 150pt;
+  margin-top: 75pt;
+  line-height: 0.2em;
+  top: 0.1em;
+}
+
+.qotd blockquote, .qotd h2 {
+  font-family: Tangerine, cursive;
+  text-transform: none;
+}

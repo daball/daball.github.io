@@ -1,0 +1,135 @@
+// Core variables and mixins
+@import "variables.scss";
+@import "mixins.scss";
+// Global CSS
+@import "global.scss";
+@import "nav.scss";
+@import "resume-item.scss";
+@import "bootstrap-overrides.scss";
+// Components
+
+@media print {
+  nav, .navbar, .btn, .alert, #resume, #resume .my-auto, #blog, #blog .my-auto {
+    display: none !important;
+  }
+  body {
+    background-color: #fff;
+    color: #000 !important;
+    @include print-font;
+  }
+  .paper-area {
+    width: 100%;
+  }
+  .printable-area {
+    width: 100%;
+  }
+  h3 {
+    font-weight: 100 !important;
+  }
+}
+@page { size:8.5in 11in; margin: 0.5in 0.5in 0.5in 0.5in; }
+
+@media screen {
+  body {
+    background-color: $dark !important;
+    color: #000 !important;
+    @include print-font;
+  }
+  .paper-area {
+    margin: 5em 0 1em 0;
+    background-color: #fff;
+  }
+  .navbar {
+    @include heading-font;
+    font-size: 1.25em;
+    text-transform: uppercase;
+  }
+  .navbar-brand {
+    @include heading-font;
+    font-size: 1.5em;
+    font-weight: bold;
+  }
+
+  .paper-area {
+    width: 8.5in;
+    min-width: 8.5in;
+    max-width: 8.5in;
+  }
+
+  .printable-area {
+    border: 1px solid $dark;
+    position: relative;
+    left: 0.5in;
+    top: 0.5in;
+    width: 7.5in;
+    min-width: 7.5in;
+    max-width: 7.5in;
+  }
+}
+
+.text-black {
+  color: $black;
+}
+
+.qotd sup {
+  font-size: 150pt;
+  margin-top: 75pt;
+  line-height: 0.2em;
+  top: 0.1em;
+}
+
+.qotd blockquote, .qotd h2 {
+  font-family: Tangerine, cursive;
+  text-transform: none;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+  line-height: 1.0 !important;
+}
+h1, h2 {
+  font-weight: bold;
+}
+h1 {
+  text-decoration: underline;
+  font-size: 18.2pt;
+}
+h1.name {
+  text-decoration: none !important;
+  font-size: 28pt;
+  text-decoration: underline;
+  display: inline-block;
+  border-bottom: 10px solid #000;
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+}
+h2 {
+  font-weight: bold;
+}
+h2, h3 {
+  font-size: 12.6pt;
+}
+h3 {
+  font-weight: normal !important;
+}
+h4 {
+  font-size: 10.5pt;
+  font-weight: lighter !important;
+}
+h4.address {
+  margin-bottom: 12.5pt;
+  font-size: 12.5pt;
+  font-weight: bold;
+}
+p {
+  @include print-font;
+  margin-top: 2pt;
+}
+
+.p-2 {
+  padding-top: 0.25rem !important;
+  padding-bottom: 0.25rem !important;
+}
+
+.p-2 h1, .p-2 h2, .p-2 h3, .p-2 h4 {
+  margin-bottom: 4pt;
+}

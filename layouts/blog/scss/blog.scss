@@ -1,0 +1,32 @@
+// Core variables and mixins
+@import "variables.scss";
+@import "mixins.scss";
+@import "bootstrap";
+@import "bootswatch.scss";
+// Components
+body {
+  font-family: $font-family-sans-serif;
+  margin-top: 5em;
+  background-color: $light;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @include heading-font;
+  text-transform: uppercase;
+}
+
+.navbar {
+  @include heading-font;
+  font-size: 1.25em;
+  text-transform: uppercase;
+}
+
+.navbar-brand {
+  @include heading-font;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.card {
+  margin-bottom: 10px;
+}

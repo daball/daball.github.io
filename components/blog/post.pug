@@ -1,0 +1,64 @@
+extends /layouts/blog/theme.pug
+
+block head
+  -var meta = blog.meta
+  -var title = blog.title
+  if meta
+    each m in meta
+      meta(name=m, content=meta[m])
+  title!=title
+
+block body
+  include /components/blog/nav.pug
+  .container
+    if blog.post
+      .card
+        .card-body
+          h1.card-title.post-title!=blog.post.title
+          h4.card-subtitle.mb-2.text-muted.post-meta
+            i.fa.fa-calendar
+            | 
+            | published:
+            | 
+            !=moment(blog.post.date).format("D MMMM YYYY")
+            | 
+            | @
+            | 
+            !=moment(blog.post.date).format("h:mm a")
+            if blog.post.author
+              | 
+              i.fa.fa-user
+              | 
+              | author: 
+              !=blog.post.author
+            if blog.post.meta
+              | 
+              !=blog.post.meta
+            if blog.post.tags
+              | 
+              i.fa.fa-tags
+              | 
+              !=blog.post.tags
+            if blog.post.disqus_id
+              | 
+              i.fa.fa-comment
+              | 
+              span.disqus-comment-count(data-disqus-identifier=blog.post.disqus_id)
+          !=blog.post.title
+          p.card-text!=blog.post.contents
+          .disqus_thread
+          script(type="text/javascript").
+            var disqus_identifier = '#{blog.post.disqus_id }';
+            var disqus_title = '#{blog.post.title}';
+            /* var disqus_url = '{{ site.url }}{{ site.base_url }}{{ page.url }}'; */
+          noscript
+            |Please enable JavaScript to view the
+            | 
+            a(href="https://disqus.com/?ref_noscript")
+              |comments powered by Disqus
+            |.
+
+block append scripts
+  include /components/disqus/shortname-foot.pug
+  include /components/disqus/count-foot.pug
+  include /components/disqus/embed-foot.pug

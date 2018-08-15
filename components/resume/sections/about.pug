@@ -1,0 +1,32 @@
+section#about.resume-section.p-3.p-lg-5.d-flex.d-column
+  - var my = resume.sections.about.me
+  .my-auto
+    if my.displayName
+      - var parts = my.displayName.split(' ')
+      - var lastPart = parts.pop()
+      - var firstPart = parts.join(' ') + ' '
+      h1.mb-0.d-none.d-md-block
+        =firstPart
+        span.text-primary=lastPart
+      h2.mb-0.d-block.d-md-none
+        =firstPart
+        span.text-primary=lastPart
+    .subheading.mb-5
+      - var parts = [];
+      - my.addressLines.map((addressLine) => parts.push(addressLine))
+      =parts.join(' · ')+(my.phoneNumber||my.emailAddress?' · ':'')
+      a(href='tel:' + my.phoneNumber)=my.phoneNumber
+      =(my.phoneNumber && my.emailAddress)?' · ':''
+      a(href='mailto:' + my.emailAddress)=my.emailAddress
+    - var alerts = resume.sections.about.alerts
+    if alerts
+      include /components/resume/parts/alerts.pug
+    p.mb-5=resume.sections.about.opener
+    h3.mb-5=resume.sections.about.closer
+    ul.list-inline.list-social-icons.mb-0
+      each social in my.socialMedia
+        li.list-inline-item
+          a(href=social.profileUrl, title=social.network, data-toggle="tooltip", data-offset=10, data-direction="top")
+            span.fa-stack.fa-lg
+              i.fa.fa-circle.fa-stack-2x
+              i.fa.fa-stack-1x.fa-inverse(class=social.icon)
