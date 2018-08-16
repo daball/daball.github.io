@@ -502,7 +502,7 @@ gulp.task('push-src-to-remote-src', function (done) {
 });
 
 gulp.task('post-dist-build', function (done) {
-  runSequence('add-and-commit-dist-to-master', 'add-and-commit-src', 'push-src-to-remote-src', 'push-dist-to-remote-master', done);
+  runSequence('add-and-commit-dist-to-master', 'add-and-commit-src', 'push-dist-to-remote-master', 'push-src-to-remote-src', done);
 });
 gulp.task('deploy', function(done) {
   runSequence('pre-dist-build', 'dist-build', 'post-dist-build', done);
