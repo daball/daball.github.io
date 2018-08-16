@@ -458,7 +458,6 @@ gulp.task('add-and-commit-src', function () {
       return index.addAll('.');
     })
     .then(function() {
-      //write files to index
       return index.write();
     })
     .then(function() {
@@ -472,10 +471,6 @@ gulp.task('add-and-commit-src', function () {
       return repo.getCommit(head);
     })
     .then(function(parent) {
-      // var author = nodegit.Signature.create("Scott Chacon",
-      //   "schacon@gmail.com", 123456789, 60);
-      // var committer = nodegit.Signature.create("Scott A Chacon",
-      //   "scott@github.com", 987654321, 90);
       var author = Git.Signature.default(repo);
       var committer = Git.Signature.default(repo);
       message = "Source saved from automatic build " + moment().format('MMMM DD, YYYY @ hh:mm:ss.SSS a' + '.');
