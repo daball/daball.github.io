@@ -3,7 +3,7 @@ var sass = require('gulp-sass');
 var header = require('gulp-header');
 var clean = require('gulp-clean');
 var cleanCSS = require('gulp-clean-css');
-var rename = require("gulp-rename");
+var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var source = require('vinyl-source-stream')
 var pkg = require('./package.json');
@@ -12,6 +12,9 @@ var pug = require('gulp-pug');
 var _pug = require('pug');
 var slugify = require('slug');
 var extend = require('extend');
+var runSequence = require('run-sequence');
+var Git = require('nodegit');
+var git = require('gulp-git');
 
 // Get data in order
 var models = require('./models');
@@ -323,7 +326,9 @@ gulp.task('img', ['img:copy']);
 gulp.task('js', ['js:minify']);
 
 // Default task
-gulp.task('default', ['html', 'img', 'css', 'js', 'pdf', 'vendor', 'github']);
+gulp.task('default', ['html', 'img', 'css', 'js', 'pdf', 'vendor', 'github'], function (done) {
+  done();
+});
 
 // Configure the browserSync task
 gulp.task('browserSync', function() {
@@ -333,6 +338,142 @@ gulp.task('browserSync', function() {
     }
   });
 });
+
+// Deployment tasks
+gulp.task('clean', function () {
+  return gulp.src('dist', { read: false })
+    .pipe(clean());
+});
+gulp.task('clone-src-repo-to-dist', function () {
+  return gulp.src(['.git/**/*'])
+    .pipe(gulp.dest('./dist/.git'));
+});
+gulp.task('checkout-remote-master-on-dist', function (done) {
+  Git.Repository.open('./dist')
+    .then(function (repository) {
+      repository.getBranch('refs/heads/master')
+        .then(function (reference) {
+          repository.checkoutRef(reference)
+            .then(function () {
+              done();
+            });
+        });
+    });
+});
+gulp.task('clean-working-dir-on-dist', function () {
+  return gulp.src(['./dist/*', '!./git'], { read: false })
+    .pipe(clean({force:true}));
+});
+gulp.task('pre-dist-build', function (done) {
+  runSequence('clean', 'clone-src-repo-to-dist', 'checkout-remote-master-on-dist', 'clean-working-dir-on-dist', done);
+});
+gulp.task('dist-build', ['default']);
+
+var commit;
+gulp.task('add-and-commit-dist-to-master', function () {
+  var repo;
+  var index;
+  var oid;
+  Git.Repository.open('./dist')
+    .then(function(repoResult) {
+      repo = repoResult;
+      return repo.refreshIndex();
+    })
+    .then(function(indexResult) {
+      index = indexResult;
+      return index.addAll('.');
+    })
+    .then(function() {
+      //write files to index
+      return index.write();
+    })
+    .then(function() {
+      return index.writeTree();
+    })
+    .then(function(oidResult) {
+      oid = oidResult;
+      return Git.Reference.nameToId(repo, "HEAD");
+    })
+    .then(function(head) {
+      return repo.getCommit(head);
+    })
+    .then(function(parent) {
+      // var author = nodegit.Signature.create("Scott Chacon",
+      //   "schacon@gmail.com", 123456789, 60);
+      // var committer = nodegit.Signature.create("Scott A Chacon",
+      //   "scott@github.com", 987654321, 90);
+      var author = Git.Signature.default(repo);
+      var committer = Git.Signature.default(repo);
+      message = "Source saved from automatic build " + moment().format('MMMM DD, YYYY @ hh:mm:ss.SSS a');
+      return repo.createCommit("HEAD", author, committer, message, oid, [parent]);
+    })
+    .done(function(commitId) {
+      commit = commitId;
+      console.log("Created new commit", commit, "with message:");
+      console.log(message);
+    });
+});
+gulp.task('add-and-commit-src', function () {
+  var repo;
+  var index;
+  var oid;
+  Git.Repository.open('.')
+    .then(function(repoResult) {
+      repo = repoResult;
+      return repo.refreshIndex();
+    })
+    .then(function(indexResult) {
+      index = indexResult;
+      return index.addAll('.');
+    })
+    .then(function() {
+      //write files to index
+      return index.write();
+    })
+    .then(function() {
+      return index.writeTree();
+    })
+    .then(function(oidResult) {
+      oid = oidResult;
+      return Git.Reference.nameToId(repo, "HEAD");
+    })
+    .then(function(head) {
+      return repo.getCommit(head);
+    })
+    .then(function(parent) {
+      // var author = nodegit.Signature.create("Scott Chacon",
+      //   "schacon@gmail.com", 123456789, 60);
+      // var committer = nodegit.Signature.create("Scott A Chacon",
+      //   "scott@github.com", 987654321, 90);
+      var author = Git.Signature.default(repo);
+      var committer = Git.Signature.default(repo);
+      message = "Automatically built " + commit + " on master branch; src branch committed automatically via build script.");
+      return repo.createCommit("HEAD", author, committer, message, oid, [parent]);
+    })
+    .done(function(commitId) {
+      console.log("Created new commit", commitId, "with message:");
+      console.log(message);
+    });
+});
+
+gulp.task('push-dist-to-remote-master', function (done) {
+  git.push('origin', 'master', { cwd: './dist' }, function (err) {
+    if (err) throw err;
+    done();
+  });
+});
+
+gulp.task('push-src-to-remote-src', function (done) {
+  git.push('origin', 'src', { cwd: './' }, function (err) {
+    if (err) throw err;
+    done();
+  });
+});
+
+gulp.task('post-dist-build', function (done) {
+  runSequence('add-and-commit-dist-to-master', 'add-and-commit-src', 'push-src-to-remote-src', 'push-dist-to-remote-master', done);
+});
+gulp.task('deploy', gulpSequence(['pre-dist-build', 'dist-build', 'post-dist-build']));
 
 // Dev task
 gulp.task('dev', ['html', 'img', 'css', 'js', 'pdf', 'vendor', 'github', 'browserSync'], function() {
