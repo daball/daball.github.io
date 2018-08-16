@@ -485,33 +485,45 @@ gulp.task('add-and-commit-src', function (done) {
 });
 
 gulp.task('push-dist-to-remote-master', function (done) {
-  Git.Repository.open('./dist')
-    .then(function (repo) {
-      return repo.getRemote('origin');
-    })
-    .then(function (remote) {
-      return remote.push(['refs/heads/master:refs/heads/master']);
-    })
-    .then(function (err) {
-      if (err)
-        console.error("Push failed with", err);
-      done();
-    });
+  // Git.Repository.open('./dist')
+  //   .then(function (repo) {
+  //     return repo.getRemote('origin');
+  //   })
+  //   .then(function (remote) {
+  //     return remote.push(['refs/heads/master:refs/heads/master'], {
+  //
+  //     });
+  //   })
+  //   .done(function (e) {
+  //     if (e)
+  //       console.error("Push failed with", e);
+  //     done();
+  //   });
+  git.push('origin', 'master', { cwd: './dist' }, function (e) {
+    if (e)
+      console.error(e);
+    done();
+  });
 });
 
 gulp.task('push-src-to-remote-src', function (done) {
-  Git.Repository.open('.')
-    .then(function (repo) {
-      return repo.getRemote('origin');
-    })
-    .then(function (remote) {
-      return remote.push(['refs/heads/src:refs/heads/src']);
-    })
-    .then(function (err) {
-      if (err)
-        console.error("Push failed with", err);
-      done();
-    });
+  // Git.Repository.open('.')
+  //   .then(function (repo) {
+  //     return repo.getRemote('origin');
+  //   })
+  //   .then(function (remote) {
+  //     return remote.push(['refs/heads/src:refs/heads/src']);
+  //   })
+  //   .done(function (e) {
+  //     if (e)
+  //       console.error("Push failed with", e);
+  //     done();
+  //   });
+  git.push('origin', 'src', { cwd: './' }, function (e) {
+    if (e)
+      console.error(e);
+    done();
+  });
 });
 
 gulp.task('post-dist-build', function (done) {
