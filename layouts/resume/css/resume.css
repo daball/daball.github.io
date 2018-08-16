@@ -203,3 +203,8 @@ a:hover, a:focus, a:active {
   font-family: Tangerine, cursive;
   text-transform: none;
 }
+
+svg.github-corner {
+  fill: #007bff;
+  color: #fff;
+}

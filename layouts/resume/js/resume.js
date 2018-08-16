@@ -27,6 +27,7 @@
 
   // Activate tooltips
   $(function () {
+    $('a.github-corner').tooltip({ container: 'body' });
     $('[data-toggle="tooltip"]').tooltip();
   });
 
