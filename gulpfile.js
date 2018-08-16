@@ -447,7 +447,7 @@ gulp.task('add-and-commit-src', function () {
       //   "scott@github.com", 987654321, 90);
       var author = Git.Signature.default(repo);
       var committer = Git.Signature.default(repo);
-      message = "Automatically built " + commit + " on master branch; src branch committed automatically via build script.");
+      message = "Automatically built " + commit + " on master branch; src branch committed automatically via build script.";
       return repo.createCommit("HEAD", author, committer, message, oid, [parent]);
     })
     .done(function(commitId) {
@@ -473,7 +473,9 @@ gulp.task('push-src-to-remote-src', function (done) {
 gulp.task('post-dist-build', function (done) {
   runSequence('add-and-commit-dist-to-master', 'add-and-commit-src', 'push-src-to-remote-src', 'push-dist-to-remote-master', done);
 });
-gulp.task('deploy', gulpSequence(['pre-dist-build', 'dist-build', 'post-dist-build']));
+gulp.task('deploy', function(done) {
+  runSequence('pre-dist-build', 'dist-build', 'post-dist-build', done);
+});
 
 // Dev task
 gulp.task('dev', ['html', 'img', 'css', 'js', 'pdf', 'vendor', 'github', 'browserSync'], function() {
