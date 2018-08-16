@@ -493,6 +493,8 @@ gulp.task('push-dist-to-remote-master', function (done) {
       return remote.push(['refs/heads/master:refs/heads/master']);
     })
     .then(function (err) {
+      if (err)
+        console.err("Push failed with", err);
       done();
     })
 });
@@ -506,6 +508,8 @@ gulp.task('push-src-to-remote-src', function (done) {
       return remote.push(['refs/heads/src:refs/heads/src']);
     })
     .then(function (err) {
+      if (err)
+        console.err("Push failed with", err);
       done();
     })
 });
