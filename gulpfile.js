@@ -494,9 +494,9 @@ gulp.task('push-dist-to-remote-master', function (done) {
     })
     .then(function (err) {
       if (err)
-        console.err("Push failed with", err);
+        console.error("Push failed with", err);
       done();
-    })
+    });
 });
 
 gulp.task('push-src-to-remote-src', function (done) {
@@ -509,9 +509,9 @@ gulp.task('push-src-to-remote-src', function (done) {
     })
     .then(function (err) {
       if (err)
-        console.err("Push failed with", err);
+        console.error("Push failed with", err);
       done();
-    })
+    });
 });
 
 gulp.task('post-dist-build', function (done) {
