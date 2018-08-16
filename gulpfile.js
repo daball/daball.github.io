@@ -488,16 +488,14 @@ gulp.task('add-and-commit-src', function () {
 });
 
 gulp.task('push-dist-to-remote-master', function (done) {
-  git.push('origin', 'master', { cwd: './dist' }, function (err) {
+  return git.push('origin', 'master', { cwd: './dist' }, function (err) {
     if (err) throw err;
-    done();
   });
 });
 
 gulp.task('push-src-to-remote-src', function (done) {
-  git.push('origin', 'src', { cwd: './' }, function (err) {
+  return git.push('origin', 'src', { cwd: './' }, function (err) {
     if (err) throw err;
-    done();
   });
 });
 
