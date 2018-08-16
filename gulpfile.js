@@ -401,7 +401,7 @@ gulp.task('pre-dist-build', function (done) {
 gulp.task('dist-build', ['default']);
 
 var commit;
-gulp.task('add-and-commit-dist-to-master', function () {
+gulp.task('add-and-commit-dist-to-master', function (done) {
   var repo;
   var index;
   var oid;
@@ -438,13 +438,14 @@ gulp.task('add-and-commit-dist-to-master', function () {
       message = "Build saved automatically on " + moment().format('MMMM DD, YYYY @ hh:mm:ss.SSS a' + '.');
       return repo.createCommit("HEAD", author, committer, message, oid, [parent]);
     })
-    .done(function(commitId) {
+    .then(function(commitId) {
       commit = commitId;
       console.log("Created new commit", commit, "with message:");
       console.log(message);
+      done();
     });
 });
-gulp.task('add-and-commit-src', function () {
+gulp.task('add-and-commit-src', function (done) {
   var repo;
   var index;
   var oid;
@@ -476,9 +477,10 @@ gulp.task('add-and-commit-src', function () {
       message = "Source saved from automatic build " + moment().format('MMMM DD, YYYY @ hh:mm:ss.SSS a' + '.');
       return repo.createCommit("HEAD", author, committer, message, oid, [parent]);
     })
-    .done(function(commitId) {
+    .then(function(commitId) {
       console.log("Created new commit", commitId, "with message:");
       console.log(message);
+      done();
     });
 });
 
