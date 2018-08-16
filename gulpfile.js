@@ -344,15 +344,37 @@ gulp.task('clean', function () {
   return gulp.src('dist', { read: false })
     .pipe(clean());
 });
+gulp.task('fetch-remote-src', function (done) {
+  var repository;
+  Git.Repository.open(".")
+    .then(function(repo) {
+      repository = repo;
+      return repo.fetchAll("origin");
+    })
+    .then(function () {
+       return repository.mergeBranches("src", "origin/src");
+    })
+    .then(function () {
+      done();
+    });
+});
+gulp.task('fetch-remote-master', function (done) {
+  var repository;
+  Git.Repository.open(".")
+    .then(function(repo) {
+      repository = repo;
+      return repo.fetchAll("origin");
+    })
+    .then(function () {
+       return repository.mergeBranches("master", "origin/master");
+    })
+    .then(function () {
+      done();
+    });
+});
 gulp.task('fetch-remotes', function (done) {
-  Git.Repository.open("./dist")
-  .then(function(repo) {
-    repo.fetchAll("origin")
-      .then(function () {
-        done();
-      });
-  });
-})
+  runSequence('fetch-remote-master', 'fetch-remote-src', done);
+});
 gulp.task('clone-src-repo-to-dist', function () {
   return gulp.src(['.git/**/*'])
     .pipe(gulp.dest('./dist/.git'));
