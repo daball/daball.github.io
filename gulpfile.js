@@ -487,31 +487,27 @@ gulp.task('add-and-commit-src', function (done) {
 gulp.task('push-dist-to-remote-master', function (done) {
   Git.Repository.open('./dist')
     .then(function (repo) {
-      repo.getRemote('origin').then(function (remote) {
-        remote.push(['refs/heads/master:refs/heads/master']).then(function (err) {
-          done();
-        });
-      })
-    });
-  // git.push('origin', 'master', { cwd: './dist' }, function (err) {
-  //   if (err) throw err;
-  //   done();
-  // });
+      return repo.getRemote('origin');
+    })
+    .then(function (remote) {
+      return remote.push(['refs/heads/master:refs/heads/master']);
+    })
+    .then(function (err) {
+      done();
+    })
 });
 
 gulp.task('push-src-to-remote-src', function (done) {
   Git.Repository.open('.')
     .then(function (repo) {
-      repo.getRemote('origin').then(function (remote) {
-        remote.push(['refs/heads/src:refs/heads/src']).then(function (err) {
-          done();
-        });
-      })
-    });
-  // git.push('origin', 'src', { cwd: './' }, function (err) {
-  //   if (err) throw err;
-  //   done();
-  // });
+      return repo.getRemote('origin');
+    })
+    .then(function (remote) {
+      return remote.push(['refs/heads/src:refs/heads/src']);
+    })
+    .then(function (err) {
+      done();
+    })
 });
 
 gulp.task('post-dist-build', function (done) {
