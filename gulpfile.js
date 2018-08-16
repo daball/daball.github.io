@@ -435,7 +435,7 @@ gulp.task('add-and-commit-dist-to-master', function () {
       //   "scott@github.com", 987654321, 90);
       var author = Git.Signature.default(repo);
       var committer = Git.Signature.default(repo);
-      message = "Source saved from automatic build " + moment().format('MMMM DD, YYYY @ hh:mm:ss.SSS a');
+      message = "Build saved automatically on " + moment().format('MMMM DD, YYYY @ hh:mm:ss.SSS a' + '.');
       return repo.createCommit("HEAD", author, committer, message, oid, [parent]);
     })
     .done(function(commitId) {
@@ -478,7 +478,7 @@ gulp.task('add-and-commit-src', function () {
       //   "scott@github.com", 987654321, 90);
       var author = Git.Signature.default(repo);
       var committer = Git.Signature.default(repo);
-      message = "Automatically built " + commit + " on master branch; src branch committed automatically via build script.";
+      message = "Source saved from automatic build " + moment().format('MMMM DD, YYYY @ hh:mm:ss.SSS a' + '.');
       return repo.createCommit("HEAD", author, committer, message, oid, [parent]);
     })
     .done(function(commitId) {

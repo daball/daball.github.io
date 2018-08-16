@@ -17,7 +17,7 @@
     border: none;
   }
   .container {
-    
+
   }
 }
 
@@ -49,4 +49,9 @@ width: 100% !important;
 .qotd blockquote, .qotd h2 {
   font-family: Tangerine, cursive;
   text-transform: none;
+}
+
+svg.github-corner {
+  fill: $primary;
+  color: #fff;
 }

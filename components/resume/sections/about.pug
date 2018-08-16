@@ -15,9 +15,9 @@ section#about.resume-section.p-3.p-lg-5.d-flex.d-column
       - var parts = [];
       - my.addressLines.map((addressLine) => parts.push(addressLine))
       =parts.join(' · ')+(my.phoneNumber||my.emailAddress?' · ':'')
-      a(href='tel:' + my.phoneNumber)=my.phoneNumber
+      a(href='tel:' + my.phoneNumber, title="Call or text me.", data-toggle="tooltip", data-placement="bottom")=my.phoneNumber
       =(my.phoneNumber && my.emailAddress)?' · ':''
-      a(href='mailto:' + my.emailAddress)=my.emailAddress
+      a(href='mailto:' + my.emailAddress, title="Send me an email.", data-toggle="tooltip", data-placement="bottom")=my.emailAddress
     - var alerts = resume.sections.about.alerts
     if alerts
       include /components/resume/parts/alerts.pug
