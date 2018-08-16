@@ -205,6 +205,11 @@ a:hover, a:focus, a:active {
 }
 
 svg.github-corner {
-  fill: #007bff;
+  fill: #343a40;
   color: #fff;
+  z-index: 100000;
+}
+
+a:hover svg.github-corner {
+  fill: #007bff;
 }
