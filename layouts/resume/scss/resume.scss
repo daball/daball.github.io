@@ -52,6 +52,11 @@ width: 100% !important;
 }
 
 svg.github-corner {
+  fill: $dark;
+  color: $white;
+  z-index: 100000;
+}
+
+a:hover svg.github-corner {
   fill: $primary;
-  color: #fff;
 }

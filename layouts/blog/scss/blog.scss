@@ -1,6 +1,7 @@
 // Core variables and mixins
 @import "variables.scss";
 @import "mixins.scss";
+@import "global.scss";
 @import "bootstrap";
 @import "bootswatch.scss";
 // Components
@@ -16,7 +17,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .navbar {
-  @include heading-font;
+  @include body-font;
+  font-weight: 600;
   font-size: 1.25em;
   text-transform: uppercase;
 }
@@ -29,4 +31,14 @@ h1, h2, h3, h4, h5, h6 {
 
 .card {
   margin-bottom: 10px;
+}
+
+svg.github-corner {
+  fill: $dark;
+  color: $white;
+  z-index: 100000;
+}
+
+a:hover svg.github-corner {
+  fill: $primary;
 }
