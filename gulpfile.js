@@ -344,6 +344,15 @@ gulp.task('clean', function () {
   return gulp.src('dist', { read: false })
     .pipe(clean());
 });
+gulp.task('fetch-remotes', function (done) {
+  Git.Repository.open("./dist")
+  .then(function(repo) {
+    repo.fetchAll("origin")
+      .then(function () {
+        done();
+      });
+  });
+})
 gulp.task('clone-src-repo-to-dist', function () {
   return gulp.src(['.git/**/*'])
     .pipe(gulp.dest('./dist/.git'));
@@ -365,7 +374,7 @@ gulp.task('clean-working-dir-on-dist', function () {
     .pipe(clean({force:true}));
 });
 gulp.task('pre-dist-build', function (done) {
-  runSequence('clean', 'clone-src-repo-to-dist', 'checkout-remote-master-on-dist', 'clean-working-dir-on-dist', done);
+  runSequence('fetch-remotes', 'clean', 'clone-src-repo-to-dist', 'checkout-remote-master-on-dist', 'clean-working-dir-on-dist', done);
 });
 gulp.task('dist-build', ['default']);
 
