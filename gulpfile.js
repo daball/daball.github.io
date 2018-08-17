@@ -306,12 +306,19 @@ gulp.task('img:copy', function() {
 gulp.task('pdf:resume:compile', /*['pdf:resume:ttf:fetch'],*/ function () {
   var generatePdf = require('./components/resume/print/generate-pdf-2');
   var stream = source('resume.pdf');
-  generatePdf(stream, models);
+  generatePdf(stream, models['resume']);
   return stream.pipe(rename('resume.pdf')).pipe(gulp.dest('./dist/pdf/'));
 });
 
+gulp.task('pdf:resume-callcenter:compile', /*['pdf:resume:ttf:fetch'],*/ function () {
+  var generatePdf = require('./components/resume/print/generate-pdf-2');
+  var stream = source('resume-callcenter.pdf');
+  generatePdf(stream, models['resume-callcenter']);
+  return stream.pipe(rename('resume-callcenter.pdf')).pipe(gulp.dest('./dist/pdf/'));
+});
+
 // pdf
-gulp.task('pdf', ['pdf:resume:compile']);
+gulp.task('pdf', ['pdf:resume:compile', 'pdf:resume-callcenter:compile']);
 
 // pdf
 gulp.task('github', function () {

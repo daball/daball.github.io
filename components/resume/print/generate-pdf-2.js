@@ -112,9 +112,8 @@ function objective(my) {
 	return p(decode(my.objective), H4);
 }
 
-function generatePdf(stream, models) {
+function generatePdf(stream, resume) {
 	var all_styles = styles();
-	var resume = models.resume;
 	var my = resume.sections.about.me;
 	var my_name = { text: name(my), width: 1.6 * INCH };
 	var my_address = { text: address(my), margin: [ 0, 0.235 * INCH, 0, 0 ], alignment: 'justify' };
