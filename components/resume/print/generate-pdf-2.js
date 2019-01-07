@@ -48,7 +48,7 @@ function style(font, fontSize, bold) {
 function styles() {
 	var s = {};
 	s[NAME] = style(SAIRA_EXTRA_CONDENSED_EXTRABOLD, 26, true);
-	s[ADDRESS] = style(SAIRA_EXTRA_CONDENSED_EXTRABOLD, 11.2, true);
+	s[ADDRESS] = style(SAIRA_EXTRA_CONDENSED_EXTRABOLD, 13.6, true);
 	s[BODY] = style(MERRIWEATHER, 12, false);
 	s[H1] = style(SAIRA_EXTRA_CONDENSED_EXTRABOLD, 12, true);
 	s[H1].decoration = 'underline';

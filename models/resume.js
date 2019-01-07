@@ -16,7 +16,7 @@ module.exports = {
       "closer": "Let's build something great together!",
       "me": {
         "displayName": "David A. Ball",
-        "addressLines": ["50 Ball Drive", "Cleveland, Virginia"],
+        "addressLines": ["50 Ball Drive", "Cleveland, Virginia 24225"],
         "phoneNumber": "+12762543692",
         "emailAddress": "david@daball.me",
         "url": "www.daball.me",
