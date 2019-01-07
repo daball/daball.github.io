@@ -23,7 +23,7 @@ module.exports = {
       "name": "About",
       "me": {
         "displayName": "David A. Ball",
-        "addressLines": ["1222 Seminole Drive", "Apartment 18", "Johnson City, Tennessee"],
+        "addressLines": ["50 Ball Drive", "Cleveland, Virginia"],
         "phoneNumber": "+12762543692",
         "emailAddress": "david@daball.me",
         "socialMedia": [
