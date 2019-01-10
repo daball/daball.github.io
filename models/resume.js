@@ -17,7 +17,7 @@ module.exports = {
       "me": {
         "displayName": "David A. Ball",
         "addressLines": ["50 Ball Drive", "Cleveland, Virginia 24225"],
-        "phoneNumber": "+12762543692",
+        "phoneNumber": "+12762107356",
         "emailAddress": "david@daball.me",
         "url": "www.daball.me",
         // "objective": "Deliver state-of-the-art native and web apps using the latest tech stacks.",
