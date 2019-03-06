@@ -34,6 +34,18 @@ section#experience.resume-section.p-3.p-lg-5.d-flex.flex-column
               if job.bullets
                 each bullet in job.bullets
                   p!=bullet
+              if job.appStoreUrl
+                p.mb-0
+                  a.btn.btn-danger(href=job.appStoreUrl)
+                    | Available in the Apple App Store
+                    | 
+                    i.devicons.devicon-apple-plain
+              if job.playStoreUrl
+                p.mb-0
+                  a.btn.btn-success(href=job.playStoreUrl)
+                    | Available in the Google Play Store
+                    | 
+                    i.devicons.devicon-android-plain
               if job.githubRepoUrl
                 p.mb-0
                   a.btn.btn-success(href=job.githubRepoUrl)

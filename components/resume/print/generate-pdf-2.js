@@ -132,7 +132,7 @@ function generatePdf(stream, resume) {
 	if (history.length > 0) {
 		var experience_h1 = { text: p(decode(experience.title).toUpperCase(), H1), width: 1 * INCH };
 		content.push(experience_h1);
-		for (var j = 0; j < history.length; j++) {
+		for (var j = 0; j < history.length && j < 5; j++) {
 			var job = history[j];
 			if (job.featured) {
 				var job_title = p(decode(job.title).toUpperCase(), H2);

@@ -109,6 +109,20 @@ gulp.task('vendor', function() {
     ])
     .pipe(gulp.dest('./dist/vendor/devicons'))
 
+  // Devicon
+  gulp.src([
+    './node_modules/devicon-2.2/icons/**/*'
+  ])
+  .pipe(gulp.dest('./dist/vendor/devicon/icons'))
+  gulp.src([
+    './node_modules/devicon-2.2/fonts/**/*'
+  ])
+  .pipe(gulp.dest('./dist/vendor/devicon/fonts'))
+  gulp.src([
+    './node_modules/devicon-2.2/*.css'
+  ])
+  .pipe(gulp.dest('./dist/vendor/devicon'))
+
   // Font Awesome
   gulp.src([
       './node_modules/font-awesome/**/*',

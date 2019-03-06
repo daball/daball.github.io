@@ -63,6 +63,29 @@ module.exports = {
       "history": [
         {
           "featured": true,
+          "title": "Mobile App Developer",
+          "project": "Cash Count Calculator",
+          "company": "Self-Employed",
+          "location": "Lebanon, Virginia",
+          // "gitlabRepoUrl": "https://gitlab.com/daball/cash-count-calculator",
+          "playStoreUrl": "https://play.google.com/store/apps/details?id=me.daball.cashcountcalculator",
+          // "appStoreUrl": "",
+          "devicons": [
+            { "title": "Android", "icon": "devicon-android-plain" },
+            { "title": "iOS", "icon": "devicon-apple-original" },
+            { "title": "React", "icon": "devicon-react-original" },
+            { "title": "BABEL", "icon": "devicon-babel-plain" },
+            { "title": "Git", "icon": "devicon-git-plain" },
+            { "title": "GitLab", "icon": "devicon-gitlab-plain" },
+          ],
+          "dates": "March 2019 &mdash; Present",
+          "bullets": [
+            "This app is perfect for cashiers needing to count their cash till for their register or POS or anyone who would like a methodical way of counting money.",            
+            "Simple, fast, effective. From wallets to cash registers, Cash Count Calculator makes counting money easy."
+          ]
+        },
+        {
+          "featured": true,
           "title": "Project Manager &amp; Developer Lead",
           "project": "Rowdy Red's Java Adventure Game (Team Project)",
           "githubRepoUrl": "https://github.com/daball/rowdy-reds-java-adventure-game",
