@@ -306,11 +306,11 @@ gulp.task('html:pages:compile', function() {
 // html
 gulp.task('html', ['html:pages:compile', 'html:blog:index:generate', 'html:blog:posts:generate']);
 
-gulp.task('img:copy', function() {
+gulp.task('assets:copy', function() {
   return gulp.src([
-      './layouts/resume/img/*'
+      './assets/**/*'
     ])
-    .pipe(gulp.dest('./dist/layouts/resume/img/'));
+    .pipe(gulp.dest('./dist/'));
 });
 
 // gulp.task('pdf:resume:ttf:fetch', function () {
@@ -340,14 +340,14 @@ gulp.task('github', function () {
     .pipe(gulp.dest('./dist'));
 });
 
-// img
-gulp.task('img', ['img:copy']);
+// assets
+gulp.task('assets', ['assets:copy']);
 
 // JS
 gulp.task('js', ['js:minify']);
 
 // Default task
-gulp.task('default', ['html', 'img', 'css', 'js', 'pdf', 'vendor', 'github'], function (done) {
+gulp.task('default', ['html', 'assets', 'css', 'js', 'pdf', 'vendor', 'github'], function (done) {
   done();
 });
 
@@ -555,9 +555,9 @@ gulp.task('deploy', function(done) {
 });
 
 // Dev task
-gulp.task('dev', ['html', 'img', 'css', 'js', 'pdf', 'vendor', 'github', 'browserSync'], function() {
+gulp.task('dev', ['html', 'assets', 'css', 'js', 'pdf', 'vendor', 'github', 'browserSync'], function() {
   gulp.watch('./scss/*.scss', ['css']);
   gulp.watch('./js/*.js', ['js']);
-  gulp.watch('./img/*', ['img']);
+  gulp.watch('./assets/*', ['assets']);
   gulp.watch('./**/*.pug', ['html', browserSync.reload]);
 });

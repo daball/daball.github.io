@@ -1,0 +1,36 @@
+extends /layouts/blog/theme.pug
+
+block head
+  title Cash Count Calculator - Privacy Policy - David A. Ball
+
+block body
+  .navbar.navbar-expand-lg.fixed-top.navbar-dark.bg-primary
+    .container
+      a.navbar-brand(href='/') David A. Ball
+
+  .container
+    .card
+      .card-body
+        img.cover-image(src='/img/cash-count-calculator/featured.png')
+
+    .card
+      .card-body
+        h1 Cash Count Calculator
+        p This app is perfect for cashiers needing to count their cash till for their register or POS or anyone who would like a methodical way of counting money.
+        h2 Counting Money Made Easy!
+        p Simply count the number of bills, coins, and coin rolls for each denomination, fill in the amounts, and Cash Count Calculator does the counting for you as you type.
+        h2 Save Time And Improve Your Accuracy!
+        p $5, $10, $15, $20, $25, $30, $35, oops, I actually counted the total instead of the number of bills. Not a problem. You can edit the totals as well as the counts. Invalid totals for a denomination will show up in red and won't count toward the Grand Total unless corrected.
+        h2 Count Money Like A Pro!
+        p Simple, fast, effective. From wallets to cash registers, Cash Count Calculator makes counting money easy.
+
+    .card
+      .card-body
+        include /components/adsense/responsive.pug
+
+    .card
+      .card-body
+        a.btn.btn-success(href="https://play.google.com/store/apps/details?id=me.daball.cashcountcalculator")
+          | Available in the Google Play Store
+          | 
+          i.devicons.devicon-android-plain

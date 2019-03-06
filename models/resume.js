@@ -7,7 +7,7 @@ module.exports = {
   },
   "nav": {
     "logo": "David A. Ball",
-    "profilePic": "/layouts/resume/img/profile.jpg"
+    "profilePic": "/img/profile.jpg"
   },
   "sections": {
     "about": {
@@ -67,8 +67,9 @@ module.exports = {
           "project": "Cash Count Calculator",
           "company": "Self-Employed",
           "location": "Lebanon, Virginia",
+          "learnMoreUrl": "/cash-count-calculator/",
           // "gitlabRepoUrl": "https://gitlab.com/daball/cash-count-calculator",
-          "playStoreUrl": "https://play.google.com/store/apps/details?id=me.daball.cashcountcalculator",
+          // "playStoreUrl": "https://play.google.com/store/apps/details?id=me.daball.cashcountcalculator",
           // "appStoreUrl": "",
           "devicons": [
             { "title": "Android", "icon": "devicon-android-plain" },

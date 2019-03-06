@@ -34,6 +34,12 @@ section#experience.resume-section.p-3.p-lg-5.d-flex.flex-column
               if job.bullets
                 each bullet in job.bullets
                   p!=bullet
+              if job.learnMoreUrl
+                p.mb-0
+                  a.btn.btn-primary(href=job.learnMoreUrl)
+                    | Learn More
+                    | 
+                    i.fa.fa-external-link
               if job.appStoreUrl
                 p.mb-0
                   a.btn.btn-danger(href=job.appStoreUrl)

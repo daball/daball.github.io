@@ -28,6 +28,15 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: bold;
 }
 
+.btn {
+  @include heading-font;
+  font-size: 1.35rem;
+}
+
+.btn .devicon {
+  font-size: 3rem;
+}
+
 .card {
   margin-bottom: 10px;
 }
@@ -40,4 +49,12 @@ svg.github-corner {
 
 a:hover svg.github-corner {
   fill: $primary;
+}
+
+.center { 
+  text-align: center;
+}
+
+.cover-image {
+  width: 100%;
 }
