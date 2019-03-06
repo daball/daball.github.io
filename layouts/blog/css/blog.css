@@ -8748,6 +8748,15 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: bold;
 }
 
+.btn {
+  font-family: 'Saira Extra Condensed', serif;
+  font-size: 1.35rem;
+}
+
+.btn .devicon {
+  font-size: 3rem;
+}
+
 .card {
   margin-bottom: 10px;
 }
@@ -8760,4 +8769,12 @@ svg.github-corner {
 
 a:hover svg.github-corner {
   fill: #007bff;
+}
+
+.center {
+  text-align: center;
+}
+
+.cover-image {
+  width: 100%;
 }
