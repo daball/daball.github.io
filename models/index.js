@@ -3,5 +3,6 @@ module.exports = {
   blog: require('./blog'),
   resume: require('./resume'),
   'resume-callcenter': require('./resume-callcenter'),
-  links: require('./links')
+  links: require('./links'),
+  ccc: require('./ccc')
 }

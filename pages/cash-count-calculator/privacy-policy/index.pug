@@ -1,12 +1,10 @@
 extends /layouts/blog/theme.pug
 
 block head
-  title Privacy Policy - Cash Count Calculator - David A. Ball
+  title Privacy Policy - Cash Count Calculator
 
 block body
-  .navbar.navbar-expand-lg.fixed-top.navbar-dark.bg-primary
-    .container
-      a.navbar-brand(href='/') David A. Ball
+  include /components/cash-count-calculator/nav.pug
 
   .container
     .card
@@ -152,3 +150,5 @@ block body
           | Cleveland, VA 24225
           br
           | United States
+
+    include /components/cash-count-calculator/footer.pug

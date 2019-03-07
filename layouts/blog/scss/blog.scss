@@ -58,3 +58,19 @@ a:hover svg.github-corner {
 .cover-image {
   width: 100%;
 }
+
+ul.footer-menu li {
+  padding: 0;
+}
+
+ul.footer-menu li {
+  display: inline;
+  list-style-type: none;
+  margin: 2px;
+  padding: 0px;
+}
+
+ul.footer-menu li + li:before{
+  content: " | ";
+  padding: 0 2px;
+}

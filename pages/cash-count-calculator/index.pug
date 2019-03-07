@@ -1,17 +1,16 @@
 extends /layouts/blog/theme.pug
 
 block head
-  title Cash Count Calculator - David A. Ball
+  title Cash Count Calculator
 
 block body
-  .navbar.navbar-expand-lg.fixed-top.navbar-dark.bg-primary
-    .container
-      a.navbar-brand(href='/') David A. Ball
-
+  include /components/cash-count-calculator/nav.pug
+  
   .container
-    .card
-      .card-body
-        img.cover-image(src='/img/cash-count-calculator/featured.png')
+    if ccc.featuredImageUrl
+      .card
+        .card-body.center
+          img.cover-image(src=ccc.featuredImageUrl)
 
     .card
       .card-body
@@ -25,12 +24,23 @@ block body
         p Simple, fast, effective. From wallets to cash registers, Cash Count Calculator makes counting money easy.
 
     .card
-      .card-body
+      .card-body.center
         include /components/adsense/responsive.pug
 
-    .card
-      .card-body
-        a.btn.btn-success(href="https://play.google.com/store/apps/details?id=me.daball.cashcountcalculator")
-          | Available in the Google Play Store
-          | 
-          i.devicons.devicon-android-plain
+    if ccc.appStoreUrl || ccc.playStoreUrl
+      .card
+        .card-body.center
+          h1 Download Now
+          .btn-group
+            if ccc.appStoreUrl
+              a.btn.btn-danger(href=ccc.appStoreUrl)
+                | Available in the Apple App Store
+                | 
+                i.devicons.devicon-apple-plain
+            if ccc.playStoreUrl
+              a.btn.btn-success(href=ccc.playStoreUrl)
+                | Available in the Google Play Store
+                | 
+                i.devicons.devicon-android-plain
+                   
+    include /components/cash-count-calculator/footer.pug
