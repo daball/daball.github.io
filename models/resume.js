@@ -63,10 +63,10 @@ module.exports = {
       "history": [
         {
           "featured": true,
-          "title": "Mobile App Developer",
+          "title": "Freelance App Developer",
           "project": "Cash Count Calculator",
-          "company": "Self-Employed",
-          "location": "Lebanon, Virginia",
+          // "company": "",
+          "location": "Cleveland, Virginia",
           "learnMoreUrl": "/cash-count-calculator/",
           // "gitlabRepoUrl": "https://gitlab.com/daball/cash-count-calculator",
           // "playStoreUrl": "https://play.google.com/store/apps/details?id=me.daball.cashcountcalculator",
@@ -84,6 +84,26 @@ module.exports = {
             "This app is perfect for cashiers needing to count their cash till for their register or POS or anyone who would like a methodical way of counting money.",            
             "Simple, fast, effective. From wallets to cash registers, Cash Count Calculator makes counting money easy."
           ]
+        },
+        {
+          "featured": true,
+          "title": "Freelance Web Developer",
+          "project": "HASOLAR.CO",
+          "company": "H.A. Solar Consulting",
+          "location": "Aurora, Colorado",
+          "learnMoreUrl": "https://www.hasolar.co",
+          // "gitlabRepoUrl": "https://gitlab.com/daball/cash-count-calculator",
+          // "playStoreUrl": "https://play.google.com/store/apps/details?id=me.daball.cashcountcalculator",
+          // "appStoreUrl": "",
+          "devicons": [
+            { "title": "Android", "icon": "devicon-android-plain" },
+            { "title": "iOS", "icon": "devicon-apple-original" },
+            { "title": "Ghost", "icon": "devicons-ghost_small" },
+            { "title": "HTML5", "icon": "devicons-html5" },
+            { "title": "Git", "icon": "devicon-git-plain" },
+            { "title": "GitLab", "icon": "devicon-gitlab-plain" },
+          ],
+          "dates": "February 2019 &mdash; Present"
         },
         {
           "featured": true,
@@ -115,14 +135,16 @@ module.exports = {
         {
           "featured": true,
           "title": "Contract Service Desk Analyst I",
-          "company": "VITA / Northrop Grumman / DatamanUSA",
+          "project": "VITA Project",
+          "company": "Northrop Grumman via DatamanUSA",
           "location": "Lebanon, Virginia",
           "dates": "3 February 2014 &mdash; 8 July 2014"
         },
         {
           "featured": true,
           "title": "Contract Lead Technician",
-          "company": "Best Buy / The Go2IT Group",
+          "project": "IBM Technology Refresh Project",
+          "company": "Best Buy via The Go2IT Group",
           "location": "Johnson City, Tennessee",
           "dates": "12 October 2011",
           "bullets": [
