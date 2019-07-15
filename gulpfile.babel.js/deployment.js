@@ -48,7 +48,6 @@ function checkoutMasterOnDist(cb) {
             .then(function (reference) {
                 repository.checkoutRef(reference)
                 .then(function () {
-                    done();
                     cb();
                 });
             });
@@ -104,7 +103,6 @@ function addAndCommitDistToMaster(cb) {
             commit = commitId;
             console.log("Created new commit", commit, "with message:");
             console.log(message);
-            done();
             cb();
         });
 }
