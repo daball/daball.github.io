@@ -7,6 +7,9 @@ block root
           // Resume theme evolved from startbootstrap-resume-gh-pages
           meta(charset='utf-8')
           meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
+          <!--[if lt IE 9]>
+          <script language="javascript" type="text/javascript" src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+          <![endif]-->
           block head
           block css
             // Bootstrap core CSS
@@ -19,8 +22,14 @@ block root
             link(href='/vendor/devicons/css/devicons.min.css', rel='stylesheet')
             link(href='/vendor/devicon/devicon.min.css', rel='stylesheet')
             link(href='/vendor/simple-line-icons/css/simple-line-icons.css', rel='stylesheet')
+            link(href='/fontello-6cd9445d/css/fontello-embedded.css', rel='stylesheet')
+            <!--[if IE 7]>
+            <link rel="stylesheet" href="/fontello-6cd9445d/css/fontello-ie7.css">
+            <![endif]-->
             // Custom styles for this template
             link(href='/layouts/resume/css/resume.min.css', rel='stylesheet')
+            style(type='text/css').
+              .list-social-icons [class*=" devicon-"],.list-social-icons [class^=devicon-],.list-social-icons .devicons { line-height: inherit !important; }
             if site.githubRepo
               style(type='text/css').
                 .github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}
