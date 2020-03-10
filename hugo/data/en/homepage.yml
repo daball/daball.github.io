@@ -1,0 +1,319 @@
+########################## hero area ##########################
+hero:
+  title : "I'm David A. Ball"
+
+  # animated text loop
+  occupations:
+    - "Web Developer"
+    - "Android Developer"
+    - "iOS Developer"
+    - "Windows Developer"
+    - "Mac Developer"
+    - "Linux Developer"
+    - "Database Developer"
+    - "Test Developer"
+    - "Software Tester"
+    - "Cybersecurity Analyst"
+    - "Pen Tester"
+    - "Script Developer"
+    - "Shell Programmer"
+    - "Software Engineer"
+    - "Project Manager"
+    - "Database Manager"
+    - "Server Admin"
+    - "Docker DevOps Developer"
+    - "Support Technician"
+    - "Network Admin"
+    - "Active Directory Administrator"
+    - "Desktop Technician"
+    - "Data Analyst"
+    - "Document Developer"
+    - "Copywriter"
+    - "Freelancer"
+    - "C++ Programmer"
+    - "C# Programmer"
+    - ".NET Programmer"
+    - "Java Programmer"
+    - "JS Programmer"
+    - "SQL Programmer"
+    - "SwiftUI Programmer"
+    - "TypeScript Programmer"
+    - "Late Night Problem Solver"
+    - "Academic Enthusiast"
+    - "Lifelong Learner"
+    - "Philosopher"
+    - "Microsoft Enthusiast"
+    - "Mac Fanatic"
+    - "Linux Liberalist"
+    - "Xbox One Gamer"
+    - "Chef"
+    - "Entrepreneur"
+    - "DJ"
+    - "Investor"
+    - "Volunteer"
+    # - "Generally Awesome"
+    # - "Specifically Curious"
+    # - "One Of A Kind"
+
+  # slider background image loop
+  slider_image:
+    - "images/slider/hero-slider-1.jpg"
+    - "images/slider/hero-slider-2.jpg"
+    - "images/slider/hero-slider-3.jpg"
+    - "images/slider/hero-slider-4.jpg"
+    - "images/slider/hero-slider-5.jpg"
+    - "images/slider/hero-slider-6.jpg"
+
+  # button
+  button:
+    enable : true
+    label : "TELL ME MORE"
+    link : "#about"
+  
+  logo:
+    enable: true
+    label: "<DABALL/>"
+
+
+####################### Full screen navigation #####################
+fullscreen_nav:
+  enable : true
+  # bg_image : "images/backgrounds/full-nav-bg.jpg"
+  bg_image : "images/backgrounds/portrait-2.jpg"
+  first_name : "daball.me"
+  last_name : "David A. Ball"
+  
+
+########################### About ##################################
+about:
+  enable : true
+  image : "images/backgrounds/portrait-1.jpg"
+  title : "A LITTLE BIT<br />ABOUT MYSELF"
+  content : "I'm David, a professional software engineer, analyst, developer, and programmer. I love to write code."
+  # button
+  button:
+    enable : true
+    label : "MY RESUME"
+    link : "/resume/" # you can put your cv in static folder and give the path here.
+
+############################ Experience ##############################
+experience:
+  enable : true
+  title : "I'VE DONE A FEW THINGS"
+  experience_list:
+    # experience item loop
+    - name : "Freelance Developer"
+      #company : "Fiverr.com"
+      duration : "2019-2020"
+      content : "I produced a web site, documents, and marketing materials for a H. A. Solar Consulting, developed the Cash Count Calculator mobile app, and made improvements on my own web site, while exploring many other potential projects."
+      
+    # experience item loop
+    - name : "Project Manager & Developer Lead"
+      project : "Rowdy Red's Java Adventure Game Team Project"
+      company : "Radford University"
+      duration : "2015"
+      content : "Utilizing an agile XP approach, developed a PHP-Java-JavaScript 3-tier application across 4 sprints."
+      # content : "Graphic design is art with a purpose. I love illustration, so logo desing is my favorite work. But i can do many things with graphics."
+      
+    # experience item loop
+    - name : "Service Desk Analyst"
+      project : "VITA Project"
+      company : "Northrop Grumman"
+      duration : "2014"
+      content : "Utilizing a modern ITIL approach, answered incoming calls and emails, routing tech support tickets supporting 92 Commonwealth of Virginia state agencies."
+      # content : "Database management is among the fundamental processes in the software field of computing. I know MS Access very well."
+
+    # experience item loop
+    - name : "Lead Technician"
+      project : "Best Buy IBM Technology Refresh Project"
+      company : "The Go2IT Group"
+      duration : "2011"
+      content : "Completed IBM point-of-sale and kiosk technology refresh upgrades."
+
+    # experience item loop
+    - name : "Project Manager & Developer Lead"
+      project : "Cooking to Goal App Team Project"
+      company : "Radford University"
+      duration : "2011"
+      content : "Demonstrated SDLC waterfall project management model on a Java MVC GUI app."
+      # content : "Graphic design is art with a purpose. I love illustration, so logo desing is my favorite work. But i can do many things with graphics."
+
+############################### Skill #################################
+skill:
+  enable : true
+  # title : "MASTER IN CLASS"
+  title : "WHAT WE'RE ALL ABOUT"
+  skill_list:
+    # skill item loop
+    - name : "LUCK"
+      parcentage: "10%"
+    # skill item loop
+    - name : "SKILL"
+      parcentage: "20%"
+    # skill item loop
+    - name : "CONCENTRATED POWER OF WILL"
+      parcentage: "15%"
+    # skill item loop
+    - name : "PLEASURE"
+      parcentage: "5%"
+    # skill item loop
+    - name : "PAIN"
+      parcentage: "50%"
+    # skill item loop
+    - name : "REASON TO REMEMBER THE NAME"
+      parcentage: "100%"
+      # # skill item loop
+    # - name : "AWESOME"
+    #   parcentage : "115%"
+
+    #   # skill item loop
+    # - name : "HOSTAGE NEGOTIATIONS"
+    #   parcentage : "75%"
+
+    # # skill item loop
+    # - name : "BLESSED TO IMPRESS"
+    #   parcentage : "90%"
+      
+    # # skill item loop
+    # - name : "POSSESS FINESSE"
+    #   parcentage : "70%"
+      
+    # # skill item loop
+    # - name : "ARTISTRY"
+    #   parcentage : "90%"
+
+    # # skill item loop
+    # - name : "GENIUS"
+    #   parcentage : "95%"
+
+    #   # skill item loop
+    # # - name : "Pen Testing"
+    # #   parcentage : "20%"
+
+
+################################### Service ##############################3
+service:
+  enable : false
+  title : "SERVICES"
+  service_list:
+    # service item loop
+    - name : "Web Development"
+      image : "images/icons/web-development.png"
+      
+    # service item loop
+    - name : "Graphic Design"
+      image : "images/icons/graphic-design.png"
+      
+    # service item loop
+    - name : "Database Management"
+      image : "images/icons/dbms.png"
+      
+    # service item loop
+    - name : "Software Development"
+      image : "images/icons/software-development.png"
+      
+    # service item loop
+    - name : "Digital Marketing"
+      image : "images/icons/marketing.png"
+      
+    # service item loop
+    - name : "Mobile App Development"
+      image : "images/icons/mobile-app.png"
+
+
+############################## call to action #########################
+# call_to_action:
+#   enable : true
+#   bg_image : "images/backgrounds/need-service.jpg"
+#   title : "NEED A SERVICE?"
+#   button:
+#     enable : true
+#     label : "SAY HELLO!"
+#     link : "#contact"
+
+
+############################# portfolio ################################
+portfolio:
+  enable : true
+  title : "PORTFOLIO"
+  portfolio_list:
+    # portfolio item loop
+    - name : "Note Perfect"
+      image : "images/portfolio/noteperfect-daball-me.jpg"
+      url: "http://noteperfect.daball.me/"
+      date : "February 2019"
+      category : "Web"
+    # portfolio item loop
+    - name : "Cash Count Calculator"
+      image : "images/portfolio/ccc-daball-me.jpg"
+      url: "https://www.daball.me/cash-count-calculator/"
+      date : "February 2019"
+      category : "Mobile"
+    # portfolio item loop
+    - name : "H. A. Solar Consulting"
+      image : "images/portfolio/hasolar-co.png"
+      url: "https://hasolar.co/"
+      date : "February 2019"
+      category : "Web"
+    # portfolio item loop
+    - name : "Microsoft Project to Google Calendar"
+      image : "images/portfolio/project-to-calendar.png"
+      url: "https://www.daball.me/Microsoft-Project-to-Google-Calendar/"
+      date : "April 2011"
+      category : "Windows"
+
+
+################################# Testimonial #########################33
+testimonial:
+  enable : true
+  title : "WHAT OTHERS ARE SAYING"
+  testimonial_slider:
+    # slider item loop
+    - name : "Hunter Adams"
+      image : "images/clients/client-1-ha.jpg"
+      designation : "OWNER, H.A. SOLAR CONSULTING"
+      content : "Sweet!"
+                
+    # slider item loop
+    - name : "Prem Uppuluri, Ph.D"
+      image : "images/clients/prem_mp.jpg"
+      designation : "PROFESSOR, RADFORD UNIVERSITY"
+      content : "Graduate student material."
+                
+    # slider item loop
+    # - name : "Jessica Jones"
+    #   image : "images/clients/client3.jpg"
+    #   designation : "CEO, RANDOM COMPANY"
+    #   content : "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolores ad,
+    #             omnis totam iusto quia? Excepturi itaque quaerat, quia unde delectus rem error dignissimos in iusto."
+
+
+######################### funfacts #############################3
+funfacts:
+  enable : false
+  funfacts_list:
+    # funfacts item loop
+    - name : "YEARS PUSHING BUTTONS"
+      image : "images/icons/works.png"
+      count : "25"
+
+    # funfacts item loop
+    - name : "MGs OF CAFFEINE A DAY"
+      image : "images/icons/coffee.png"
+      count : "150"
+      
+    # funfacts item loop
+    - name : "CREDIT HOURS EARNED"
+      image : "images/icons/project.png"
+      count : "200"
+
+    # funfacts item loop
+    - name : "PERCENT AWESOME"
+      image : "images/icons/happy.png"
+      count : "100"
+
+
+############################## contact ###########################
+contact:
+  enable : false
+  title : "SAY HELLO!"

@@ -1,0 +1,36 @@
+<head>
+  <meta charset="utf-8">
+  <title>{{ .Title }}</title>
+
+  {{ "<!-- mobile responsive meta -->" | safeHTML }}
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="{{ with .Params.Description }}{{ . }}{{ else }}{{ with .Site.Params.description }}{{ . }}{{ end }}{{ end }}">
+  {{ with .Site.Params.author }}<meta name="author" content="{{ . }}">{{ end }}
+  {{ hugo.Generator }}
+
+  {{ "<!-- plugins -->" | safeHTML }}
+  {{ range .Site.Params.plugins.css }}
+  <link rel="stylesheet" href="{{ .link | absURL }}">
+  {{ end }}
+
+  {{ "<!-- Main Stylesheet -->" | safeHTML }}
+  {{ $styles := resources.Get "css/style.css" | minify }}
+  <link rel="stylesheet" href="{{ $styles.Permalink }}" media="screen">
+  <link href="https://fonts.googleapis.com/css?family=Saira+Extra+Condensed:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+  <link href="/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/vendor/devicons/css/devicons.min.css" rel="stylesheet">
+  <link href="/vendor/devicon/devicon.min.css" rel="stylesheet">
+  <link href="/vendor/simple-line-icons/css/simple-line-icons.css" rel="stylesheet">
+  <link href="/fontello-6cd9445d/css/fontello-embedded.css" rel="stylesheet">
+  {{ "<!--[if IE 7]" | safeHTML }}
+  <link rel="stylesheet" href="/fontello-6cd9445d/css/fontello-ie7.css">
+  {{ "<![endif]-->" | safeHTML }}
+  <style type="text/css">
+    .list-social-icons [class*=" devicon-"],.list-social-icons [class^=devicon-],.list-social-icons .devicons { line-height: inherit !important; }
+  </style>
+
+  {{ "<!--Favicon-->" | safeHTML }}
+  <!-- <link rel="shortcut icon" href="{{ `images/favicon.png` | absURL }}" type="image/x-icon">""
+  <link rel="icon" href="{{ `images/favicon.png` | absURL }}" type="image/x-icon"> -->
+
+</head>

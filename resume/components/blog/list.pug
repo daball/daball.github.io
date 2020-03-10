@@ -1,0 +1,60 @@
+extends /layouts/blog/theme.pug
+
+block head
+  -var meta = blog.meta
+  -var title = blog.title
+  if meta
+    each m in meta
+      meta(name=m, content=meta[m])
+  title!=title
+
+block body
+  include /components/blog/nav.pug
+  .container
+    .card
+      .card-body
+        include /components/adsense/responsive.pug
+    each post in query().sort("date").desc().on(blog.posts)
+      .card
+        .card-body
+          h1.card-title.post-title!=post.title
+          h4.card-subtitle.mb-2.text-muted.post-meta
+            i.fa.fa-calendar
+            | 
+            | published:
+            | 
+            !=moment(post.date).format("D MMMM YYYY")
+            | 
+            | @
+            | 
+            !=moment(post.date).format("h:mm a")
+            if post.author
+              | 
+              i.fa.fa-user
+              | 
+              | author: 
+              | 
+              !=post.author
+            if post.meta
+              | 
+              !=post.meta
+            if post.tags
+              | 
+              i.fa.fa-tags
+              | 
+              !=post.tags
+            //if post.disqus_id
+              | 
+              i.fa.fa-comment
+              | 
+              a.disqus-comment-count(data-disqus-identifier=post.disqus_id, href=post.permalink+'#disqus_thread')
+                | Comments
+          p.card-text!=post.summary
+          a.card-link(href=post.permalink) Read more...
+    .card
+      .card-body
+        include /components/adsense/responsive.pug
+
+block append scripts
+  include /components/disqus/shortname-foot.pug
+  include /components/disqus/count-foot.pug

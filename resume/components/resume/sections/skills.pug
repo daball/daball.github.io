@@ -1,0 +1,21 @@
+section#skills.resume-section.p-3.p-lg-5.d-flex.flex-column
+  .my-auto
+    h2.mb-3!=resume.sections.skills.title
+    - var alerts = resume.sections.skills.alerts
+    if alerts
+      include /components/resume/parts/alerts.pug
+    if resume.sections.skills.tools
+      .subheading.mb-3 Programming Languages &amp; Tools
+      ul.mb-0.list-inline.list-icons.text-center
+        each tool in resume.sections.skills.tools
+          li.list-inline-item
+            a(title=tool.title, data-toggle="tooltip")
+              i.devicons(class=tool.icon)
+    if resume.sections.skills.skills
+      .subheading.mb-3 Workflow
+      ul.fa-ul.mb-0
+        each skill in resume.sections.skills.skills
+          li
+            i.fa-li.fa.fa-check
+            | 
+            !=skill

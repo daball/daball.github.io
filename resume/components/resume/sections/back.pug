@@ -1,0 +1,11 @@
+section#back.resume-section.p-3.p-lg-5.d-flex.flex-column
+  .my-auto
+    h2.mb-3=resume.sections.back.title
+    - var alerts = resume.sections.back.alerts
+    if alerts
+      include /components/resume/parts/alerts.pug
+    p.mb-5
+      a.btn.btn-success(href='/')
+        | View My Portfolio
+        | 
+        i.fa.fa-home

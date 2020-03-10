@@ -1,0 +1,60 @@
+section#experience.resume-section.p-3.p-lg-5.d-flex.flex-column
+  .my-auto
+    h2.mb-3=resume.sections.experience.title
+    - var alerts = resume.sections.experience.alerts
+    if alerts
+      include /components/resume/parts/alerts.pug
+    - var history = resume.sections.experience.history
+    if history
+      each job in history
+        if job.featured
+          .resume-item.d-flex.flex-column.flex-md-row.mb-0
+            .resume-content.mr-auto
+              h3.mb-0!=job.title
+              .subheading.mb-0!=job.project
+              if job.company
+                .subheading.mb-0
+                  !=job.company
+                  if job.location
+                    | 
+                    | &bullet;
+                    | 
+                    !=job.location
+            if job.dates
+              .resume-date.text-md-right
+                h4.text-primary!=job.dates
+          .resume-item.d-flex.flex-column.flex-md-row.mb-4
+            .resume-content.mr-auto
+              if job.devicons
+                  ul.mb-0.list-inline.list-icons
+                    each devicon in job.devicons
+                      li.list-inline-item
+                        a(title=devicon.title, data-toggle="tooltip")
+                          i.devicons(class=devicon.icon)
+              if job.bullets
+                each bullet in job.bullets
+                  p!=bullet
+              if job.learnMoreUrl
+                p.mb-0
+                  a.btn.btn-primary(href=job.learnMoreUrl)
+                    | Learn More
+                    | 
+                    i.fa.fa-external-link
+              if job.appStoreUrl
+                p.mb-0
+                  a.btn.btn-danger(href=job.appStoreUrl)
+                    | Available in the Apple App Store
+                    | 
+                    i.devicons.devicon-apple-plain
+              if job.playStoreUrl
+                p.mb-0
+                  a.btn.btn-success(href=job.playStoreUrl)
+                    | Available in the Google Play Store
+                    | 
+                    i.devicons.devicon-android-plain
+              if job.githubRepoUrl
+                p.mb-0
+                  a.btn.btn-success(href=job.githubRepoUrl)
+                    | View Source on GitHub
+                    | 
+                    i.devicons.devicons-git
