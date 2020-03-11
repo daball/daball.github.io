@@ -10,6 +10,8 @@ echo "Entering ./resume/dist"
 cd resume/dist
 echo "Checking out master branch"
 git checkout master
+echo "Fetching latest changes to master branch of repo"
+git pull
 echo "Removing current files/folders"
 rm -rf 2010
 rm -rf 2011
@@ -26,6 +28,9 @@ rm -rf pdf
 rm -rf print
 rm -rf svg
 rm -rf vendor
+rm -rf plugins
+rm -rf images
+rm -rf js
 rm ads.txt
 rm index.html
 echo "Entering ./resume"
@@ -40,7 +45,7 @@ echo "Building Go site"
 hugo --minify
 echo "Entering ./"
 cd ..
-echo "Merginng Go site artifacts to JavaScript site"
+echo "Merging Go site artifacts to JavaScript site"
 mv hugo/public/index.html resume/dist/
 mv hugo/public/plugins resume/dist/
 mv hugo/public/images resume/dist/
