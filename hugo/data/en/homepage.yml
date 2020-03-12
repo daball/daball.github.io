@@ -105,37 +105,37 @@ experience:
     - name : "Freelance Developer"
       #company : "Fiverr.com"
       duration : "2019-2020"
-      content : "I produced a web site, documents, and marketing materials for a H. A. Solar Consulting, developed the Cash Count Calculator mobile app, and made improvements on my own web site, while exploring many other potential projects."
+      content : "Offering web development, document services, brand identity, and marketing materials. Developed the Cash Count Calculator mobile app."
       
     # experience item loop
     - name : "Project Manager & Developer Lead"
-      project : "Rowdy Red's Java Adventure Game Team Project"
+      project : "Rowdy Red's Java Adventures"
       company : "Radford University"
       duration : "2015"
-      content : "Utilizing an agile XP approach, developed a PHP-Java-JavaScript 3-tier application across 4 sprints."
+      content : "Utilizing an agile XP approach, developed a Linux, Apache, PHP, Tomcat, Angular.js text adventure game application across 4 sprints, ensuring automated PHPUnit/Selenium user acceptance test suites met backlog user story specs, utilizing a peer programming technique across shared remote workspaces."
       # content : "Graphic design is art with a purpose. I love illustration, so logo desing is my favorite work. But i can do many things with graphics."
       
     # experience item loop
     - name : "Service Desk Analyst"
-      project : "VITA Project"
+      project : "VITA"
       company : "Northrop Grumman"
       duration : "2014"
-      content : "Utilizing a modern ITIL approach, answered incoming calls and emails, routing tech support tickets supporting 92 Commonwealth of Virginia state agencies."
+      content : "Utilizing a modern ITIL approach, answered incoming calls and emails, routing tech support tickets supporting 92 Commonwealth of Virginia state agencies, compliant with SLAs, volunteering spare time between calls to help design, improve, migrate, and automate internal departmental tools."
       # content : "Database management is among the fundamental processes in the software field of computing. I know MS Access very well."
 
     # experience item loop
     - name : "Lead Technician"
-      project : "Best Buy IBM Technology Refresh Project"
+      project : "Best Buy IBM Technology Refresh"
       company : "The Go2IT Group"
       duration : "2011"
-      content : "Completed IBM point-of-sale and kiosk technology refresh upgrades."
+      content : "Providing key leadership for assigned locations, completed IBM point-of-sale and kiosk technology refresh upgrades without issue."
 
     # experience item loop
     - name : "Project Manager & Developer Lead"
-      project : "Cooking to Goal App Team Project"
+      project : "Cooking to Goal"
       company : "Radford University"
       duration : "2011"
-      content : "Demonstrated SDLC waterfall project management model on a Java MVC GUI app."
+      content : "In order to demonstrate the shortfalls of the traditional engineering model for software projects, exercised a basic SDLC waterfall project management model on a Java MVC GUI Cooking to Goal app, running through each linear project phase exactly once until completion. Over 80% of such projects will fail in practice. Ask me why."
       # content : "Graphic design is art with a purpose. I love illustration, so logo desing is my favorite work. But i can do many things with graphics."
 
 ############################### Skill #################################
@@ -243,6 +243,12 @@ portfolio:
       url: "https://www.hasolar.co/"
       date : "February 2019"
       category : "Web Sites"
+    # portfolio item loop
+    - name : "Rowdy Red's Java Adventures"
+      image : "images/portfolio/rowdyred.png"
+      url: "https://github.com/daball/rowdy-reds-java-adventure-game"
+      date : "December 2015"
+      category : "Web Apps"
     # portfolio item loop
     - name : "Note Perfect"
       image : "images/portfolio/noteperfect-daball-me.jpg"
