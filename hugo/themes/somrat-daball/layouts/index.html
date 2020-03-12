@@ -63,20 +63,20 @@
         <div class="full-nav-holder">
           <div class="full-nav-content">
             <div class="name">
-              {{ with $data.homepage.fullscreen_nav.first_name }}<div class="first-name">{{ . }}</div>{{ end }}
-              {{ with $data.homepage.fullscreen_nav.last_name }}<div class="last-name">{{ . }}</div>{{ end }}
+              {{ with $data.homepage.fullscreen_nav.first_name }}<div class="first-name"><span class="hvr-grow">{{ . }}</span></div>{{ end }}
+              {{ with $data.homepage.fullscreen_nav.last_name }}<div class="last-name"><span class="hvr-grow">{{ . }}</span></div>{{ end }}
             </div>
             <div class="fulscreen-nav">
               <ul class="list-inline fullscreen-nav-holder">
                 {{ range .Site.Menus.main }}
-                <li><a class="text-uppercase" href="{{ .URL }}">{{ .Name }}</a></li>
+                <li class="hvr-pulse-grow"><a class="text-uppercase" href="{{ .URL }}">{{ .Name }}</a></li>
                 {{ end }}
               </ul>
             </div>
             <div class="full-nav-icon-holder">
               <ul class="full-nav-icons list-inline">
                 {{ range .Site.Params.social }}
-                <li><a href="{{ .link | safeURL }}"><i class="fa {{ .icon }}"></i></a></li>
+                <li class="hvr-sink"><a href="{{ .link | safeURL }}"><i class="fa {{ .icon }}"></i></a></li>
                 {{ end }}
               </ul>
             </div>
