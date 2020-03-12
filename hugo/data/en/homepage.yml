@@ -238,29 +238,35 @@ portfolio:
   title : "PORTFOLIO"
   portfolio_list:
     # portfolio item loop
+    - name : "H. A. Solar Consulting"
+      image : "images/portfolio/hasolar-co.png"
+      url: "https://www.hasolar.co/"
+      date : "February 2019"
+      category : "Web Sites"
+    # portfolio item loop
     - name : "Note Perfect"
       image : "images/portfolio/noteperfect-daball-me.jpg"
       url: "http://noteperfect.daball.me/"
-      date : "February 2019"
-      category : "Web"
+      date : "April 2014"
+      category : "Web Apps"
     # portfolio item loop
     - name : "Cash Count Calculator"
       image : "images/portfolio/ccc-daball-me.jpg"
       url: "https://www.daball.me/cash-count-calculator/"
       date : "February 2019"
-      category : "Mobile"
-    # portfolio item loop
-    - name : "H. A. Solar Consulting"
-      image : "images/portfolio/hasolar-co.png"
-      url: "https://hasolar.co/"
-      date : "February 2019"
-      category : "Web"
+      category : "Mobile Apps"
     # portfolio item loop
     - name : "Microsoft Project to Google Calendar"
       image : "images/portfolio/project-to-calendar.png"
       url: "https://www.daball.me/Microsoft-Project-to-Google-Calendar/"
       date : "April 2011"
-      category : "Windows"
+      category : "Desktop Apps"
+    # portfolio item loop
+    - name : "Cooking to Goal"
+      image : "images/portfolio/ctg-screenshot-8.png"
+      url: "https://github.com/daball/Cooking-to-Goal"
+      date : "April 2011"
+      category : "Desktop Apps"
 
 
 ################################# Testimonial #########################33

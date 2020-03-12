@@ -234,21 +234,23 @@
 	});
 
 	// Initialize MagnificPopup Plugin
-	$('.filtr-container').magnificPopup({
-		type: 'image',
-		delegate: 'a',
-		gallery: {
-			enabled: true
-		},
-		zoom: {
-			enabled: true,
-			duration: 300,
-			easing: 'ease-in-out'
-		}
-	});
+	// $('.filtr-container').magnificPopup({
+	// 	type: 'image',
+	// 	delegate: 'a',
+	// 	gallery: {
+	// 		enabled: true
+	// 	},
+	// 	zoom: {
+	// 		enabled: true,
+	// 		duration: 300,
+	// 		easing: 'ease-in-out'
+	// 	}
+	// });
 
 	// Galley Shuffle When Scrolled Down
-	$('.services').waypoint({
+	// Disabled Services section, using .about-me instead of .services
+	// If Services is enabled again, change it back
+	$('.about-me').waypoint({
 		handler: function (direction) {
 			if (direction == "down") {
 				filterizd.filterizr('shuffle');
