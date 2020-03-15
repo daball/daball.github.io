@@ -1337,26 +1337,34 @@ ul.experience-chart h4 {
 
 .filtr-item img {
   width: 100%;
-  -webkit-transition: -webkit-transform 0.5s ease-in-out;
+  /* -webkit-transition: -webkit-transform 0.5s ease-in-out;
   transition: -webkit-transform 0.5s ease-in-out;
   transition: transform 0.5s ease-in-out;
-  transition: transform 0.5s ease-in-out, -webkit-transform 0.5s ease-in-out;
+  transition: transform 0.5s ease-in-out, -webkit-transform 0.5s ease-in-out; */
+  -webkit-transition: -webkit-all 0.75s ease-in-out;
+  transition: -webkit-all 0.75s ease-in-out;
+  transition: all 0.75s ease-in-out;
+  transition: all 0.75s ease-in-out, -webkit-all 0.75s ease-in-out;
   -webkit-filter: opacity(0.65);
   -moz-filter: opacity(0.65);
   -ms-filter: opacity(0.65);
   -o-filter: opacity(0.65);
   filter: opacity(0.65);
+  -webkit-transform: rotate(0deg) scale(1.0) translateY(0%);
+  transform: rotate(0deg) scale(1.0)translateY(0%);
 }
 
 .filtr-item:hover .item-holder img {
-  -webkit-transform: translateX(150px) ease-in-out;
-  transform: translateX(150px);
+  /* -webkit-transform: translateX(150px) ease-in-out;
+  transform: translateX(150px); */
+  -webkit-transform: rotate(-360deg) scale(1.2) translateY(8.2%);
+  transform: rotate(-360deg) scale(1.2) translateY(8.3%);
   cursor: pointer;
-  -webkit-filter: opacity(1);
-  -moz-filter: opacity(1);
-  -ms-filter: opacity(1);
-  -o-filter: opacity(1);
-  filter: opacity(1);
+  -webkit-filter: opacity(0.9);
+  -moz-filter: opacity(0.9);
+  -ms-filter: opacity(0.9);
+  -o-filter: opacity(0.9);
+  filter: opacity(0.9);
 }
 
 .item-holder {
@@ -1374,11 +1382,12 @@ ul.experience-chart h4 {
   bottom: 0;
   left: 0;
   width: 150px;
-  background: #007bff;
+  /* background: #007bff; */
+  background: rgba(0, 123, 255, 0);
   -webkit-transform: translateX(-150px);
   transform: translateX(-150px);
-  -webkit-transition: all 0.5s ease-in-out;
-  transition: all 0.5s ease-in-out;
+  -webkit-transition: all 0.85s ease-out;
+  transition: all 0.85s ease-out;
 }
 
 .item-caption h2 {
@@ -1406,6 +1415,7 @@ ul.experience-chart h4 {
 .filtr-item:hover .item-caption {
   -webkit-transform: translateX(0px);
   transform: translateX(0px);
+  background: rgba(0, 123, 255, .8);
 }
 
 .item-holder a {
