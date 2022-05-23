@@ -1,9 +1,9 @@
 ######################## default configuration ####################
-# baseURL = "https://www.daball.me"
+# baseURL = "https://daball.me"
 title = "David A. Ball"
 theme = "somrat-daball"
 # disable language
-disableLanguages = ["fr"] # desable language from here
+disableLanguages = ["fr"] # disable language from here
 
 ############################# Plugins ##############################
 
@@ -46,10 +46,6 @@ link = "plugins/owl-carousel/owl.carousel.min.js"
 
 ############################## navigation ###############################
 
-# On 3/8/2020, Austin R. says to me,
-#   "David, the man, the myth, the legend"
-# I guess he's right. That's that 2020 vision.
-
 # main menu
 [[menu.main]]
 name = "DABALL.ME"
@@ -83,6 +79,7 @@ weight = 5
 
 
 #################### default parameters ################################
+
 [params]
 # logo_light = "images/logo.png"
 # logo_dark = "images/logo-dark.png"
@@ -100,6 +97,7 @@ enable = true
 preloader = "images/preloader.gif" # use jpg, png, svg or gif format.
   
 ############################# social site ########################
+
 [[params.social]]
 icon = "icon-upwork"
 link = "https://www.upwork.com/o/profiles/users/_~0140053cbcd78b2231/"
@@ -130,6 +128,7 @@ link = "https://twitter.com/daballme"
 
 
 ################################### English language #####################################
+
 [Languages.en]
 languageName = "En"
 languageCode = "en-us"
@@ -141,11 +140,12 @@ copyright = "Copyright &copy; 2020 David A. Ball."
 
 
 ################################### French language #####################################
-[Languages.fr]
-languageName = "Fr"
-languageCode = "fr-fr"
-contentDir = "content/french"
-weight = 2
-home = "Accueil"
+
+#[Languages.fr]
+#languageName = "Fr"
+#languageCode = "fr-fr"
+#contentDir = "content/french"
+#weight = 2
+#home = "Accueil"
 # copyright
-copyright = "Copyright &copy; 2020 David A. Ball."
+#copyright = "Copyright &copy; 2020 David A. Ball."

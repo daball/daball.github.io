@@ -1,0 +1,22 @@
+section#awards.resume-section.p-3.p-lg-5.d-flex.flex-column
+  .my-auto
+    h2.mb-3=resume.sections.awards.title
+    - var alerts = resume.sections.awards.alerts
+    if alerts
+      include /components/resume/parts/alerts.pug
+    each award in resume.sections.awards.awards
+      .resume-item.d-flex.flex-column.flex-md-row.mb-4
+        .resume-content.me-auto
+          h3.mb-0
+            i.fa.fa-trophy.text-warning
+            | 
+            !=award.award
+          .subheading.mb-3
+            !=award.issuer
+            if (award.location)
+              | 
+              | &bullet;
+              | 
+              !=award.location
+        .resume-date.text-end
+          h4.text-primary!=award.dates

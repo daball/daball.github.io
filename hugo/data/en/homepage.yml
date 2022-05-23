@@ -38,7 +38,7 @@ hero:
     - "SQL Programmer"
     - "SwiftUI Programmer"
     - "TypeScript Programmer"
-    - "Late Night Problem Solver"
+    #- "Late Night Problem Solver"
     - "Academic Enthusiast"
     - "Lifelong Learner"
     - "Philosopher"
@@ -94,7 +94,7 @@ about:
   button:
     enable : true
     label : "MY RESUME"
-    link : "/resume/" # you can put your cv in static folder and give the path here.
+    link : "https://resume.daball.me/" # you can put your cv in static folder and give the path here.
 
 ############################ Experience ##############################
 experience:
@@ -258,7 +258,7 @@ portfolio:
     # portfolio item loop
     - name : "Cash Count Calculator"
       image : "images/portfolio/ccc-daball-me.jpg"
-      url: "https://www.daball.me/cash-count-calculator/"
+      url: "https://ccc.daball.me/"
       date : "February 2019"
       category : "Mobile Apps"
     # portfolio item loop

@@ -1,0 +1,76 @@
+// Core variables and mixins
+@import "variables.scss";
+@import "mixins.scss";
+@import "node_modules/bootstrap/scss/bootstrap";
+@import "bootswatch.scss";
+// Components
+body {
+  font-family: $font-family-sans-serif;
+  margin-top: 5em;
+  background-color: $light;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @include heading-font;
+  text-transform: uppercase;
+}
+
+.navbar {
+  @include body-font;
+  font-weight: 600;
+  font-size: 1.25em;
+  text-transform: uppercase;
+}
+
+.navbar-brand {
+  @include heading-font;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.btn {
+  @include heading-font;
+  font-size: 1.35rem;
+}
+
+.btn .devicon {
+  font-size: 3rem;
+}
+
+.card {
+  margin-bottom: 10px;
+}
+
+svg.github-corner {
+  fill: $dark;
+  color: $white;
+  z-index: 100000;
+}
+
+a:hover svg.github-corner {
+  fill: $primary;
+}
+
+.center { 
+  text-align: center;
+}
+
+.cover-image {
+  width: 100%;
+}
+
+ul.footer-menu li {
+  padding: 0;
+}
+
+ul.footer-menu li {
+  display: inline;
+  list-style-type: none;
+  margin: 2px;
+  padding: 0px;
+}
+
+ul.footer-menu li + li:before{
+  content: " | ";
+  padding: 0 2px;
+}

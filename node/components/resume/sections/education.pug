@@ -1,0 +1,44 @@
+section#education.resume-section.p-3.p-lg-5.d-flex.flex-column
+  - var education = resume.sections.education
+  .my-auto
+    h2.mb-3!=resume.sections.education.title
+    - var alerts = resume.sections.education.alerts
+    if alerts
+      include /components/resume/parts/alerts.pug
+    - var qualifications = resume.sections.education.qualifications
+    if qualifications
+      each qualification in qualifications
+        .resume-item.d-flex.flex-column.flex-md-row.mb-4
+          .resume-content.me-auto
+            if (qualification.degree)
+              h3.mb-0!=qualification.degree
+            if (qualification.major)
+              - var major = qualification.major
+              .subheading.mb-0!=major
+            if (qualification.majors)
+              - var majors = qualification.majors.slice()
+              - if (majors.length > 2)
+                - majors.splice(majors.length-1, 0, '&amp;')
+                - var major = majors.join(', ').replace('&amp;,', '&amp;')
+                .subheading.mb-0!=major
+              - else if (majors.length == 2)
+                - var major = majors.join(' &amp; ');
+                .subheading.mb-0!=major
+              - else if (majors.length == 1)
+                .subheading.mb-0!=majors[0]
+            if (qualification.school)
+              .subheading.mb-0
+                !=qualification.school
+                if (qualification.location)
+                  | 
+                  | &bullet; 
+                  !=qualification.location
+                if (qualification.gpa)
+                  | 
+                  | &bullet; 
+                  !=qualification.gpa
+                  | 
+                  | GPA
+          if (qualification.dates)
+            .resume-date.text-end
+              h4.text-primary!=qualification.dates

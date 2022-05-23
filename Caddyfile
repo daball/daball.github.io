@@ -1,0 +1,78 @@
+# The Caddyfile is an easy way to configure your Caddy web server.
+#
+# To use your own domain name (with automatic HTTPS), first make
+# sure your domain's A/AAAA DNS records are properly pointed to
+# this machine's public IP, then replace the line below with your
+# domain name.
+#
+# Refer to the Caddy docs for more information:
+# https://caddyserver.com/docs/caddyfile
+
+daball.me {
+  encode zstd gzip
+  #respond "daball.me works!"
+  redir /blog https://blog.daball.me/
+  redir /blog/ https://blog.daball.me/
+  redir /blog/index.html https://blog.daball.me/
+  handle_path /blog/* { redir /* https://blog.daball.me{uri} temporary }
+  redir /cash-count-calculator/ https://ccc.daball.me/
+  redir /cash-count-calculator/index.html https://ccc.daball.me/
+  redir /ccc/ https://ccc.daball.me/
+  redir /ccc/index.html https://ccc.daball.me/
+  redir /resume/ https://resume.daball.me/
+  redir /resume/index.html https://resume.daball.me/
+  redir /pdf https://docs.google.com/viewerng/viewer?url=https://resume.daball.me/resume.pdf
+  redir /pdf/ https://docs.google.com/viewerng/viewer?url=https://resume.daball.me/resume.pdf
+  redir /pdf/resume.pdf https://docs.google.com/viewerng/viewer?url=https://resume.daball.me/resume.pdf
+  redir /Microsoft-Project-to-Google-Calendar/* https://daball.github.io/Microsoft-Project-to-Google-Calendar/
+  file_server * {
+    root /mnt/SanDisk/www/daball.me/src/dist
+    hide .git CNAME LICENSE readme.md
+    index index.html
+  }
+}
+
+www.daball.me {
+  redir https://daball.me{uri}
+}
+
+blog.daball.me {
+  encode zstd gzip
+  rewrite / /blog
+  rewrite /index.html /blog
+  file_server * {
+    root /mnt/SanDisk/www/daball.me/src/dist
+    hide .git CNAME LICENSE readme.md
+    index index.html
+  }
+}
+
+ccc.daball.me {
+  encode zstd gzip
+  rewrite / /cash-count-calculator
+  rewrite /index.html /cash-count-calculator
+  file_server * {
+    root /mnt/SanDisk/www/daball.me/src/dist
+    hide .git CNAME LICENSE readme.md
+    index index.html
+  }
+}
+
+resume.daball.me {
+  encode zstd gzip
+  rewrite / /resume
+  rewrite /index.html /resume
+  redir /pdf https://docs.google.com/viewerng/viewer?url=https://resume.daball.me/resume.pdf
+  redir /pdf/ https://docs.google.com/viewerng/viewer?url=https://resume.daball.me/resume.pdf
+  rewrite /resume.pdf /pdf/resume.pdf
+  file_server * {
+    root /mnt/SanDisk/www/daball.me/src/dist
+    hide .git CNAME LICENSE readme.md
+    index index.html
+  }
+}
+
+noteperfect.daball.me {
+  encode zstd gzip
+  respond "noteperfect.daball.me works!"
+}

@@ -1,0 +1,28 @@
+if alerts
+  each alert in alerts
+    - var INFO_ICON = 'fa-info-circle'
+    - var SUCCESS_ICON = 'fa-check-circle'
+    - var EXCLAMATION_ICON = 'fa-exclamation-triangle'
+    - var icon = alert.icon||INFO_ICON
+    if !alert.icon
+      case alert.severity
+        when "success"
+          - icon = SUCCESS_ICON
+        when "warning"
+          - icon = EXCLAMATION_ICON
+        when "danger"
+          - icon = EXCLAMATION_ICON
+    .alert.mb-3.show(class="alert-"+alert.severity, role="alert")
+      .d-flex.align-items-start
+        span.align-self-start.flex-shrink-0
+          i.fa.fa-2x(class=icon, aria-hidden="true")
+          | 
+        .flex-grow-1.ms-3
+          if alert.header
+            h4.mt-0!=alert.header
+            hr.mt-0
+          if alert.message
+            p.mt-0!=alert.message
+          else if alert.messages
+            each message in alert.messages
+              p.mt-0!=message

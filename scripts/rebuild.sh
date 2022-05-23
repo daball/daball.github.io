@@ -1,13 +1,15 @@
 #!/bin/zsh
 # cd ..
-echo "Removing ./resume/dist"
-rm -rf resume/dist
-echo "Making directory ./resume/dist"
-mkdir resume/dist
-echo "Copying .git repo to ./resume/dist"
-cp -R .git resume/dist
-echo "Entering ./resume/dist"
-cd resume/dist
+echo "Removing ./build"
+rm -rf build
+echo "Removing ./node/dist"
+rm -rf node/dist
+echo "Making directory ./node/dist"
+mkdir node/dist
+echo "Copying .git repo to ./node/dist"
+cp -R .git node/dist
+echo "Entering ./node/dist"
+cd node/dist
 echo "Checking out master branch"
 git checkout master
 echo "Fetching latest changes to master branch of repo"
@@ -33,22 +35,31 @@ rm -rf images
 rm -rf js
 rm ads.txt
 rm index.html
-echo "Entering ./resume"
+echo "Entering ./node"
 cd ..
 # cd resume
 echo "Building JavaScript site"
+npm install
 gulp
-echo "Entering ./hugo"
+echo "Entering ./"
 cd ..
+echo "Moving ./node/dist to ./build"
+mv ./node/dist ./build
+echo "Entering ./hugo"
 cd hugo
 echo "Building Go site"
 hugo --minify
 echo "Entering ./"
 cd ..
-echo "Merging Go site artifacts to JavaScript site"
-mv hugo/public/index.html resume/dist/
-mv hugo/public/plugins resume/dist/
-mv hugo/public/images resume/dist/
-mv hugo/public/css/* resume/dist/css/
-mv hugo/public/js resume/dist/
-# mv hugo/public/assets resume/dist
+echo "Merging Go site artifacts to ./build"
+mv hugo/public/index.html ./build/
+mv hugo/public/plugins ./build/
+mv hugo/public/images ./build/
+mv hugo/public/css/* ./build/css/
+mv hugo/public/js ./build/
+# mv hugo/public/assets build/build
+echo "Removing ./dist"
+rm -rf dist
+echo "Build complete, moving/renaming ./build to ./dist"
+mv build dist
+echo "Build and distribution complete"

@@ -1,0 +1,39 @@
+title: Blog
+charset: utf-8
+meta:
+  author: David A. Ball
+  description: ''
+nav:
+  logo: David A. Ball
+  menu:
+    - title: Blog
+      url: https://blog.daball.me/
+    - title: Portfolio
+      url: https://daball.me/
+    - title: Resume
+      url: https://resume.daball.me/
+    - title: Shop
+      url: https://shop.daball.me/
+sections:
+  about:
+    name: About
+    me:
+      displayName: David A. Ball
+      addressLines:
+        - 50 Ball Drive
+        - 'Cleveland, Virginia'
+      phoneNumber: '+12762107356'
+      emailAddress: david@daball.me
+      socialMedia:
+        - icon: fa-linkedin
+          network: LinkedIn
+          profileUrl: 'https://www.linkedin.com/in/davidball'
+        - icon: fa-github
+          network: GitHub
+          profileUrl: 'https://github.com/daball'
+        - icon: fa-facebook
+          network: Facebook
+          profileUrl: 'https://www.facebook.com/davidallenball'
+        - icon: fa-twitter
+          network: Twitter
+          profileUrl: 'https://twitter.com/daballme'
