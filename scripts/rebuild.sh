@@ -38,6 +38,8 @@ rm index.html
 echo "Entering ./node"
 cd ..
 # cd resume
+echo "Selecting node v18.2.0 via nvm"
+nvm use 18.2.0
 echo "Building JavaScript site"
 npm install
 gulp
