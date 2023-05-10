@@ -4,7 +4,7 @@ meta:
   author: David A. Ball
   description: >-
     Delivering state-of-the-art web and native/web hybrid app using the latest
-    technolgy stacks.
+    technology stacks.
 nav:
   logo: David A. Ball
   profilePic: /img/profile.jpg
@@ -58,25 +58,28 @@ sections:
     title: Experience
     alerts:
       - severity: info
-        header: 'Just Getting Warmed Up, Actually'
+        header: 'Ready For Development'
         messages:
           - >-
-            My apologies in advance should I seem a little anxious to climb
-            onboard. As I'm not currently active in development, I'm very much
-            looking forward to getting started on my next project.
-          - >-
-            I'm afraid I've been off to a rough start so far. It seems as though
-            nobody wants to give me a good go. I have a few novel app ideas that
-            I've been dreaming up. While I am accepting all serious offers, I am
-            also considering the value of propriety.
-          - 'Either way, I''m just getting started.'
+            While I'm currently dashing here and there, I am also excited
+            about the prospect of joining a development team that can help
+            me grow my talents.
     history:
+      - featured: true
+        title: Dasher
+        #project: 
+        company: DoorDash
+        learnMoreUrl: https://www.doordash.com/dasher/signup
+        dates: 2021 May 12 &mdash; Present
+        bullets:
+          - >-
+            
       - featured: true
         title: Freelance App Developer
         project: Cash Count Calculator
         # company:
         location: 'Cleveland, Virginia'
-        learnMoreUrl: /cash-count-calculator/
+        learnMoreUrl: https://ccc.daball.me/
         # gitlabRepoUrl: https://gitlab.com/daball/cash-count-calculator
         # playStoreUrl: https://play.google.com/store/apps/details?id=me.daball.cashcountcalculator
         # appStoreUrl:
@@ -93,7 +96,7 @@ sections:
             icon: devicon-git-plain
           - title: GitLab
             icon: devicon-gitlab-plain
-        dates: March 2019 &mdash; Present
+        dates: 2019 March &mdash; Present
         bullets:
           - >-
             This app is perfect for cashiers needing to count their cash till
@@ -124,7 +127,7 @@ sections:
             icon: devicon-git-plain
           - title: GitLab
             icon: devicon-gitlab-plain
-        dates: February 2019 &mdash; Present
+        dates: 2019 February &mdash; Present
       - featured: true
         title: Project Manager &amp; Developer Lead
         project: Rowdy Red's Java Adventure Game (Team Project)
@@ -158,7 +161,7 @@ sections:
             icon: devicon-gitlab-plain
           - title: GitHub
             icon: devicons-github
-        dates: May 2015 &mdash; December 2015
+        dates: 2015 May &mdash; 2015 December
         bullets:
           - >-
             I knew something was wrong when everyone voted to use PHP to
@@ -179,13 +182,13 @@ sections:
         project: VITA Project
         company: Northrop Grumman via DatamanUSA
         location: 'Lebanon, Virginia'
-        dates: 3 February 2014 &mdash; 8 July 2014
+        dates: 2014 February 3 &mdash; 2014 July 8
       - featured: true
         title: Contract Lead Technician
         project: IBM Technology Refresh Project
         company: Best Buy via The Go2IT Group
         location: 'Johnson City, Tennessee'
-        dates: 12 October 2011
+        dates: 2011 October 12
         bullets:
           - >-
             I provided instrumental leadership needed to ensure the concise IBM
@@ -194,11 +197,11 @@ sections:
       - title: Contract Technician
         company: Best Buy / The Go2IT Group
         location: 'Bristol, Virginia'
-        dates: 30 August 2011
+        dates: 2011 August 30
       - title: Telephony Install Engineer
         company: U.S. Senate / Advantage Resourcing
         location: 'Abingdon, Virginia'
-        dates: 18 August 2011
+        dates: 2011 August 18
       - featured: true
         title: Project Manager &amp; Developer
         project: Cooking to Goal App (Team Project)
@@ -214,7 +217,7 @@ sections:
             icon: devicons-git
           - title: GitHub
             icon: devicons-github
-        dates: January 2011 &mdash; April 2011
+        dates: 2011 January &mdash; 2011 April
         bullets:
           - >-
             Utilizing Java as a requirement, the project purpose was following
@@ -235,10 +238,10 @@ sections:
             icon: devicon-csharp-plain
           - title: XML
             icon: devicons-xml
-        dates: February 2005 & March 2006
+        dates: 2005 February & 2006 March
       - title: Volunteer IT Intern
         company: Richlands Business Incubator
-        dates: February 2004 &mdash; April 2004
+        dates: 2004 February &mdash; 2004 April
   education:
     name: Education
     title: Education
@@ -247,15 +250,11 @@ sections:
         header: Academic Status &mdash; Withdrawn
         messages:
           - >-
-            I have withdrawn from my undergraduate studies. Once I restart, I
-            should be able to wrap up everything within a year or two with
-            distance education options.
-          - >-
-            It is far more important for me to take control of my escalating
-            student debt right now.
+            I have withdrawn from my undergraduate studies with only
+            University Core courses remaining.
           - >-
             So, at least for the present, it looks like I'm back to
-            self-educating.
+            self-educating. I'd love to finish, but now is not the time.
     qualifications:
       - school: Radford University
         location: 'Radford, Virginia'
@@ -264,29 +263,29 @@ sections:
           - Software Engineering
           - Databases
           - Information Security
-        dates: Withdrawn February 2018
-        bullets:
-          - >-
-            Remaining Course Work: 1 optional senior-level ITEC course, 1
-            junior-level ITEC course, 2 natural science courses, ...
-            TODO:COMPLETE
+        dates: Withdrawn 2018 February
+        # bullets:
+        #   - >-
+        #     Remaining Course Work: 1 optional senior-level ITEC course, 1
+        #     junior-level ITEC course, 2 natural science courses, ...
+        #     TODO:COMPLETE
       - school: Southwest Virginia Community College
         location: 'Richlands, Virginia'
         degree: Certificate &mdash; Information Systems Technology
         major: Software Development
         gpa: '3.52'
-        dates: Graduated May 2012
+        dates: Graduated 2012 May
       - school: Southwest Virginia Community College
         location: 'Richlands, Virginia'
         degree: A.A.S. &mdash; Information Systems Technology
         major: Network Administration in the Enterprise
         gpa: '3.00'
-        dates: Graduated May 2004
+        dates: Graduated 2004 May
       - school: Lebanon High School
         location: 'Lebanon, Virginia'
         degree: Diploma
         major: General Studies
-        dates: Graduated May 2002
+        dates: Graduated 2002 May
   affiliations:
     name: Affiliations
     title: Professional Affiliations
@@ -294,7 +293,7 @@ sections:
       - membership: 'Member # 12255777'
         organization: The Honor Society of Phi Kappa Phi
         location: 'Radford, Virginia'
-        dates: 27 March 2011 &mdash; Present
+        dates: 2001 March 27 &mdash; Present
       - membership: Competing Member
         organization: Cyber Defense Club
         location: 'Radford, Virginia'

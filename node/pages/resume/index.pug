@@ -13,12 +13,14 @@ block body
   -var sections = resume.sections||[]
   nav#sideNav.navbar.navbar-expand-lg.navbar-dark.bg-primary.fixed-top(role="navigation", data-spy="affix", data-offset-top="100")
     a.navbar-brand.js-scroll-trigger(href='#page-top')
-      span.d-block.d-lg-none.responsive-logo=nav.logo
+      //- span.d-block.d-lg-none.responsive-logo=nav.logo
       span.d-none.d-lg-block
         img.img-fluid.img-profile.rounded-circle.mx-auto.mb-2(src=nav.profilePic, alt='')
-    button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarSupportedContent', aria-controls='navbarSupportedContent', aria-expanded='false', aria-label='Toggle navigation')
+    button.navbar-toggler(type='button', data-bs-toggle='collapse', data-bs-target='#navbarSupportedContent', aria-controls='navbarSupportedContent', aria-expanded='false', aria-label='Toggle navigation')
       span.navbar-toggler-icon
     #navbarSupportedContent.collapse.navbar-collapse
+      a.navbar-brand
+        span.d-block.d-lg-none.responsive-logo=nav.logo
       ul.navbar-nav
         each section, id in sections
           li.nav-item
