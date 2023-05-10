@@ -11,28 +11,57 @@
 daball.me {
   encode zstd gzip
   #respond "daball.me works!"
-  redir /blog https://blog.daball.me/
-  redir /blog/ https://blog.daball.me/
-  redir /blog/index.html https://blog.daball.me/
-  handle_path /blog/* { redir /* https://blog.daball.me{uri} temporary }
+  #redir /blog https://blog.daball.me/
+  #redir /blog/ https://blog.daball.me/
+  handle_path /blog/* {
+    redir /* https://blog.daball.me{uri} temporary
+  }
   redir /cash-count-calculator/ https://ccc.daball.me/
   redir /cash-count-calculator/index.html https://ccc.daball.me/
   redir /ccc/ https://ccc.daball.me/
   redir /ccc/index.html https://ccc.daball.me/
-  redir /resume/ https://resume.daball.me/
-  redir /resume/index.html https://resume.daball.me/
+  redir /Microsoft-Project-to-Google-Calendar https://microsoft-project-to-google-calendar.daball.me/
+  redir /Microsoft-Project-to-Google-Calendar/ https://microsoft-project-to-google-calendar.daball.me/
+  handle_path /Microsoft-Project-to-Google-Calendar/* {
+    redir /* https://microsoft-project-to-google-calendar.daball.me{uri} temporary
+  }
   redir /pdf https://docs.google.com/viewerng/viewer?url=https://resume.daball.me/resume.pdf
   redir /pdf/ https://docs.google.com/viewerng/viewer?url=https://resume.daball.me/resume.pdf
   redir /pdf/resume.pdf https://docs.google.com/viewerng/viewer?url=https://resume.daball.me/resume.pdf
-  redir /Microsoft-Project-to-Google-Calendar/* https://daball.github.io/Microsoft-Project-to-Google-Calendar/
+  redir /resume/ https://resume.daball.me/
+  redir /resume/index.html https://resume.daball.me/
   file_server * {
     root /mnt/SanDisk/www/daball.me/src/dist
-    hide .git CNAME LICENSE readme.md
+    hide .git* CNAME LICENSE readme.md
     index index.html
   }
 }
 
+microsoft-project-to-google-calendar.daball.me {
+  encode zstd gzip
+  file_server * {
+    root /mnt/SanDisk/www/daball.me/Microsoft-Project-to-Google-Calendar
+    hide .git* CNAME LICENSE readme.md
+    index index.html
+  }
+}
+
+noteperfect.daball.me {
+  encode zstd gzip
+  file_server * {
+    root /mnt/SanDisk/www/daball.me/note-perfect/assets
+    hide .git* CNAME LICENSE readme.md
+    index index.html
+  }
+}
+
+dev.noteperfect.daball.me {
+  encode zstd gzip
+  reverse_proxy 10.4.20.90:3000
+}
+
 www.daball.me {
+  encode zstd gzip
   redir https://daball.me{uri}
 }
 
@@ -42,7 +71,7 @@ blog.daball.me {
   rewrite /index.html /blog
   file_server * {
     root /mnt/SanDisk/www/daball.me/src/dist
-    hide .git CNAME LICENSE readme.md
+    hide .git* CNAME LICENSE readme.md
     index index.html
   }
 }
@@ -53,7 +82,7 @@ ccc.daball.me {
   rewrite /index.html /cash-count-calculator
   file_server * {
     root /mnt/SanDisk/www/daball.me/src/dist
-    hide .git CNAME LICENSE readme.md
+    hide .git* CNAME LICENSE readme.md
     index index.html
   }
 }
@@ -67,12 +96,8 @@ resume.daball.me {
   rewrite /resume.pdf /pdf/resume.pdf
   file_server * {
     root /mnt/SanDisk/www/daball.me/src/dist
-    hide .git CNAME LICENSE readme.md
+    hide .git* CNAME LICENSE readme.md
     index index.html
   }
 }
 
-noteperfect.daball.me {
-  encode zstd gzip
-  respond "noteperfect.daball.me works!"
-}
