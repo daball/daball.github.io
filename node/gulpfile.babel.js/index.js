@@ -10,7 +10,7 @@ import { generateResumeAssets } from './generate-resume-pdf';
 
 let defaultBuild = parallel(
     copyVendorLibraries,
-    copyGithubSupportFiles,
+//    copyGithubSupportFiles,
     copyAssets,
     buildThemes,
     generateSite,

@@ -8,7 +8,8 @@
 # Refer to the Caddy docs for more information:
 # https://caddyserver.com/docs/caddyfile
 
-daball.me {
+daball.me:80 {
+#  import /etc/caddy/tls-dns-cloudflare
   encode zstd gzip
   #respond "daball.me works!"
   #redir /blog https://blog.daball.me/
@@ -31,63 +32,70 @@ daball.me {
   redir /resume/ https://resume.daball.me/
   redir /resume/index.html https://resume.daball.me/
   file_server * {
-    root /mnt/SanDisk/www/daball.me/src/dist
+    root /srv
     hide .git* CNAME LICENSE readme.md
     index index.html
   }
 }
 
-microsoft-project-to-google-calendar.daball.me {
+microsoft-project-to-google-calendar.daball.me:80 {
+#  import /etc/caddy/tls-dns-cloudflare
   encode zstd gzip
   file_server * {
-    root /mnt/SanDisk/www/daball.me/Microsoft-Project-to-Google-Calendar
+    root /srv/Microsoft-Project-to-Google-Calendar
     hide .git* CNAME LICENSE readme.md
     index index.html
   }
 }
 
-noteperfect.daball.me {
+noteperfect.daball.me:80 {
+#  import /etc/caddy/tls-dns-cloudflare
   encode zstd gzip
   file_server * {
-    root /mnt/SanDisk/www/daball.me/note-perfect/assets
+    root /srv/note-perfect/assets
     hide .git* CNAME LICENSE readme.md
     index index.html
   }
 }
 
-dev.noteperfect.daball.me {
-  encode zstd gzip
-  reverse_proxy 10.4.20.90:3000
-}
+#dev.noteperfect.daball.me {
+#  import /etc/caddy/tls-dns-cloudflare
+#  encode zstd gzip
+#  reverse_proxy 10.4.20.90:3000
+#}
 
-www.daball.me {
+www.daball.me:80 {
+#  import /etc/caddy/tls-dns-cloudflare
   encode zstd gzip
   redir https://daball.me{uri}
 }
 
-blog.daball.me {
+blog.daball.me:80 {
+#  import /etc/caddy/tls-dns-cloudflare
   encode zstd gzip
   rewrite / /blog
   rewrite /index.html /blog
   file_server * {
-    root /mnt/SanDisk/www/daball.me/src/dist
+    root /srv
     hide .git* CNAME LICENSE readme.md
     index index.html
   }
 }
 
-ccc.daball.me {
+ccc.daball.me:80 {
+#  import /etc/caddy/tls-dns-cloudflare
   encode zstd gzip
   rewrite / /cash-count-calculator
   rewrite /index.html /cash-count-calculator
   file_server * {
-    root /mnt/SanDisk/www/daball.me/src/dist
+    root /srv
     hide .git* CNAME LICENSE readme.md
     index index.html
   }
 }
 
-resume.daball.me {
+resume.daball.me:80 {
+#  import /etc/caddy/tls-dns-cloudflare
   encode zstd gzip
   rewrite / /resume
   rewrite /index.html /resume
@@ -95,7 +103,7 @@ resume.daball.me {
   redir /pdf/ https://docs.google.com/viewerng/viewer?url=https://resume.daball.me/resume.pdf
   rewrite /resume.pdf /pdf/resume.pdf
   file_server * {
-    root /mnt/SanDisk/www/daball.me/src/dist
+    root /srv
     hide .git* CNAME LICENSE readme.md
     index index.html
   }

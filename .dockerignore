@@ -1,0 +1,7 @@
+node/node_modules
+node/dist
+.git
+.gitignore
+.vscode
+.idea
+CNAME
