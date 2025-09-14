@@ -27,6 +27,15 @@ block body
       .card-body.center
         include /components/adsense/responsive.pug
 
+    .card
+      .card-body.center
+        h1 New Avalonia UI
+        .btn-group
+          a.btn.btn-primary(href="https://launch.ccc.daball.me/")
+           i.devicon-windows8-original
+           |
+           | Launch for Desktops
+
     if ccc.appStoreUrl || ccc.playStoreUrl
       .card
         .card-body.center
@@ -34,13 +43,13 @@ block body
           .btn-group
             if ccc.appStoreUrl
               a.btn.btn-danger(href=ccc.appStoreUrl)
-                | App Store
-                | 
                 i.devicons.devicon-apple-plain
+                |
+                | App Store
             if ccc.playStoreUrl
               a.btn.btn-success(href=ccc.playStoreUrl)
-                | Play Store
-                | 
                 i.devicons.devicon-android-plain
+                |
+                | Play Store
                    
     include /components/cash-count-calculator/footer.pug
