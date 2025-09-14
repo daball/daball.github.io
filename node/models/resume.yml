@@ -22,9 +22,11 @@ sections:
     me:
       displayName: David A. Ball
       addressLines:
-        - 50 Ball Drive
-        - 'Cleveland, Virginia 24225'
-      phoneNumber: '+12763361797'
+#        - 50 Ball Drive
+#        - 'Cleveland, Virginia 24225'
+         - 'Cleveland, Virginia'
+#      phoneNumber: '+12763361797'
+      phoneNumber: ''
       emailAddress: david@daball.me
       url: www.daball.me
       # objective: Deliver state-of-the-art native and web apps using the latest tech stacks.
@@ -56,24 +58,24 @@ sections:
   experience:
     name: Experience
     title: Experience
-    alerts:
-      - severity: info
-        header: 'Ready For Development'
-        messages:
-          - >-
-            While I'm currently dashing here and there, I am also excited
-            about the prospect of joining a development team that can help
-            me grow my talents.
+#    alerts:
+#      - severity: info
+#        header: 'Ready For Development'
+#        messages:
+#          - >-
+#            While I'm currently dashing here and there, I am also excited
+#            about the prospect of joining a development team that can help
+#            me grow my talents.
     history:
-      - featured: true
-        title: Dasher
-        #project: 
-        company: DoorDash
-        learnMoreUrl: https://www.doordash.com/dasher/signup
-        dates: 2021 May 12 &mdash; Present
-        bullets:
-          - >-
-            
+#      - featured: true
+#        title: Dasher
+#        #project: 
+#        company: DoorDash
+#        learnMoreUrl: https://www.doordash.com/dasher/signup
+#        dates: 2021 May 12 &mdash; Present
+#        bullets:
+#          - >-
+#
       - featured: true
         title: Freelance App Developer
         project: Cash Count Calculator
@@ -105,29 +107,29 @@ sections:
           - >-
             Simple, fast, effective. From wallets to cash registers, Cash Count
             Calculator makes counting money easy.
-      - featured: true
-        title: Freelance Web Developer
-        project: HASOLAR.CO
-        company: H.A. Solar Consulting
-        location: 'Aurora, Colorado'
-        learnMoreUrl: 'https://www.hasolar.co'
-        # gitlabRepoUrl:
-        # playStoreUrl:
-        # appStoreUrl: 
-        devicons:
-          - title: Android
-            icon: devicon-android-plain
-          - title: iOS
-            icon: devicon-apple-original
-          - title: Ghost
-            icon: devicons-ghost_small
-          - title: HTML5
-            icon: devicons-html5
-          - title: Git
-            icon: devicon-git-plain
-          - title: GitLab
-            icon: devicon-gitlab-plain
-        dates: 2019 February &mdash; Present
+#      - featured: true
+#        title: Freelance Web Developer
+#        project: HASOLAR.CO
+#        company: H.A. Solar Consulting
+#        location: 'Aurora, Colorado'
+#        learnMoreUrl: 'https://www.hasolar.co'
+#        # gitlabRepoUrl:
+#        # playStoreUrl:
+#        # appStoreUrl: 
+#        devicons:
+#          - title: Android
+#            icon: devicon-android-plain
+#          - title: iOS
+#            icon: devicon-apple-original
+#          - title: Ghost
+#            icon: devicons-ghost_small
+#          - title: HTML5
+#            icon: devicons-html5
+#          - title: Git
+#            icon: devicon-git-plain
+#          - title: GitLab
+#            icon: devicon-gitlab-plain
+#        dates: 2019 February &mdash; Present
       - featured: true
         title: Project Manager &amp; Developer Lead
         project: Rowdy Red's Java Adventure Game (Team Project)
@@ -465,10 +467,14 @@ sections:
     name: Interests
     title: Interests
     qotd:
-      # - quote: We're not here for a long time. We're here for a good time.
-      #   author: Unknown Author
-      - quote: Well that's the beauty of it. It doesn't do a thing.
-        author: Unknown Author
+      - quote: To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment.
+        author: Ralph Waldo Emerson
+#       - quote: We're not here for a long time. We're here for a good time.
+#         author: Unknown Author
+#      - quote: Well that's the beauty of it. It doesn't do a thing.
+#        author: Unknown Author
+#      - quote: If you don't start nothing, there won't be nothing.
+#        author: Will Smith
     bullets:
       - >-
         Apart from being a web and app developer (and everything else I do), I
