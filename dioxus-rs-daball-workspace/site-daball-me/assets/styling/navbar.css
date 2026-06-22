@@ -1,0 +1,77 @@
+#navbar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: block;
+  z-index: 999;
+}
+
+#navbar-container #navbar {
+  display: flex;
+  flex-direction: row;
+}
+
+#navbar-container #navbar .nav-container {
+  background: #007bff;
+  display: flex;
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 55px;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  transition: background 1s;
+}
+
+#navbar-container #navbar .nav-container ul {
+  display: flex;
+  width: 90%;
+  height: 55px;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style: none;
+  margin-top: 0;
+}
+
+#navbar-container #navbar .nav-container ul li {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+#navbar-container #navbar .nav-container ul li:hover:before,
+#navbar-container #navbar .nav-container ul li:focus:before,
+#navbar-container #navbar .nav-container ul li:active:before,
+#navbar-container #navbar .nav-container ul li:active:before {
+  right: 0;
+}
+
+#navbar-container #navbar .nav-container ul li:before {
+  background: #fff;
+}
+
+#navbar-container #navbar .nav-container ul li:before {
+  bottom: 11px;
+  height: 2.5px;
+}
+
+#navbar-container #navbar .nav-container ul li.dark:before {
+  background: #333;
+}
+
+#navbar-container #navbar ul li a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 17px;
+  margin-right: 20px;
+  transition: color 0.2s ease;
+}
+
+#navbar-container #navbar ul li a:hover {
+  color: #fff;
+}

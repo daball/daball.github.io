@@ -1,0 +1,22 @@
+use std::process::Command;
+
+fn main() {
+    println!("cargo:rerun-if-changed=tailwind.config.js");
+    println!("cargo:rerun-if-changed=src/tailwind/input.css");
+    println!("cargo:rerun-if-changed=src/**/*.rs");
+
+    let status = Command::new("npx")
+       .args([
+            "-y",
+            "@tailwindcss/cli",
+            "-i", "../daball-tailwind-css/src/tailwind/input.css",
+            "-o", "assets/ui/tailwind.g.css",
+            "--minify",
+        ])
+       .status()
+       .expect("Failed to run tailwindcss");
+
+    if!status.success() {
+        panic!("tailwindcss build failed");
+    }
+}

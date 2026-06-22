@@ -1,0 +1,3 @@
+[workspace]
+members = ["shared-daball-ui", "site-daball-me"]
+resolver = "2"

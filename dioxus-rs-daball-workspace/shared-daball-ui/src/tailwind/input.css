@@ -1,0 +1,76 @@
+/**
+ * The design in this application is that the CSS will be run via @tailwindcss/cli to
+ *  generate the tailwind.css file during the Cargo build.
+ **/
+
+/* input.css */
+@import "tailwindcss";
+
+/* 1. Tailwind layers */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 2. Your CSS variables - from colors.rs */
+@layer base {
+  :root {
+    /* Brand - Bootstrap + Material hybrid */
+    --brand-primary: 0 123 255;      /* #007bff as RGB for opacity support */
+    --brand-danger: 244 67 54;       /* #f44336 */
+    --brand-success: 76 175 80;      /* #4caf50 */
+    --brand-white: 255 255 255;      /* #fff */
+    
+    /* Text */
+    --text-primary: 51 51 51;        /* #333 */
+    --text-secondary: 111 111 111;   /* #6f6f6f */
+    
+    /* Backgrounds */
+    --bg-dark: 33 33 33;             /* #212121 */
+    --bg-darker: 43 44 47;           /* #2B2C2F */
+    --bg-darkest: 49 49 49;          /* #313131 */
+    
+    /* Material Red Scale */
+    --material-red-400: 239 83 80;   /* #ef5350 */
+    --material-red-500: 244 67 54;   /* #f44336 */
+    --material-red-700: 198 40;   /* #c62828 */
+    --material-red-900: 183 28 28;   /* #b71c1c */
+    --material-red-a400: 255 23 68;  /* #ff1744 */
+    
+    /* Material Green */
+    --material-green-500: 76 175 80; /* #4caf50 */
+    --material-green-800: 46 125 50; /* #2e7d32 */
+  }
+  
+  /* Dark mode override */
+  [data-theme="dark"] {
+    --text-primary: 255 255 255;
+    --bg-dark: 18 18 18;
+  }
+}
+
+/* 3. Your component base styles */
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded font-medium transition-colors duration-150;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-filled {
+    @apply shadow-sm;
+  }
+  
+  .btn-outlined {
+    @apply bg-transparent border-2;
+  }
+  
+  .btn-link {
+    @apply bg-transparent underline-offset-4 hover:underline;
+  }
+}
+
+/* 4. Utilities you can't do in Tailwind */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
