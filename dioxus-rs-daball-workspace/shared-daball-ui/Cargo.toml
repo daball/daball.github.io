@@ -9,7 +9,7 @@ name = "shared_ui"
 crate-type = ["rlib", "cdylib"] # rlib for other bins, cdylib if you ever compile this directly to WASM
 
 [dependencies]
-dioxus = { version = "0.7.1", default-features = false, features = ["html", "logger", "macro", "router", "signals"] }
+dioxus = { version = "0.7.1", default-features = false, features = ["document", "html", "logger", "macro", "router", "signals"] }
 manganis = "0.7.9"
 tracing = "0.1.44"
 

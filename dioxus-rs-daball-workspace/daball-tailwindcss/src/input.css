@@ -15,6 +15,7 @@
 @layer base {
   :root {
     /* Brand - Bootstrap + Material hybrid */
+    --bootstrap-primary: 0 123 255;      /* #007bff as RGB for opacity support */
     --brand-primary: 0 123 255;      /* #007bff as RGB for opacity support */
     --brand-danger: 244 67 54;       /* #f44336 */
     --brand-success: 76 175 80;      /* #4caf50 */
@@ -32,7 +33,7 @@
     /* Material Red Scale */
     --material-red-400: 239 83 80;   /* #ef5350 */
     --material-red-500: 244 67 54;   /* #f44336 */
-    --material-red-700: 198 40;   /* #c62828 */
+    --material-red-700: 198 40 40;   /* #c62828 */
     --material-red-900: 183 28 28;   /* #b71c1c */
     --material-red-a400: 255 23 68;  /* #ff1744 */
     
@@ -51,20 +52,55 @@
 /* 3. Your component base styles */
 @layer components {
   .btn {
-    @apply px-4 py-2 rounded font-medium transition-colors duration-150;
-    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2;
+    @apply px-4 py-2 font-medium;
+    @apply transition-all duration-150 ease-in-out;
+    @apply transition-colors duration-150;
+    @apply cursor-pointer select-none;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none;
+    transition: color .15s ease-in-out, 
+                background-color .15s ease-in-out, 
+                border-color .15s ease-in-out, 
+                box-shadow .15s ease-in-out;
+
   }
-  
+
+  .btn:hover {
+    filter: brightness(110%);
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+  }
+
   .btn-filled {
     @apply shadow-sm;
   }
   
+  .btn-rounded {
+    @apply rounded;
+  }
+
   .btn-outlined {
     @apply bg-transparent border-2;
   }
   
   .btn-link {
     @apply bg-transparent underline-offset-4 hover:underline;
+  }
+ 
+  .btn-filled {
+    @apply shadow-sm;
+    @apply hover:brightness-90;
+    @apply active:brightness-75;
+    @apply active:translate-y-px;
+    @apply active:shadow-inner;
+  }
+  
+  .btn-transparent {
+    @apply bg-transparent;
+    @apply hover:bg-black/5;
+    @apply active:bg-black/10;
   }
 }
 

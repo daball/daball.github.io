@@ -1,73 +1,104 @@
 use dioxus::prelude::*;
 use manganis::{Asset, asset};
 use std::fmt::Display;
+use crate::colors::*;
 
-const BUTTON_CSS: Asset = asset!("/assets/ui/css/button.css");
+// const BUTTON_CSS: Asset = asset!("/assets/ui/css/button.css");
 
 // Trait your users implement
-pub trait ToClass: Copy + PartialEq + 'static {
+pub trait ToClass: Clone + PartialEq + 'static {
     fn to_class(&self) -> String;
 }
 
-// Default enums provided by your lib
-#[derive(Clone, Copy, PartialEq)]
-pub enum DefaultButtonAccentColor {
-    Blue,
-    Red,
-    Gray,
+pub trait ToBackgroundStyle: Clone + PartialEq + 'static {
+    fn to_bg_style(&self) -> String;
 }
 
-impl ToClass for DefaultButtonAccentColor {
-    fn to_class(&self) -> String {
+// Default enums provided by your lib
+// #[derive(Clone, Copy, PartialEq)]
+// pub enum DefaultButtonAccentColor {
+//     Blue,
+//     Red,
+//     Gray,
+// }
+
+// impl ToClass for DefaultButtonAccentColor {
+//     fn to_class(&self) -> String {
+//         match self {
+//             DefaultButtonAccentColor::Blue => "btn-blue",
+//             DefaultButtonAccentColor::Red => "btn-red",
+//             DefaultButtonAccentColor::Gray => "btn-gray",
+//         }.to_string()
+//     }
+// }
+
+impl ToBackgroundStyle for AccentColor {
+    fn to_bg_style(&self) -> String {
+        format!("background: {}", self.to_var_color()).to_string()
+    }
+}
+
+#[derive(Clone, PartialEq)]
+pub enum DefaultButtonFillStyle {
+    AccentFill(AccentColor),
+    TransparentFill,
+}
+
+// impl ToClass for DefaultButtonFillStyle {
+//     fn to_class(&self) -> String {
+//         match self {
+//             DefaultButtonFillStyle::AccentFill(color) => color.to_var_color(),
+//             DefaultButtonFillStyle::TransparentFill => "".to_string(),
+//         }.to_string()
+//     }
+// }
+
+impl ToBackgroundStyle for DefaultButtonFillStyle {
+    fn to_bg_style(&self) -> String {
         match self {
-            DefaultButtonAccentColor::Blue => "btn-blue",
-            DefaultButtonAccentColor::Red => "btn-red",
-            DefaultButtonAccentColor::Gray => "btn-gray",
-        }.to_string()
+            DefaultButtonFillStyle::AccentFill(accent_color) => accent_color.to_bg_style().to_string(),
+            DefaultButtonFillStyle::TransparentFill => "".to_string(),
+        }
     }
 }
 
 #[derive(Clone, Copy, PartialEq)]
-pub enum DefaultButtonFillStyle {
-    Filled,
-    Outlined,
-    Link,
+pub enum DefaultButtonBorderStyle {
+    Outline,
+    Transparent,
 }
 
-impl ToClass for DefaultButtonFillStyle {
+impl ToClass for DefaultButtonBorderStyle {
     fn to_class(&self) -> String {
         match self {
-            DefaultButtonFillStyle::Filled => "btn-filled",
-            DefaultButtonFillStyle::Outlined => "btn-outlined",
-            DefaultButtonFillStyle::Link => "btn-link",
-        }.to_string()
+            DefaultButtonBorderStyle::Outline => "btn-outline".to_string(),
+            DefaultButtonBorderStyle::Transparent => "btn-transparent".to_string(),
+        }
     }
 }
 
 #[derive(Clone, Copy, PartialEq)]
 pub enum DefaultButtonCornerRoundness {
-    SquaredCorners,
-    RoundedCorners(u8)
+    SquareCorners,
+    RoundCorners
 }
 
 impl ToClass for DefaultButtonCornerRoundness {
     fn to_class(&self) -> String {
         match self {
-            DefaultButtonCornerRoundness::SquaredCorners => "".to_string(),
-            DefaultButtonCornerRoundness::RoundedCorners(roundness) => format!("btn-rounded-{}", roundness),
+            DefaultButtonCornerRoundness::SquareCorners => "".to_string(),
+            DefaultButtonCornerRoundness::RoundCorners => "btn-rounded".to_string(),
         }
     }
 }
 
 #[derive(Props, Clone, PartialEq)]
-pub struct ButtonProps<ButtonAccentColor: ToClass, ButtonFillStyle: ToClass, ButtonCornerRoundness: ToClass>
+pub struct ButtonProps<ButtonFillStyle: ToBackgroundStyle, ButtonCornerRoundness: ToClass>
 where
-    ButtonAccentColor: ToClass + Default,
-    ButtonFillStyle: ToClass + Default,
+    // ButtonAccentColor: ToBackgroundStyle + Default,
+    ButtonFillStyle: ToBackgroundStyle + Default,
     ButtonCornerRoundness: ToClass + Default
 {
-    #[props(default)]
-    pub accent_color: ButtonAccentColor,
     #[props(default)]
     pub fill_style: ButtonFillStyle,
     #[props(default)]
@@ -80,30 +111,32 @@ where
 }
 
 // Defaults so Button<> still works
-impl Default for DefaultButtonAccentColor {
-    fn default() -> Self { DefaultButtonAccentColor::Blue }
-}
+// impl Default for AccentColor {
+//     fn default() -> Self { AccentColor::BrandPrimary }
+// }
 impl Default for DefaultButtonFillStyle {
-    fn default() -> Self { DefaultButtonFillStyle::Filled }
+    fn default() -> Self { DefaultButtonFillStyle::AccentFill(AccentColor::BrandPrimary) }
 }
 impl Default for DefaultButtonCornerRoundness {
-    fn default() -> Self { DefaultButtonCornerRoundness::RoundedCorners(4) }
+    fn default() -> Self { DefaultButtonCornerRoundness::RoundCorners }
 }
 
 #[component]
-pub fn BaseButton<TemplateButtonAccentColor, TemplateButtonFillStyle, TemplateButtonCornerRoundness>(props: ButtonProps<TemplateButtonAccentColor, TemplateButtonFillStyle, TemplateButtonCornerRoundness>) -> Element
+pub fn BaseButton<TemplateButtonFillStyle, TemplateButtonCornerRoundness>(props: ButtonProps<TemplateButtonFillStyle, TemplateButtonCornerRoundness>) -> Element
 where
-    TemplateButtonAccentColor: ToClass + Default,
-    TemplateButtonFillStyle: ToClass + Default,
+    // TemplateButtonAccentColor: ToClass + Default,
+    TemplateButtonFillStyle: ToBackgroundStyle + Default,
     TemplateButtonCornerRoundness: ToClass + Default,
 {
-    let ButtonProps { accent_color, fill_style, corner_roundness, disabled, onclick, children } = props;
+    let ButtonProps { fill_style, corner_roundness, disabled, onclick, children } = props;
 
     rsx! {
-        document::Link { rel: "stylesheet", href: BUTTON_CSS.to_string() }
+        // document::Link { rel: "stylesheet", href: BUTTON_CSS.to_string() }
         button {
-            class: "btn {accent_color.to_class()} {fill_style.to_class()} {corner_roundness.to_class()}",
-            disabled,
+            class: "flex items-center btn {corner_roundness.to_class()}",
+            r#type: "button",
+            style: "{fill_style.to_bg_style()}",
+            // disabled,
             onclick: move |evt| {
                 if let Some(cb) = &onclick {
                     cb.call(evt);
@@ -115,7 +148,7 @@ where
 }
 
 #[component]
-pub fn Button(props: ButtonProps<DefaultButtonAccentColor, DefaultButtonFillStyle, DefaultButtonCornerRoundness>) -> Element
+pub fn Button(props: ButtonProps<DefaultButtonFillStyle, DefaultButtonCornerRoundness>) -> Element
 {
-    BaseButton::<DefaultButtonAccentColor, DefaultButtonFillStyle, DefaultButtonCornerRoundness>(props)
+    BaseButton::<DefaultButtonFillStyle, DefaultButtonCornerRoundness>(props)
 }

@@ -5,10 +5,11 @@
   "main": "tailwind.config.js",
   "scripts": {
     "dev": "npm run build:css && concurrently -k \"npm:dev:*\"",
-    "dev:css": "npx @tailwindcss/cli -i ./src/tailwind/input.css -o ./assets/ui/css/tailwind.g.css --watch",
+    "dev:css": "npx @tailwindcss/cli -i ./daball-tailwindcss/src/input.css -o ./shared-daball-ui/assets/tailwind/tailwind.g.css --watch",
     "dev:dx": "dx serve --package site-daball-me --platform server",
-    "build": "npm run build:css && dx build --release --package site-daball-me",
-    "build:css": "npx @tailwindcss/cli -i ./src/tailwind/input.css -o ./assets/ui/css/tailwind.g.css --minify"
+    "build": "npm run build:minify-css && dx build --release --package site-daball-me",
+    "build:css": "npx @tailwindcss/cli -i ./daball-tailwindcss/src/input.css -o ./shared-daball-ui/assets/tailwind/tailwind.g.css",
+    "build:minify-css": "npx @tailwindcss/cli -i ./daball-tailwindcss/src/input.css -o ./shared-daball-ui/assets/tailwind/tailwind.g.css --minify"
   },
   "keywords": [],
   "author": "",

@@ -3,7 +3,7 @@
 use dioxus::prelude::*;
 
 use views::{Blog, Home, Navbar};
-use shared_ui::{TAILWIND_CSS};
+use shared_ui::{UseTailwindCss};
 use manganis::{Asset, asset};
 
 /// Define a components module that contains all shared components for our app.
@@ -60,7 +60,7 @@ fn App() -> Element {
         // we are using the `document::Link` component to add a link to our favicon and main CSS file into the head of our app.
         document::Link { rel: "icon", href: FAVICON }
         document::Link { rel: "stylesheet", href: MAIN_CSS }
-        document::Link { rel: "stylesheet", href: TAILWIND_CSS }
+        UseTailwindCss {}
 
         // The router component renders the route enum we defined above. It will handle synchronization of the URL and render
         // the layouts and components for the active route.

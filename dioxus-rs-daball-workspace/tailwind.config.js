@@ -3,7 +3,9 @@ import path from 'node:path';
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    path.join(__dirname, 'src'),
+    // path.join(__dirname, 'daball-tailwindcss', 'src', 'input.css'),
+    // path.join(__dirname, 'shared-daball-ui', 'src', '**', '*.rs'),
+    // path.join(__dirname, 'shared-daball-ui', 'assets', 'ui', 'css', '**', '*.rs'),
   ],
   theme: {
     extend: {

@@ -1,10 +1,12 @@
 use dioxus::prelude::*;
 use manganis::{Asset, asset};
 
-pub const TAILWIND_CSS: Asset = asset!("/assets/ui/css/tailwind.g.css");
+pub const TAILWIND_CSS: Asset = asset!("/assets/tailwind/tailwind.g.css");
 
 pub mod components;
 pub use components::{Button};
+
+pub mod colors;
 
 #[component]
 pub fn LButton(label: String, onclick: EventHandler<MouseEvent>) -> Element {
@@ -28,5 +30,13 @@ pub fn LUserCard(name: String, email: String) -> Element {
             p { "{email}" }
             LButton { label: "Message", onclick: move |_| tracing::info!("clicked") }
         }
+    }
+}
+
+
+#[component]
+pub fn UseTailwindCss() -> Element {
+    rsx! {
+        document::Link { rel: "stylesheet", href: TAILWIND_CSS }
     }
 }
